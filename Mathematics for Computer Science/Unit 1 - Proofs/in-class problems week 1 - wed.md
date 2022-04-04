@@ -52,6 +52,8 @@ c)The problem is that (a-b) =0, and you cannot divide by zero;
 
 if (a+b) >= 2sqrt(ab) and a, b > 0, so (a+b)² MUST be >= (2sqrt(ab))² = 4ab;
 
+The problem indeed is that it is in the reverse order;
+
 ## Problem 5
 
 1. The reasoning cannot be applied to Monday, so the test should not have been a surprise;
