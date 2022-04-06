@@ -97,14 +97,4 @@
      done
      ```
    
-4. Write a command that recursively finds all HTML files in the folder and makes a zip with them
-
-   ```bash
-   find . -name "*.html" | xargs tar -cf htmls.tar
-   ```
-
-5. (Advanced) Write a command or script to recursively find the most recently modified file in a directory. More generally, can you list all files by recency?
-
-   * **Answer**: 
-     * Generally answer: **`ls -a -t -p | grep -v /`**
-     *  Just the most recent file: **`ls -a -t -p | grep -v / | head -n 1`**
+     
