@@ -13,9 +13,8 @@ $$
 C ::= \{n\ |\ S(n)\ NOT\ IMPLIES\ 3\ |\ n \}
 $$
 
-	1. Assume for the purpose of obtaining a contradiction that $C$ is nonempty. Then by the WOP,
-there is a smallest number, $m\ \in\ C$. This $m$ must be positive because **$S(0)\ IMPLIES\ 3\ |\ 0$**.
- 	2. But if $S(m)$ holds and $m$ is positive, then $S(m-6)$ or $S(m-15)$ must hold, **because $(m-3)$ and $(m-6)$ are less than $m$, therefore they are not part of $C$.**
+	1. Assume for the purpose of obtaining a contradiction that $C$ is nonempty. Then by the WOP, there is a smallest number, $m\ \in\ C$. This $m$ must be positive because **$S(0)\ IMPLIES\ 3\ |\ 0$**.
+	1. But if $S(m)$ holds and $m$ is positive, then $S(m-6)$ or $S(m-15)$ must hold, **because $(m-3)$ and $(m-6)$ are less than $m$, therefore they are not part of $C$.**
  	3. So suppose $S(m-6)$ holds. Then $3\ |\ m-6$, because **$(m-6)$ is not part of $C$.**
  	4. But if $3\ |\ m- 6$, then $3\ |\ m$, because **6 is obviously divisible by 3 and a number which is the result of the subtraction of two numbers divisible by 3 is also divisible by 3.**
      contradicting the fact that $m$ is a counterexample.
@@ -84,7 +83,6 @@ $$
     f(m) = \sum_{k=0}^{m}{k²}= \frac{m(m+1)(2m+1)}{6} \ \ \ \ \ \ \ (2.4)
     $$
     
-
  5. The equation (2.4)  shows that  we arrive at a contradiction, because $f(m)$ holds, so we conclude that **$C$ must be empty and therefore $f(n)$ holds for all nonnegative integers, $n$,**
     which proves that (1)
 
@@ -102,11 +100,11 @@ C ::= \{a, b, c, d\ \in\ \N\ |\ 8a^4+4b^4+2c^4 = d^4\} \ \ \ \ \ \ \ \ \ \ (3.2)
 $$
 
  	1. Assume for the purpose of obtaining a contradiction that $C$ is nonempty. Then by the WOP,
-     there is a smallest number, $a\ \in\ C$. $a$ must be even:
-     * This is true, because the left hand side will always be even, so $d^4$, and therefore $d$, will always be even too.
-     * $d$ being even implies that both sides can be divided by 2, so $c$ must also be even.
-     * $c$ being even implies that both sides can be divided by 4, so $b$ must be even, 
-     * finally, $b$ being even imples that both sides can be divided by 8, so $a$ must also be even.
+ 	 there is a smallest number, $a\ \in\ C$. $a$ must be even:
+ 	 * This is true, because the left hand side will always be even, so $d^4$, and therefore $d$, will always be even too.
+ 	 * $d$ being even implies that both sides can be divided by 2, so $c$ must also be even.
+ 	 * $c$ being even implies that both sides can be divided by 4, so $b$ must be even, 
+ 	 * finally, $b$ being even imples that both sides can be divided by 8, so $a$ must also be even.
  	2. If $a$ is even and positive, this means that it is not the smallets possible value, so we arrive at a contradiction. Since we get a contradiction, we conclude that **$C$ must be empty and therefore no solution exists** which proves what was claimed.
 
 ## Problem 5
