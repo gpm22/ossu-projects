@@ -53,4 +53,28 @@ Examines whether the following specifications are *satisfiable*:
 
 ## Problem 3
 
+* a
+  1. $c_0 = b$
+  1. $s_0 = a_0\ XOR\ c_0$
+  1. ...
+  1. $s_i = a_i\ XOR\ c_i$
+  1. $c_i = a_{i-1}\ AND\ c_{i-1}$ 
+  1. ...
+  1. $c_n = a_{n-1}\ AND\ c_{n-1}$ 
+  1. $c = c_{n}$
+* b
+  1. $c_0 = 0$
+  2. $s_0=a_0\ XOR\ b_0\ XOR\ c_0$
+  3. ...
+  4. $s_i=a_i\ XOR\ b_i\ XOR\ c_i$
+  5. $c_i=(a_{i-1}\ AND\ b_{i-1})\ OR\ (a_{i-1}\ AND\ c_{i-1})\ OR\ (b_{i-1}\ AND\ c_{i-1})$
+  6. ...
+  7. $c_n=(a_{n-1}\ AND\ b_{n-1})\ OR\ (a_{n-1}\ AND\ c_{n-1})\ OR\ (b_{n-1}\ AND\ c_{n-1})$
+  8. $c=c_{n+1}$
+* c
+  * It uses $3(n+1)$ ANDs, $2(n+1)$ ORs, and $2(n+1)$ XORs, so are used $7(n+1)$ operations;
+  
+
 ## Problem 4
+
+Because it is implicit considered in the current language, that if-then statements are IFF statements. But in a place where there are a formal understating of propositional logic, the translation is direct.
