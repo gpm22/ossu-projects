@@ -1,4 +1,6 @@
-# In-Class Problems Week 1, Wed.
+# In-Class Problems Week 2, Wed.
+
+Questions in [**MIT**](https://openlearninglibrary.mit.edu/assets/courseware/v1/b9289f9f419268bed259c034100f4f63/asset-v1:OCW+6.042J+2T2019+type@asset+block/MIT6_042JS15_cp3.pdf).
 
 ## Problem 1
 
@@ -15,11 +17,11 @@ $$
 
 	1. Assume for the purpose of obtaining a contradiction that $C$ is nonempty. Then by the WOP, there is a smallest number, $m\ \in\ C$. This $m$ must be positive because **$S(0)\ IMPLIES\ 3\ |\ 0$**.
 	1. But if $S(m)$ holds and $m$ is positive, then $S(m-6)$ or $S(m-15)$ must hold, **because $(m-3)$ and $(m-6)$ are less than $m$, therefore they are not part of $C$.**
- 	3. So suppose $S(m-6)$ holds. Then $3\ |\ m-6$, because **$(m-6)$ is not part of $C$.**
- 	4. But if $3\ |\ m- 6$, then $3\ |\ m$, because **6 is obviously divisible by 3 and a number which is the result of the subtraction of two numbers divisible by 3 is also divisible by 3.**
-     contradicting the fact that $m$ is a counterexample.
- 	5. Next, if $S(m-15)$ holds, we arrive at a contradiction in the same way. Since we get a contradiction in both cases, we conclude that **$C$ must be empty and therefore $S(n)\ IMPLIES\ 3\ |\ n$**
-     which proves that (1)
+	3. So suppose $S(m-6)$ holds. Then $3\ |\ m-6$, because **$(m-6)$ is not part of $C$.**
+	4. But if $3\ |\ m- 6$, then $3\ |\ m$, because **6 is obviously divisible by 3 and a number which is the result of the subtraction of two numbers divisible by 3 is also divisible by 3.**
+	 contradicting the fact that $m$ is a counterexample.
+	5. Next, if $S(m-15)$ holds, we arrive at a contradiction in the same way. Since we get a contradiction in both cases, we conclude that **$C$ must be empty and therefore $S(n)\ IMPLIES\ 3\ |\ n$**
+	 which proves that (1)
 
 ## Problem 2
 

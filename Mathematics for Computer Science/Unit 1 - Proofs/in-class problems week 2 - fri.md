@@ -1,4 +1,6 @@
-# In-Class Problems Week 1, Fri.
+# In-Class Problems Week 2, Fri.
+
+Questions in [**MIT**](https://openlearninglibrary.mit.edu/assets/courseware/v1/04fc8e89039320c0b5cfa4a974507f12/asset-v1:OCW+6.042J+2T2019+type@asset+block/MIT6_042JS15_cp4.pdf).
 
 ## Problem 1
 

@@ -1,5 +1,7 @@
 # In-Class Problems Week 1, Fri.
 
+Questions in [**MIT**](https://openlearninglibrary.mit.edu/assets/courseware/v1/8e67c0038c10a24ad4a870a1948127ca/asset-v1:OCW+6.042J+2T2019+type@asset+block/MIT6_042JS15_cp2.pdf).
+
 ## Problem 1
 
 Prove that ab = n, then either a or b <= sqrt(n), where a,b, n are whole numbers;

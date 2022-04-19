@@ -1,5 +1,7 @@
 # Problem set 1
 
+Questions in [**MIT**](https://openlearninglibrary.mit.edu/assets/courseware/v1/432a6320bb11c2bfba8ed2a47e68f86d/asset-v1:OCW+6.042J+2T2019+type@asset+block/MIT6_042JS15_ps1.pdf).
+
 ## Problem 1
 
 **Prove that $log_{4}(6)$ is irrational**
@@ -120,7 +122,6 @@
   c_i = p_i\ AND\ a_i
   $$
   
-
 * **c)**
 
 * **d)**
