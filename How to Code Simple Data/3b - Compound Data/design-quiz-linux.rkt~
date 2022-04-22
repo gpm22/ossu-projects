@@ -1,0 +1,91 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname design-quiz-linux) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+;;design-quiz.rkt
+; PROBLEM:
+;
+; Design a World Program with Compound Data. You can be as creative as you like,
+; but keep it simple. Above all, follow the recipes! You must also stay within
+; the scope of the first part of the course. Do not use language features we
+; have not seen in the videos.
+;
+; The program will be a ball that is traped inside a box. It is released within
+; a certain velocity and angle in relation to the horizon.
+;
+; If you need inspiration, you can choose to create a program that allows you
+; to click on a spot on the screen to create a flower, which then grows over
+; time. If you click again the first flower is replaced by a new one at the
+; new position.
+;
+; You should do all your design work in DrRacket. Following the step-by-step
+; recipe in DrRacket will help you be sure that you have a quality solution.
+
+
+(require 2htdp/image)
+(require 2htdp/universe)
+
+;; A ball that is traped inside a box. It is released within a certain velocity and angle in relation to the horizon.
+
+;; ===================
+;; Constants:
+
+(define WIDTH 600)
+(define HEIGHT 400)
+
+(define MTS (empty-scene WIDTH HEIGHT "black"))
+
+(define red-ball (circle 40 "solid" "red"))
+
+;; ===================
+;; Data definitions:
+
+(define-struct ball (x y angle speed))
+;; Ball is (make-ball Natural[0, WIDTH], Natural[0, HEIGHT], Natural, Natural)
+;; interp. Ball is a ball with coordinate x, coordinate y, angle angle, and speed speed
+;;     x is in screen coordinates (pixels)
+;;     y is in screen coordinates (pixels)
+;;     angle is in radians
+;;     speed is in pices per tick
+
+(define B1 (make-ball 0     0      (/ pi 4)             10)) ;; ball at the lower left  end with angle    45 and velocity 10 pixels/tick
+(define B2 (make-ball 0     HEIGHT (- (/ pi 4)     )     8)) ;; ball at the upper left  end with angle   -45 and velocity  8 pixels/tick
+(define B3 (make-ball WIDTH 0      (/ (* 3 pi) 4)    17))    ;; ball at the lower right end with angle   135 and velocity 17 pixels/tick
+(define B4 (make-ball WIDTH HEIGHT (/ (* -3 pi) 4)    5))    ;; ball at the upper right end with angle  -135 and velocity  5 pixels/tick
+
+;; Template rules used:
+;; - compound: 4 fields
+
+;; ===================
+;; Functions:
+
+
+;; Ball -> Ball
+;; start the world with (main angle speed), where angle is the start angle of the ball
+;;       and speed is the velocity (integer) of the Ball.
+
+(define (main angle speed)
+  (big-bang (make-ball 0 0 angle speed)  ;; Ball
+    (on-tick   next-ball)                ;; Ball -> Ball
+    (to-draw   render-ball)))            ;; Ball -> Image
+
+;; Ball -> Ball
+;; produce the next Ball, by advancing it speed pixel(s) to direction defined by the angle
+
+(check-expect (next-ball B1) (make-ball (+ 0     (inexact->exact (* 10 (cos (/ pi 4)            )))) (+ 0      (inexact->exact (* 10 (sin (/ pi 4)            )))) (/ pi 4)             10))
+(check-expect (next-ball B2) (make-ball (+ 0     (inexact->exact (* 10 (cos (- (/ pi 4)     )   )))) (+ HEIGHT (inexact->exact (* 10 (sin (- (/ pi 4)     )   )))) (- (/ pi 4)     )    10))
+(check-expect (next-ball B3) (make-ball (+ WIDTH (inexact->exact (* 10 (cos (/ (* 3 pi) 4)   )))) (+ 0      (inexact->exact (* 10 (sin (/ (* 3 pi) 4)   )))) (/ (* 3 pi) 4)    10))
+(check-expect (next-ball B4) (make-ball (+ WIDTH (inexact->exact (* 10 (cos (/ (* -3 pi) 4)  )))) (+ HEIGHT (inexact->exact (* 10 (sin (/ (* -3 pi) 4)  )))) (/ (* -3 pi) 4)    10))
+
+
+(define (next-ball b) b) ; stub
+
+;<use template from Ball>
+
+;(define (next-ball c ) 0)
+
+;; Ball -> image
+;; render the rotated ball image in the given coordinate
+
+(define (render-ball cc) MTS) ;stub
+
+;<use template from ball>
