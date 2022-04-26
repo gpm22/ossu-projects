@@ -1,6 +1,6 @@
 # In-Class Problems Week 1, Wed.
 
-Question in [**MIT**](https://openlearninglibrary.mit.edu/assets/courseware/v1/c49ce7ef21147a1ef2c3f44473bc5250/asset-v1:OCW+6.042J+2T2019+type@asset+block/MIT6_042JS15_cp1.pdf).
+Questions in [**MIT**](https://openlearninglibrary.mit.edu/assets/courseware/v1/c49ce7ef21147a1ef2c3f44473bc5250/asset-v1:OCW+6.042J+2T2019+type@asset+block/MIT6_042JS15_cp1.pdf).
 
 ## Problem 1
 
