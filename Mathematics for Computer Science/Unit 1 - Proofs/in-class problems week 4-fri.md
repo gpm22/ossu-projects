@@ -28,9 +28,8 @@ Questions available in [MIT](https://openlearninglibrary.mit.edu/assets/coursewa
       \\
       r_ts_t + a_t =  xy \quad (\text{by (1)})
       $$
-      
-
-    * If $s$ is odd, then we have $r_t=2r$, $s_t = (s-1)/2$, and $a_t = a+r$. Therefore
+    
+  * If $s$ is odd, then we have $r_t=2r$, $s_t = (s-1)/2$, and $a_t = a+r$. Therefore
       $$
       r_ts_t + a_t = 2r((s-1)/2)+a+r
       \\
@@ -42,9 +41,9 @@ Questions available in [MIT](https://openlearninglibrary.mit.edu/assets/coursewa
       \\
       r_ts_t + a_t =  xy \quad (\text{by (1)})
       $$
-
-    So, as in both cases (1) holds, $P$ is a preserved invariant.
-
+  
+  So, as in both cases (1) holds, $P$ is a preserved invariant.
+  
 * **b)** Prove that $R$ is partially correct.
 
   As $P$ is a preserved invariant, if the program terminates, it does with $xy$ in register $a$. This works as $P$ holds for the start state $(x,y,0)$:
@@ -104,7 +103,7 @@ Questions available in [MIT](https://openlearninglibrary.mit.edu/assets/coursewa
 * **a)** Give a mathematical model of the Authority's system for letting cars on and off the bridge by specifying a transition relation between states of the form (A, B, C) above.
 
   * **Transition Relations:** 
-    * $x$ cars have entered and $y$ have leaved: $\{ (A, B, C) \rightarrow (A+3x, B+2y, C+x-y) \}\ |\ x \geq 0,\  y \geq 0  \}$
+    * $x$ cars have entered and $y$ have leaved: $\{ (A, B, C) \rightarrow (A+3x, B+2y, C+x-y) \}\ |\ 0  \leq x \leq (1000-C),\ 0 \leq y \leq C  \}$
 
 * **b)** Characterize each of the following derived variables:
 
@@ -164,7 +163,29 @@ Questions available in [MIT](https://openlearninglibrary.mit.edu/assets/coursewa
 
 * **c)** Use the results of part **b)** to define a simple predicate, $P$, on states of the transition system which is satisfied by the start state, that is $P(A_0, B_0, C_0)$ holds - is not satisfied by any collapsed stated, and is preserved invariant of the system. Explain why your $P$ has these properties. Conclude that the traffic won't cause the bridge to collapse.
 
+  Defining $T_0 ::= 3(1000-C_0) + (A_0 - B_0)$
+
+  $P(A, B, C) ::= [A - B < T_0] \text{ AND } [2A-3B-6C = 2A_0-3B_0-6C_0]$
+
+  * **start state**: $P(A_0, B_0, C_0) = [A_0 - B_0 < T_0] \text{ AND } [2A_0-3B_0-6C_0 = 2A_0-3B_0-6C_0]$ is **true**;
+
+  * The defined $P$ is not satisfied by any collapsed state, since in those cases $A-B \geq T_0$.
+
+  * The defined $P$ is a preserved invariant, as was shown in the previous question.
+
+    As none collapsed states are allowed, the traffic won't cause the bridge to collapse.
+
 * **d)** Explain, in terms of system transitions, why this policy will lead to a deadlock situation. 
+
+  A deadlock will happen when the bridge has 1000 cars on it and the number, $x$, of cars wanting to enter the bridge is bigger than the number, $y$ of cars leaving it.
+  $$
+  (A, B, C) \rightarrow (A+3x, B+2y, C+x-y)
+  $$
 
 ## Problem 4
 
+Prove the theorem:
+
+" If fewer than $n$ students among those in an $n \times n$ arrangement are initially infected in a flu outbreak, then there will be at least one student who never gets infected in this outbreak, even if students attend all the lectures."
+
+As the rule for someone be infected is to be adjacent to at least two already-infected students, then for everyone be infected at least $n$ students should be in the diagonal. Therefore, if the number of initial infected students is less than $n$, there will be at least on student who never gets infected.
