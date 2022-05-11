@@ -1,0 +1,31 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname reverse-list) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+;; List -> List
+;; It consumes a list and produces that list in the reverse order
+
+(check-expect (reverse-list empty) empty)
+(check-expect (reverse-list (list "a")) (list "a"))
+(check-expect (reverse-list (list "a" 1 false)) (list false 1 "a"))
+(check-expect (reverse-list (list 1 2 3)) (list 3 2 1))
+
+;(define (reverse-list l) l) ;stub
+
+(define (reverse-list l)
+  (cond [(empty? l) empty]
+        [else
+         (put-at-last (first l) (reverse-list (rest l)))]))
+
+;; Element List -> List
+;; It consumes an element and a list and puts the element at the final of the list
+
+(check-expect (put-at-last 1 empty) (list 1))
+(check-expect (put-at-last 1 (list "a")) (list "a" 1))
+(check-expect (put-at-last 1 (list "a" 1 false)) (list "a" 1 false 1))
+
+;(define (put-at-last e l) (cons e l)) ;stub
+
+(define (put-at-last e l)
+  (cond [(empty? l) (cons e empty)]
+        [else
+         (cons (first l) (put-at-last e (rest l)))]))

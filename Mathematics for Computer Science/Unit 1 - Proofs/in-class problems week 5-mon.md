@@ -72,6 +72,69 @@ Questions available in [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
 
 ## Problem 2
 
+* **a)** Use structural induction to prove that $\text{RecMatch } \subseteq \text{ Erasable}$.
+
+  * **Definition of RecMatch**:
+
+    * **Base Case**: $\lambda \in \text{RecMatch}$.
+    * **Constructor Case:** If $s, t \in \text{RecMatch}$, then $[s]t \in \text{RecMatch}$.
+
+  * **Answer**:
+
+    * We prove by structural induction that $\text{RecMatch } \subseteq \text{ Erasable}$.
+
+    * **Induction Hypothesis:** $P(s) ::= \forall s \in \text{RecMatch} \Rightarrow s \in \text{Erasable}$
+
+    * **Base Case**: $P(\lambda)$ holds, as $\lambda \in \text{Erasable}$.
+
+    * **Constructor Case**: Assuming that $P(t)$ holds, we have to prove that $P([s]t)$ holds. To prove it we have to prove that $[s]t \in \text{Erasable}$:
+      $$
+      [s]t \rightarrow t
+      $$
+      as $P(t)$ holds, so $t \rightarrow \lambda$ and therefore $P([s]t)$ holds. So $\text{RecMatch } \subseteq \text{ Erasable}$.
+
+* **b)** Supply yhe missing parts of the following proof that $\text{Erasable } \subseteq \text{ RecMatch}$:
+
+  * **Proof**. We Prove by strong induction that every length $n$ string in **Erasable** is also in **RecMatch**. The induction hypothesis is
+    $$
+    P(n) ::= \forall x \in \text{Erasable. } |x| = n \Rightarrow x \in \text{RecMatch}
+    $$
+
+  * **Base case**: $P(0)$ holds, as $\lambda$, which has $|\lambda| = 0$, is in both Erasable and RecMatch.
+
+  * **Inductive step**: To prove $P(n + 1)$, suppose $|x| = n + 1$ and $x \in \text{Erasable}$. We need to show that $x \in \text{RecMatch}$.
+
+    Let's say that a string $y$ is an $erase$ of a string $z$ iff $y$ is the result of erasing a **single** occurrence of $p$ in $z$.
+
+    Since $x \in \text{Erasable}$ and has positive length, there must be an erase, $y \in \text{Erasable}$, of $x$. So $|y| = n-1 \geq 0$, and since $y \in \text{Erasable}$, we may assume by induction hypothesis that $y \in \text{RecMatch}$.
+
+    Now we argue by cases:
+
+    *  **Case ($y$ is $\lambda$)**:
+
+      As the base case shows, $\lambda \in \text{RecMatch}$, so $x$ will be a string with 2 characters, the only one possible is $[] = [\lambda]\lambda$, therefore $x \in RecMatch$.
+
+    * **Case ($y = [s]t$ for some string $s, t \in \text{RecMatch}$)**: Now we argue by subcases.
+
+      * **Subcase($x=py$)**:
+
+        By the definition of $y$, $p$ must be in RecMatch. So as both $y$ and $p$ are in RecMatch, so is $x$.
+
+      * **Subcase($x$ is of the form $[s']t$ where $s$ is an erase of $s'$)**:
+
+        Since $s \in \text{RecMatch}$, it is erasable by part **b)**, which implies that $s' \in \text{Erasable}$. But $|s'| < |x|$, so by induction hypothesis, we may assume that $s' \in \text{RecMatch}$. This shows that $x$ is the result of the constructor step of RecMatch, and therefore $x \in RecMatch$.
+
+      * **Subcase($x$ is of the form $[s]t'$ where $t$ is an erase of $t'$)**:
+
+        Since $t \in \text{RecMatch}$, it is erasable by part **b)**, which implies that $t' \in \text{Erasable}$. But $|t'| < |x|$, so by induction hypothesis, we may assume that $t' \in \text{RecMatch}$. This shows that $x$ is the result of the constructor step of RecMatch, and therefore $x \in RecMatch$.
+
+    The above cases are sufficient, as they cover all possible situations.
+
+    This completes the proof by strong induction on $n$, so we conclude that $P(n)$ holds for all $n \in \N$. Therefore $x \in \text{RecMatch}$ for every string $x \in \text{Erasable}$. That is, $\text{Erasable} \subseteq \text{Recmatch}$. Combined with part **a)**, we conclude that 
+    $$
+    \text{Erasable = RecMatch}
+    $$
+
 ## Problem 3
 
 * **a)** The set $S ::= \{2^k3^m5^n \in \N\ |\ k, m, n \in \N  \}$
@@ -104,6 +167,68 @@ Questions available in [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
       * if $|b| > |a| + 1$, then $ (a ,\ b + 3\text{Sg}(b))\in L$
 
 ## Problem 4
+
+**Definition.** The recursive data type, binary-2PTG, of *binary trees* with leaf labels, $L$, is defined recursively as follows:
+
+* **Base Case:** $\langle \text{leaf}, l \rangle \in \text{binary-2PTG}$, for all labels $l \in L$.
+* **Constructor case:** If $G_1, G_2 \in \text{binary-2PTG}$, then $\langle \text{bintree}, G_1, G_2 \rangle \in \text{binary-2PTG}$
+
+The size, $|G|$, of $G \in \text{binary-2PTG}$ is defined recursively on this definition by:
+
+* **Base Case:** $| \langle \text{leaf}, l \rangle | ::= 1, \quad \text{ for all } l \in L$.
+* **Constructor Case:** $| \langle \text{bintree}, G_1, G_2 \rangle | ::= |G_1| + |G_2| + 1$
+
+* **a)** Write out the binary-2PTG, $G$, pictured in Figure 1.
+
+  * $\langle G, \langle G_1, win, \langle G_{1,2}, lose, win \rangle \rangle, win \rangle$ 
+
+* **b)** The value of $\text{flatten}(G)$ for $G \in \text{binary-2PTG}$ is the sequence of labels in $L$ of the leaves of $G$. For example, for binary-2PTG, $G$, Pictured in Figure 1,
+  $$
+  \text{flatten}(G) = (win, lose, win, win)
+  $$
+  Give a recursive definition of flatten.
+
+  * **Base Case**: $\text{flatten}(\langle \text{leaf}, l \rangle) = (l), \quad \text{ for all } l \in L$
+  * **Constructor Case**: $\text{flatten}(\langle \text{bintree}, G_1, G_2 \rangle) = \text{flatten}(G_1) \cdot \text{flatten}(G_2) $ 
+
+* **c)** Prove by structural induction on the definitions of flatten and size that $2 \cdot \text{length}(\text{flatten}(G)) = |G| + 1$
+
+  **Proof.** We prove by structural induction that $2 \cdot \text{length}(\text{flatten}(G)) = |G| + 1$.
+
+  **Induction Hypothesis**: $P(G) ::= [ 2 \cdot \text{length}(\text{flatten}(G)) = |G| + 1]$
+
+  **Base Case**: 
+  $$
+  P( \langle \text{leaf}, l \rangle ) & = [ 2 \cdot \text{length}(\text{flatten}(\langle \text{leaf}, l \rangle)) = |\langle \text{leaf}, l \rangle| + 1]
+  \\
+  & = [ 2 \cdot \text{length}((l)) = 1 + 1] \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+  \\
+  & = [ 2 \cdot 1 = 2] \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+  \\
+  & = [ 2 = 2] \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+  \\
+  & = \text{true} \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+  $$
+  Then $P( \langle \text{leaf}, l \rangle )$ holds.
+
+  **Constructor Case**:
+
+  Assuming that $P(G_1)$ and $P(G_2)$ hold:
+  $$
+  P( \langle \text{bintree}, G_1, G_2 \rangle) & = [ 2 \cdot \text{length}(\text{flatten}(\langle \text{bintree}, G_1, G_2 \rangle)) = |\langle \text{bintree}, G_1, G_2 \rangle| + 1] \ \ \ \ \ \ \ \
+  \\ 
+  & = [ 2 \cdot \text{length}(\text{flatten}(G_1) \cdot \text{flatten}(G_2))) = |G_1| + |G_2| + 1 + 1] \ \ \ \ \ \ \ \ \ \ \  \  \
+  \\
+  & = [ 2(\text{length}(\text{flatten}(G_1))) + 2(\text{length}(\text{flatten}(G_2))) = |G_1| + |G_2| + 2]
+  \\
+  $$
+  As we assumed that  $P(G_1)$ and $P(G_2)$ hold:
+  $$
+  P( \langle \text{bintree}, G_1, G_2 \rangle) & =  [|G_1| + 1 + |G_2| + 1 = |G_1| + |G_2| + 2]
+  \\
+  & = [|G_1| + |G_2| + 2 = |G_1| + |G_2| + 2] \ \ \ \ \ \ \
+  $$
+  Therefore $P( \langle \text{bintree}, G_1, G_2 \rangle)$ holds.
 
 ## Extras
 
