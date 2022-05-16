@@ -58,3 +58,55 @@ So will always have a different nonnegative integer to a different positive rati
 
 ## Problem 4
 
+* **a)** Describe how a recognizer would work for the set of strings containing only lowercase Roman letters —`a,b,...,z` — such that each letter occurs twice in a row. For example, `aaccaabbzz`, is such a string, but `abb`, `00bb`, `AAbb`, and `a` are not. (Even better, actually write a recognizer procedure in your favorite programming language).
+
+  * The procedure will first verify the size of the string, if it is odd the procedure will return false, is its is even, the procedure will continue.
+
+  * Then the procedure will iterate over the string starting from the second element and will advance two indexes at a time.
+
+    * It will verify if the actual character is a lower case letter, if it is not, the procedure will return false, if it is, the procedure will continue.
+    * The actual character will be compared with the previous one (actual index - 1).
+      * If they are different, the procedure return false.
+      * if they equal, the procedure goes to the next iteration.
+
+  * The procedure will return true.
+
+  * Code in JavaScript
+
+    ```js
+    const verifyString = (string) => {
+        if(string.length%2 != 0){
+            return false;
+        }
+        
+        for(let i = 1; i < string.length; i+=2){
+            
+            if(isCharNotALowerCaseLetter(string[i])){
+                return false;
+            }
+            
+            if(string[i] != string[i-1]){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    const isCharNotALowerCaseLetter = (char) => {
+        return !(/^[a-z]*$/.test(char));
+    }
+    ```
+
+    
+
+* **b)** Explain why $\text{range}(f)$ is the set of all recognizable sets of strings.
+
+  * By definition, $\text{range}(f) = f(\text{domain}(f)) =f(\text{string})$.
+  * As $f(s)$ maps **every** string $s$ to the set of strings recognized by $P_s$, therefore $\text{range}(f)$ is the set of all recognizable sets of strings.
+
+* **c)** Prove that $N ::= \{s \in \text{string}\ | \ s \notin f(s) \}$ is not recognizable.
+
+  * By definition $ s \in N \iff s \notin f(s)$ for every string $s$.
+  * So $N \notin \text{range}(f)$ , therefore $N$ is not in the set of all recognizable sets of strings.
+
+* **d)** It is not possible to write a program analyzer that recognizes every string.
