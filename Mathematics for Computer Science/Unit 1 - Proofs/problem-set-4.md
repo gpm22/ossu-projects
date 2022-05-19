@@ -1,5 +1,7 @@
 # Problem Set 4
 
+Questions available in [**MIT**](https://openlearninglibrary.mit.edu/assets/courseware/v1/7e8bf62d56dd415c1fa86a453c337574/asset-v1:OCW+6.042J+2T2019+type@asset+block/MIT6_042JS15_ps4.pdf).
+
 ## Problem 1
 
 A robot moves on the two-dimensional integer grid. It starts out at $(0, 0)$ and is allowed to move in any of these four ways:
@@ -98,3 +100,22 @@ Therefore $P$ holds for any LBT with unique labels.
 
 ## Problem 3
 
+* **a)** Describe a bijection from $(0, 1]$ to $[0, \infty )$
+
+  
+
+  As $[0, \infty ) = (0, \infty ) \cup {0}$, $[0, \infty )$ and $(0, \infty )$ have the same size, so finding a bijection from $(0, 1]$ to $(0, \infty )$ will implies in a bijection from $(0, 1]$ to $[0, \infty )$.
+  $$
+  f : (0, 1] \rightarrow (0, \infty )      = x \rightarrow \{x, 1/x\}
+  $$
+  
+
+* **b)**
+
+* **c)**
+
+* **d)**
+
+* **e)**
+
+* **f)**
