@@ -109,10 +109,17 @@ Therefore $P$ holds for any LBT with unique labels.
   f : (0, 1] \rightarrow (0, \infty )      = x \rightarrow \{x, 1/x\}
   $$
   
+* **b)** Let $L$ be the set of all such long sequences. Describe a bijection from $L$ to the half-open real interval $(0, 1]$. 
 
-* **b)**
+  As $[0, 1] = (0, 1] \cup {0}$, $[0, 1]$ and $(0, 1]$ have the same size, so finding a bijection from $L$ to $[0, 1]$ will implies in a bijection from $L$ to  $(0, 1]$.
 
-* **c)**
+  The lowest number of $L$ is $\frac{1}{9} = 0.\overline{1}$, so we map it to $0$.
+
+  The biggest number is $0.\overline{9}$, which maps to 1.
+
+  The others numbers will be have also a mapping, as to each different number in $[0,1]$ you will have a different one in $L$.
+
+* **c)** Describe a surjective function from $L$ to $L^2$ that involves alternating digits from two long sequences. 
 
 * **d)**
 
