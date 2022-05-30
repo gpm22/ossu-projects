@@ -106,9 +106,21 @@ console.log(
 console.log(
   "euclidianGcd(12,8) == 4? " + (euclidianGcd(12, 8) == 4 ? "Yes" : "No")
 );
+console.log(
+  "euclidianGcd(11271,83233) == 1? " +
+    (euclidianGcd(11271, 83233) == 1 ? "Yes" : "No")
+);
+console.log(
+  "euclidianGcd(120938092183091238902138092183092139,21098309218309218309218) == 8388608? " +
+    (euclidianGcd(
+      120938092183091238902138092183092139,
+      21098309218309218309218
+    ) == 8388608
+      ? "Yes"
+      : "No")
+);
 
 console.log("\nbinaryGcd tests\n");
-
 
 let date2 = new Date();
 
@@ -132,13 +144,26 @@ console.log("binaryGcd(7,5) == 1? " + (binaryGcd(7, 5) == 1 ? "Yes" : "No"));
 console.log("binaryGcd(5,7) == 1? " + (binaryGcd(5, 7) == 1 ? "Yes" : "No"));
 console.log("binaryGcd(8,6) == 2? " + (binaryGcd(8, 6) == 2 ? "Yes" : "No"));
 console.log("binaryGcd(12,8) == 4? " + (binaryGcd(12, 8) == 4 ? "Yes" : "No"));
+console.log(
+  "binaryGcd(11271,83233) == 1? " +
+    (binaryGcd(11271, 83233) == 1 ? "Yes" : "No")
+);
+console.log(
+  "binaryGcd(120938092183091238902138092183092139,21098309218309218309218) == 8388608? " +
+    (binaryGcd(120938092183091238902138092183092139, 21098309218309218309218) ==
+    8388608
+      ? "Yes"
+      : "No")
+);
 
 let date3 = new Date();
 
 console.log("\nComparison between execution times\n");
-let euclidianTime = (date2.getTime() - date1.getTime())*1000;
-let binaryTime = (date3.getTime() - date2.getTime())*1000;
+let euclidianTime = (date2.getTime() - date1.getTime()) * 1000;
+let binaryTime = (date3.getTime() - date2.getTime()) * 1000;
 
-console.log("Executing time of euclidianGcd:" +euclidianTime );
+console.log("Executing time of euclidianGcd:" + euclidianTime);
 console.log("Executing time of binaryGcd:" + binaryTime);
-console.log("binaryGcd is faster? " +(binaryTime < euclidianTime? "Yes" : "No"));
+console.log(
+  "binaryGcd is faster? " + (binaryTime < euclidianTime ? "Yes" : "No")
+);
