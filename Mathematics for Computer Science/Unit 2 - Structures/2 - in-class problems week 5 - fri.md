@@ -124,22 +124,21 @@ $$
      & = & \text{gcd}(a, b) \ \ \ \ \ \ \ \ \ \ \ \ \
     $$
     
-
   * $ (y-x, x, e)$
-
+  
     As $y-x$ is a linear combination of $x$ and $y$, so $\text{gcd}(y-x, x) = \text{gcd}(y, y-x) = \text{gcd}(x, y)$.
-
+  
     Considering the previous state as being $(a, b, 1)$:
     $$
     \text{gcd}(a, b) & = & \text{gcd}(x, y) \cdot e \ \ \ \ \ \ \ \ \\\
      & = & \text{gcd}(b-a, a) \cdot 1 \ \ \\
      & = & \text{gcd}(a, b) \ \ \ \ \ \ \ \ \ \ \ \ \
     $$
-
+  
   * $ (1, 0, ex) $
-
+  
     As $x = y$, so $\text{gcd}(x, y) = x$.
-
+  
     Considering the previous state as being $(a, b, 1)$:
     $$
     \text{gcd}(a, b) & = & \text{gcd}(x, y) \cdot e \\\
@@ -147,7 +146,7 @@ $$
       & = & a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \\\
      & = & \text{gcd}(a, b) \ \ \ \ \
     $$
-
+  
 * **b)** Prove that the move $(x, y, e) \to (x/2, y/2, 2e)$ never occurs after any of the other rules is executed.
 
   The condition of this move if that both $x$ and $y$ are divisible by 2, this will never occur after any other movement, as for movements (3) and (4) only the even number is divided, so the other one stills odd. In the case of movements (5) and (6), one odd number remains and other even number is created, as adding or subtracting odd numbers results in a even number.
@@ -160,3 +159,22 @@ $$
 
 ## Problem 4
 
+* **a)** Every common divisor of $a$ and $b$ divides $\text{gcd}(a, b)$
+
+  If $c$ divides $a$ and $b$, then $c$ divides every linear combination of $a$ and $b$, so as the GCD of $a$ and $b$ is an integer linear combination of $a$ and $b$, therefor every common divisor of $a$ and $b$ divides $\text{gcd}(a, b)$.
+
+* **b)** If $a | bc$ and $gcd(a, b) = 1$, then $a | c$.
+
+  As $1$ is the only integer that divides all numbers, then $\text{gcd}(a, b)=1$ means that $a$ does not divides $b$, so $a | bc$ is only possible if $a|c$, therefore $ a|bc \and \text{gcd}(a,b) = 1 \Rightarrow a|c$.
+
+* **c)** If $p|bc$ for some prime, $p$, then $p|b$ or $p|c$.
+
+  Suppose for contradiction proof that $p|bc$, $\overline{p|b}$, and  $\overline{p|c}$.
+
+  As $\overline{p|b}$, then $\text{gcd}(p, b) = 1$, so as consequence of the question **b)** $p|c$ must be true, then we have a contradiction, therefore If $p|bc$ for some prime, $p$, then $p|b$ or $p|c$.
+
+* **d)** Let $m$ be the smallest integer linear combination of $a$ and $b$ that is positive. Show that $m = \text{gcd}(a, b)$.
+
+  Corollary 8.2.3 says that an integer is a linear combination of $a$ and $b$ iff it is a multiple of $\gcd(a, b)$, as the smallest multiple of $\text{gcd}(a,b)$ is $\text{gcd}(a, b)$ itself, therefore $\text{gcd}(a, b)$ is the smallest integer linear combination of $a$ and $b$ that is positive.
+
+  
