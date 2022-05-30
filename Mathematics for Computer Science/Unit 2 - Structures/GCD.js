@@ -141,4 +141,4 @@ let binaryTime = (date3.getTime() - date2.getTime())*1000;
 
 console.log("Executing time of euclidianGcd:" +euclidianTime );
 console.log("Executing time of binaryGcd:" + binaryTime);
-console.log("binaryGcd is faster? " +(binaryTime <= euclidianTime? "Yes" : "No"));
+console.log("binaryGcd is faster? " +(binaryTime < euclidianTime? "Yes" : "No"));
