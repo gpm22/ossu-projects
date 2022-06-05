@@ -13,6 +13,7 @@ My OSSU progress can be seen in [OSSU progress](https://trello.com/b/DIZv8gOk/os
 ### Core Programming
 
 * [How to Code - Simple Data](https://github.com/gpm22/ossu-projects/tree/main/How%20to%20Code%20Simple%20Data) (**Done**)
+* [How to Code - Complex Data](https://github.com/gpm22/ossu-projects/tree/main/How%20to%20Code%20Complex%20Data) (In progress)
 
 ### Core Math
 
