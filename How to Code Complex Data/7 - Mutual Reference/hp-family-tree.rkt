@@ -21,6 +21,29 @@
 ;wiki, which contains all necessary information for the other problems.  You 
 ;will use this data definition throughout the rest of the homework.
 
+(define-struct descendant (name patronus wand children))
+;; Descendant is (make-descendant String String String ListOfDescendant)
+;; interp. An Descendant is a member of a family from Harry Potter Universe.
+;;         if some information is missing, it will represented as "".
+
+;; ListOfDescendant if one of:
+;; - empty
+;; - (cons Descendant ListOfDescendant)
+;; interp. A list of Descendants.
+
+#;
+(define (fn-for-descendant d)
+  (... (descendant-name d)                    ;String
+       (descendant-patronus d)                ;String
+       (descendant-wand d)                    ;String
+       (fn-for-lod (descendant-children d)))) ;ListOfDescendant
+
+#;
+(define (fn-for-lod lod)
+  (cond [(empty? lod) (...)]
+        [else
+         (... (fn-for-descendant (first lod)) ;Descendant
+              (fn-for-lod (rest lod)))]))     ;ListOfDescendat
 
 ;PROBLEM 2: 
 
@@ -31,13 +54,132 @@
 ;You must include all of Arthur's children and these grandchildren: Lily, 
 ;Victoire, Albus, James.
 
-
 ;Note that on the Potter wiki you will find a lot of information. But for some 
 ;people some of the information may be missing. Enter that information with a 
 ;special value of "" (the empty string) meaning it is not present. Don't forget
 ;this special value when writing your interp.
 
+(define VICTORIE (make-descendant
+                  "Victorie"
+                  ""
+                  ""
+                  empty))
 
+(define DOMINIQUE (make-descendant
+                   "Dominique"
+                   ""
+                   ""
+                   empty))
+
+(define LOUIS (make-descendant
+               "Louis"
+               ""
+               ""
+               empty))
+
+(define WILLIAM (make-descendant
+                 "William"
+                 "Non-corporeal"
+                 "Unknown length, wood and core"
+                 (list VICTORIE DOMINIQUE LOUIS)))
+
+(define CHARLES (make-descendant
+                 "Charles"
+                 "Non-corporeal"
+                 "12', Ash, unicorn tail hair"
+                 empty))
+
+
+(define MOLLY (make-descendant
+               "Molly"
+               ""
+               ""
+               empty))
+
+(define LUCY (make-descendant
+              "Lucy"
+              ""
+              ""
+              empty))
+
+(define PERCY (make-descendant
+               "Percy"
+               "Non-corporeal"
+               "Unknown length, wood and core"
+               (list MOLLY LUCY)))
+
+(define FRED (make-descendant
+              "Fred"
+              "Magpie"
+              "Unknown length, wood and core"
+              empty))
+
+(define FRED2 (make-descendant
+               "Fred II"
+               ""
+               ""
+               empty))
+
+(define ROXANNE (make-descendant
+                 "Roxanne"
+                 ""
+                 ""
+                 empty))
+
+(define GEORGE (make-descendant
+                "George"
+                "Magpie"
+                "Unknown length, wood and core"
+                (list FRED2 ROXANNE)))
+
+(define ROSE (make-descendant
+              "Rose"
+              ""
+              ""
+              empty))
+
+(define HUGO (make-descendant
+              "Hugo"
+              ""
+              ""
+              empty))
+
+(define RONALD (make-descendant
+                "Ronald"
+                "Jack Russell terrier"
+                "9(1/4)', Chestnut, Dragon heartstring"
+                (list ROSE HUGO)))
+
+(define JAMES (make-descendant
+               "James"
+               ""
+               ""
+               empty))
+
+(define ALBUS (make-descendant
+               "Albus"
+               ""
+               "Cherry, Unknown length and core"
+               empty))
+
+(define LILY (make-descendant
+              "Lily"
+              ""
+              ""
+              empty))
+
+(define GINEVRA (make-descendant
+                 "Ginevra"
+                 "Horse"
+                 "Yew, unknown length, unknown core"
+                 (list JAMES ALBUS LILY)))
+
+
+(define ARTHUR (make-descendant
+                "Arthur"
+                "Weasel"
+                "Unknown length, wood and core"
+                (list WILLIAM CHARLES PERCY FRED GEORGE RONALD GINEVRA)))
 
 ;PROBLEM 3:
 
@@ -48,6 +190,15 @@
 
 ;You must use ARTHUR as one of your examples.
 
+(check-expect (pair--lod empty) empty)
+(check-expect (pair--lod (descendant-children FRED2)) empty)
+(check-expect (pair--descendant FRED2) (list (list "Fred II" "")))
+(check-expect (pair--lod (descendant-children PERCY)) (list (list "Molly" "") (list "Lucy" "")))
+(check-expect (pair--descendant PERCY) (list (list "Percy" "Non-corporeal") (list "Molly" "") (list "Lucy" "")))
+
+
+(define (pair--descendant d) empty)
+(define (pair--lod lod) empty)
 
 
 ;PROBLEM 4:
