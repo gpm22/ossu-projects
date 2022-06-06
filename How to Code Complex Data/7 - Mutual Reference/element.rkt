@@ -21,11 +21,13 @@
 (define D5 (make-elt "D5" 0 (list F3)))
 (define D6 (make-elt "D6" 0 (list D4 D5)))
 
+#;
 (define (fn-for-element e)
   (... (elt-name e)				;String
        (elt-data e)				;Integer
        (fn-for-loe (elt-subs e))));ListOfElement
 
+#;
 (define (fn-for-loe loe)
   (cond [(empty? loe) (...)]
         [else
@@ -80,3 +82,34 @@
         [else
          (append (names--element (first loe))	;Element
                  (names--list (rest loe)))]))	;ListOfElement
+
+;; String Element -> Integer or false
+;; String ListOfElements -> Integer or false
+;; It consumes String and Element and looks for a data element with the given name
+;;     If it finds that element it produces the data, otherwise it produces false.
+
+(check-expect (find--element "F1" D5) false)
+(check-expect (find--element "F3" D4) false)
+(check-expect (find--element "D5" D5) (elt-data D5))
+(check-expect (find--element "F1" D4) (elt-data F1))
+(check-expect (find--element "F1" F1) (elt-data F1))
+(check-expect (find--element "F3" D6) (elt-data F3))
+(check-expect (find--element "D4" D6) (elt-data D4))
+(check-expect (find--element "F4" D6) false)
+(check-expect (find--list "F1" empty) false)
+(check-expect (find--list "F3" (elt-subs D6)) (elt-data F3))
+(check-expect (find--list "F1" (elt-subs D6)) (elt-data F1))
+
+;(define (find--element name element) false) ;stubs
+;(define (find--list name leo) false)
+
+(define (find--element name e)
+  (if (string=? name (elt-name e))     ;String
+      (elt-data e)		       ;Integer
+      (find--list name (elt-subs e)))) ;ListOfElement
+
+(define (find--list name loe)
+  (cond [(empty? loe) false]
+        [(number? (find--element name (first loe)))
+         (find--element name (first loe))]
+        [else (find--list name (rest loe))]))

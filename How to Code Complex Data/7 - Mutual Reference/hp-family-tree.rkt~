@@ -1,0 +1,15 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname hp-family-tree) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+;; hp-family-tree.rkt
+
+;In this problem set you will represent information about descendant family 
+;trees from Harry Potter and design functions that operate on those trees.
+
+;To make your task much easier we suggest two things:
+;  - you only need a DESCENDANT family tree
+;  - read through this entire problem set carefully to see what information 
+;    the functions below are going to need. Design your data definitions to
+;    only represent that information.
+;  - you can find all the information you need by looking at the individual 
+;    character pages like the one we point you to for Arthur Weasley.
