@@ -22,15 +22,15 @@
 (define D6 (make-elt "D6" 0 (list D4 D5)))
 
 (define (fn-for-element e)
-    (... (elt-name e)				;String
-         (elt-data e)				;Integer
-         (fn-for-loe (elt-subs e))));ListOfElement
+  (... (elt-name e)				;String
+       (elt-data e)				;Integer
+       (fn-for-loe (elt-subs e))));ListOfElement
 
 (define (fn-for-loe loe)
-    (cond [(empty? loe) (...)]
-          [else
-           (... (fn-for-element(first loe))	;Element
-                (fn-for-loe (rest loe)))]))	;ListOfElement
+  (cond [(empty? loe) (...)]
+        [else
+         (... (fn-for-element(first loe))	;Element
+              (fn-for-loe (rest loe)))]))	;ListOfElement
 
 ;; Functions:
 
@@ -46,20 +46,37 @@
 (check-expect (sum-data--list (elt-subs D4)) 3)
 
 (define (sum-data--element e)
-    (+ 	(elt-data e)			;Integer
+  (+ 	(elt-data e)			;Integer
         (sum-data--list (elt-subs e))))	;ListOfElement
 
 (define (sum-data--list loe)
-    (cond [(empty? loe) 0]
-          [else
-           (+ (sum-data--element(first loe))	;Element
-                (sum-data--list (rest loe)))]))	;ListOfElement
+  (cond [(empty? loe) 0]
+        [else
+         (+ (sum-data--element(first loe))	;Element
+            (sum-data--list (rest loe)))]))	;ListOfElement
 
 ;; Element -> ListOfString
 ;; ListOfElement -> ListOfString
-;; It consumes an element and procues a list of the names of all the elements in the tree
+;; It consumes an element and produces a list of the names of all the elements in the tree
+
+(check-expect (names--element F1) (list "F1"))
+(check-expect (names--element D4) (list "D4" "F1" "F2"))
+(check-expect (names--element D6) (list "D6" "D4" "F1" "F2" "D5" "F3"))
+(check-expect (names--list empty) empty)
+(check-expect (names--list (elt-subs F1)) empty)
+(check-expect (names--list (elt-subs D4)) (list "F1" "F2"))
+(check-expect (names--list (elt-subs D6)) (list "D4" "F1" "F2" "D5" "F3"))
 
 
+;(define (names--element e) empty) ;stub
+;(define (names--list loe) empty) ;stub
 
-(define (names--element e) empty)
-(define (names--list loe) empty)
+(define (names--element e)
+  (cons (elt-name e)		     ;String
+        (names--list (elt-subs e)))) ;ListOfElement
+
+(define (names--list loe)
+  (cond [(empty? loe) empty]
+        [else
+         (append (names--element (first loe))	;Element
+                 (names--list (rest loe)))]))	;ListOfElement
