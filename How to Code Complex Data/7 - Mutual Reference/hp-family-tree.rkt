@@ -195,11 +195,41 @@
 (check-expect (pair--descendant FRED2) (list (list "Fred II" "")))
 (check-expect (pair--lod (descendant-children PERCY)) (list (list "Molly" "") (list "Lucy" "")))
 (check-expect (pair--descendant PERCY) (list (list "Percy" "Non-corporeal") (list "Molly" "") (list "Lucy" "")))
+(check-expect (pair--descendant ARTHUR) (list (list "Arthur" "Weasel")
+                                              (list "William" "Non-corporeal")
+                                              (list "Victorie" "")
+                                              (list "Dominique" "")
+                                              (list "Louis" "")
+                                              (list "Charles" "Non-corporeal")
+                                              (list "Percy" "Non-corporeal")
+                                              (list "Molly" "")
+                                              (list "Lucy" "")
+                                              (list "Fred" "Magpie")
+                                              (list "George" "Magpie")
+                                              (list "Fred II" "")
+                                              (list "Roxanne" "")
+                                              (list "Ronald" "Jack Russell terrier")
+                                              (list "Rose" "")
+                                              (list "Hugo" "")
+                                              (list "Ginevra" "Horse")
+                                              (list "James" "")
+                                              (list "Albus" "")
+                                              (list "Lily" "")))             
 
 
-(define (pair--descendant d) empty)
-(define (pair--lod lod) empty)
+;(define (pair--descendant d) empty) ;stubs
+;(define (pair--lod lod) empty)
 
+(define (pair--descendant d)
+  (cons (list (descendant-name d)          ;String
+              (descendant-patronus d))              ;String
+        (pair--lod (descendant-children d)))) ;ListOfDescendant
+
+(define (pair--lod lod)
+  (cond [(empty? lod) empty]
+        [else
+         (append (pair--descendant (first lod)) ;Descendant
+                 (pair--lod (rest lod)))]))     ;ListOfDescendat
 
 ;PROBLEM 4:
 
@@ -208,3 +238,44 @@
 
 ;You must use ARTHUR as one of your examples.
 
+(check-expect (wands--lod "" empty) empty)
+(check-expect (wands--lod "Unknown length, wood and core" empty) empty)
+(check-expect (wands--lod "Unknown length, wood and core" (descendant-children ROXANNE)) empty)
+(check-expect (wands--lod  "Cherry, Unknown length and core" (descendant-children GINEVRA)) (list "Albus"))
+(check-expect (wands--descendant "Unknown length, wood and core" FRED) (list "Fred"))
+(check-expect (wands--descendant "Unknown length, wood and core" ARTHUR) (list "Arthur"
+                                                                               "William"
+                                                                               "Percy"
+                                                                               "Fred"
+                                                                               "George"))
+
+(check-expect (wands--descendant "" ARTHUR) (list 
+                                              "Victorie" 
+                                              "Dominique" 
+                                              "Louis" 
+                                              "Molly" 
+                                              "Lucy" 
+                                              "Fred II" 
+                                              "Roxanne" 
+                                              "Rose" 
+                                              "Hugo" 
+                                              "James" 
+                                             "Lily"))
+
+(check-expect (wands--descendant "aoskoaksoaksoakoska" ARTHUR) empty)   
+
+;(define (wands--descendant w d) empty) ;stubs
+;(define (wands--lod w lod) empty)
+
+
+(define (wands--descendant w d)
+  (if (string=? w (descendant-wand d))                    ;String
+      (cons (descendant-name d)                    ;String
+       (wands--lod w (descendant-children d)))
+      (wands--lod w (descendant-children d)))) ;ListOfDescendant
+
+(define (wands--lod w lod)
+  (cond [(empty? lod) empty]
+        [else
+         (append (wands--descendant w (first lod)) ;Descendant
+              (wands--lod w (rest lod)))]))     ;ListOfDescendat
