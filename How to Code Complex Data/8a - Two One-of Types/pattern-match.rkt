@@ -72,3 +72,46 @@
 
 (define (alphabetic? 1s) (char-alphabetic? (string-ref 1s 0)))
 (define (numeric?    1s) (char-numeric?    (string-ref 1s 0)))
+
+;; Pattern ListOf1String -> Boolean
+;; It consumes Pattern and ListOf1String and produces true 
+;;     if the pattern matches the ListOf1String. If the
+;;     ListOf1String is longer than the pattern, but the
+;;     first part matches the whole pattern produce true.
+;;     If the ListOf1String is shorter than the Pattern you
+;;     should produce false.
+
+;; cross-product
+;; Pattern \ ListOf1String |  empty  | (cons 1String ListOf1String)
+;; ------------------------|---------|-------------------------------
+;;          empty          |  true   |             true             
+;; ------------------------|---------|-------------------------------
+;;    (cons "A" Pattern)   |  false  |            depends
+;; ------------------------|---------|-------------------------------
+;;    (cons "N" Pattern)   |  false  |            depends
+
+;(pattern-match? (list "A" "N" "A" "N" "A" "N") PATTERN1
+;                (list "V" "6" "T" "1" "Z" "4")) LOS1
+
+(check-expect (pattern-match? empty empty) true)
+(check-expect (pattern-match? empty LOS1) true)
+(check-expect (pattern-match? (cons "A" PATTERN1) empty) false)
+(check-expect (pattern-match? (cons "N" PATTERN1) empty) false)
+(check-expect (pattern-match? PATTERN1 LOS1) true)
+(check-expect (pattern-match? (cons "A" PATTERN1) LOS1) false)
+(check-expect (pattern-match? (cons "N" PATTERN1) LOS1) false)
+(check-expect (pattern-match? (list "A") (list "a")) true)
+(check-expect (pattern-match? (list "N") (list "3")) true)
+(check-expect (pattern-match? PATTERN1 (append LOS1 (list "a"))) true)
+
+
+;(define (pattern-match? pattern list) false) ;stub
+
+(define (pattern-match? pattern list)
+  (cond [(empty? pattern) true]
+        [(empty? list) false]
+        [(string=? "A" (first pattern))
+         (and (alphabetic? (first list)) (pattern-match? (rest pattern) (rest list)))]
+        [(string=? "N" (first pattern))
+         (and (numeric? (first list)) (pattern-match? (rest pattern) (rest list)))]))
+         
