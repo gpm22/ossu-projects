@@ -24,6 +24,19 @@
 
 ;Design an abstract fold function for (listof X).
 
+;; (X Y -> Y) Y (listof X) -> Y
+;; the abstract fold function for (listof X)
+
+(check-expect (fold + 0 (list 1 4 5)) 10)
+(check-expect (fold * 2 (list 1 3 4)) 24)
+(check-expect (fold string-append "" (list "a" "bb" "ccc")) "abbccc")
+(check-expect (fold append empty (list (list "a") (list 2) (list 10) (list 5) (list true))) (list "a" 2 10 5 true))
+
+(define (fold fn b lox)
+  (cond [(empty? lox) b]
+        [else
+         (fn  (first lox)
+              (fold fn b (rest lox)))]))
 
 
 
@@ -37,9 +50,10 @@
 (check-expect (sum empty) 0)
 (check-expect (sum (list 2 3 4)) 9)
 
-(define (sum lon) 0) ;stub
+;(define (sum lon) 0) ;stub
 
-
+(define (sum lon)
+  (fold + 0 lon))
 
 
 ;PROBLEM:
@@ -56,8 +70,10 @@
                       (square 10 "solid" "blue")
                       (square 0 "solid" "white")))
 
-(define (juxtapose loi) (square 0 "solid" "white")) ;stub
+;(define (juxtapose loi) (square 0 "solid" "white")) ;stub
 
+(define (juxtapose loi)
+  (fold beside empty-image loi))
 
 ;PROBLEM:
 
@@ -69,7 +85,9 @@
 (check-expect (copy-list empty) empty)
 (check-expect (copy-list (list 1 2 3)) (list 1 2 3))
 
-(define (copy-list lox) empty) ;stub
+;(define (copy-list lox) empty) ;stub
+(define (copy-list lox)
+  (fold cons empty lox))
 
 ;; ======================
 
@@ -119,6 +137,19 @@
 
 
 
+(define (fold-for-element fn b e)
+  (local [(define (fold-for-element fn b e)
+            (fn  e
+                 (fold-for-loe fn b (elt-subs e))))
+
+          (define (fold-for-loe fn b loe)
+            (cond [(empty? loe) b]
+                  [else
+                   (fn (fold-for-element fn b (first loe))
+                        (fold-for-loe fn b (rest loe)))]))]
+    (fold-for-element fn e b)))
+
+
 ;PROBLEM
 
 ;Complete the design of sum-data that consumes Element and producs
@@ -132,7 +163,7 @@
 (check-expect (sum-data D6) (+ 1 2 3))
 
 (define (sum-data e) 0) ;stub
-
+        
 
 ;PROBLEM
 
