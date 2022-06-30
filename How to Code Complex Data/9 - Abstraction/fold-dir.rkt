@@ -93,8 +93,15 @@
 ;images in the directory and its sub-directories. 
 ;Use the fold-dir abstract function.
 
+(check-expect (num-of-img D4) 2)
+(check-expect (num-of-img D5) 1)
+(check-expect (num-of-img D6) 3)
 
+;(define (num-of-img d) 0) ;stub
 
+(define (num-of-img d)
+  (local [(define (c1 n loi r) (+ (length loi) r))]
+                (fold-dir c1 + 0 d)))
 
 ;PROBLEM C:
 
@@ -103,12 +110,46 @@
 ;finds such a directory it should produce true, if not it should produce false. 
 ;Use the fold-dir abstract function.
 
+;(define D4 (make-dir "D4" empty (list I1 I2)))
+;(define D5 (make-dir "D5" empty (list I3)))
+;(define D6 (make-dir "D6" (list D4 D5) empty))
 
+#;
+(define (fold-dir c1 c2 b d)
+  (local [(define (fn-for-dir d)
+            (c1 (dir-name d)        ;String
+                (dir-images d)      ;ListOfImnages
+                (fn-for-lod (dir-sub-dirs d) )))
+
+          (define (fn-for-lod lod)
+            (cond [(empty? lod) b]
+                  [else
+                   (c2 (fn-for-dir (first lod))
+                       (fn-for-lod (rest lod)))]))]
+    (fn-for-dir d)))
+
+(check-expect (exist? D6 "D3") false)
+(check-expect (exist? D6 "D4") true)
+
+;(define (exist? dir name) false) ;stub
+
+(define (exist? dir nameToBeFound)
+  (local [(define (firstHelper name loi resultOfSecondFunction)
+            (if (string=? nameToBeFound name)
+                true
+                resultOfSecondFunction))
+          (define (secondHelper resultOfFirstFunction resultOfSecondFunction)
+            (if resultOfFirstFunction
+                resultOfFirstFunction
+                resultOfSecondFunction))]
+    (fold-dir firstHelper secondHelper false dir)))
 
 ;PROBLEM D:
 
 ;Is fold-dir really the best way to code the function from part C? Why or 
 ;why not?
 
+;Not, as it has to reproduce the results twice. So it would be better
+; to use a local function to save that value;
 
 
