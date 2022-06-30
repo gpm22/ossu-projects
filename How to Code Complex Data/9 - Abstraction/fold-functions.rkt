@@ -135,19 +135,30 @@
     (fn-for-element e)))
 
 
+;; ( String Integer Y -> X ) (X Y -> Y) Y Element -> X 
+;; it is an anbstract fold for the element type
 
+(check-expect (local [(define (c1 n d los) (cons n los))]
+                (fold-for-element c1 append empty D6))
+              (list "D6" "D4" "F1" "F2" "D5" "F3"))
 
-(define (fold-for-element fn b e)
-  (local [(define (fold-for-element fn b e)
-            (fn  e
-                 (fold-for-loe fn b (elt-subs e))))
+(check-expect (local [(define (c1 n d r) (+ d r))
+                      (define (c2 f r) (+ f r))]
+                (fold-for-element c1 c2 0 D6))
+              6)
 
-          (define (fold-for-loe fn b loe)
+(define (fold-for-element c1 c2 b e)
+  (local [(define (fold-element e)
+            (c1  (elt-name e)    ;String
+                 (elt-data e)    ;Integer
+                 (fold-loe (elt-subs e))))
+
+          (define (fold-loe loe)
             (cond [(empty? loe) b]
                   [else
-                   (fn (fold-for-element fn b (first loe))
-                        (fold-for-loe fn b (rest loe)))]))]
-    (fold-for-element fn e b)))
+                   (c2 (fold-element (first loe))
+                        (fold-loe (rest loe)))]))]
+    (fold-element e)))
 
 
 ;PROBLEM
@@ -162,8 +173,12 @@
 (check-expect (sum-data D4) (+ 1 2))
 (check-expect (sum-data D6) (+ 1 2 3))
 
-(define (sum-data e) 0) ;stub
-        
+;(define (sum-data e) 0) ;stub
+
+(define (sum-data e)
+  (local [(define (c1 n d r) (+ d r))
+                      (define (c2 f r) (+ f r))]
+    (fold-for-element c1 c2 0 e)))
 
 ;PROBLEM
 
@@ -177,8 +192,11 @@
 (check-expect (all-names D4) (list "D4" "F1" "F2"))
 (check-expect (all-names D6) (list "D6" "D4" "F1" "F2" "D5" "F3"))
                
-(define (all-names e) empty) ;stub
+;(define (all-names e) empty) ;stub
 
+(define (all-names e)
+  (local [(define (c1 n d los) (cons n los))]
+    (fold-for-element c1 append empty e)))
 
 ;PROBLEM
 
@@ -186,5 +204,61 @@
 ;function from last week.  Why? If you aren't sure then discover the answer by implementing
 ;find using fold-element and then step the two versions with different arguments.
 
+;; ANSWER
 
+;; That is not a good idea, as the fold version will always execute both combination functions,
+;; so it would be less efficient; 
 
+;; Original
+
+;; String Element -> Integer or false
+;; String ListOfElements -> Integer or false
+;; It consumes String and Element and looks for a data element with the given name
+;;     If it finds that element it produces the data, otherwise it produces false.
+
+(check-expect (find "F1" D5) false)
+(check-expect (find "F3" D4) false)
+(check-expect (find "D5" D5) (elt-data D5))
+(check-expect (find "F1" D4) (elt-data F1))
+(check-expect (find "F1" F1) (elt-data F1))
+(check-expect (find "F3" D6) (elt-data F3))
+(check-expect (find "D4" D6) (elt-data D4))
+(check-expect (find "F4" D6) false)
+
+(define (find n e)
+  (local [(define (find--element n e)
+            (if (string=? (elt-name e) n)
+                (elt-data e) 
+                (find--loe n (elt-subs e))))
+          
+          (define (find--loe n loe)
+            (cond [(empty? loe) false]
+                  [else
+                     (local [(define try (find--element n (first loe)))]               
+                          (if (not (false? try))
+                             try 
+                             (find--loe n (rest loe))))]))]
+    
+    (find--element n e)))
+
+;; With Fold
+
+(check-expect (find-fold "F1" D5) false)
+(check-expect (find-fold "F3" D4) false)
+(check-expect (find-fold "D5" D5) (elt-data D5))
+(check-expect (find-fold "F1" D4) (elt-data F1))
+(check-expect (find-fold "F1" F1) (elt-data F1))
+(check-expect (find-fold "F3" D6) (elt-data F3))
+(check-expect (find-fold "D4" D6) (elt-data D4))
+(check-expect (find-fold "F4" D6) false)
+
+(define (find-fold nameToBeFound element)
+  (local [(define (firstHelper name data resultOfSecondFunction)
+            (if (string=? nameToBeFound name)
+                data
+                resultOfSecondFunction))
+          (define (secondHelper resultOfFirstFunction resultOfSecondFunction)
+            (if (number? resultOfFirstFunction)
+                resultOfFirstFunction
+                resultOfSecondFunction))]
+    (fold-for-element firstHelper secondHelper false element)))
