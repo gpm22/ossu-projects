@@ -58,19 +58,20 @@
 
 
 (define CUTOFF 1)
+(define COLOR "green")
 
-;; Natural -> Image
+;; Number -> Image
 ;; .it consumes a number and produces a Sierpinski triangle of that size.
 
-(check-expect (stri CUTOFF) (triangle CUTOFF "outline" "green"))
+(check-expect (stri CUTOFF) (triangle CUTOFF "outline" COLOR))
 (check-expect (stri (* CUTOFF 2))
-              (local [(define sub (triangle CUTOFF "outline" "green"))]
+              (local [(define sub (triangle CUTOFF "outline" COLOR))]
                 (above sub
                        (beside sub sub))))
 
 (check-expect (stri (* CUTOFF 4)) 
               (local [(define sub 
-                        (local [(define sub (triangle CUTOFF "outline" "green"))]
+                        (local [(define sub (triangle CUTOFF "outline" COLOR))]
                           (above sub
                                  (beside sub sub))))]
                 (above sub
@@ -79,7 +80,7 @@
 (check-expect (stri (* CUTOFF 8)) 
               (local [(define sub 
                         (local [(define sub
-                                  (local [(define sub (triangle CUTOFF "outline" "green"))]
+                                  (local [(define sub (triangle CUTOFF "outline" COLOR))]
                                     (above sub
                                            (beside sub sub))))]
                           (above sub
@@ -91,7 +92,7 @@
               (local [(define sub 
                         (local [(define sub 
                                   (local [(define sub 
-                                            (local [(define sub (triangle CUTOFF "outline" "green"))]
+                                            (local [(define sub (triangle CUTOFF "outline" COLOR))]
                                               (above sub
                                                      (beside sub sub))))]
                                     (above sub
@@ -104,7 +105,7 @@
 ;(define (stri s) empty-image) ;stub
 
 (define (stri s)
-  (cond [(<= s CUTOFF) (triangle CUTOFF "outline" "green")]
+  (cond [(<= s CUTOFF) (triangle CUTOFF "outline" COLOR)]
         [else
          (local [(define sub (stri (/ s 2)))]
            (above sub
@@ -129,3 +130,48 @@
 ;|_|_|_|_|_|_|_|_|_|
 ;|_|_|_|_|_|_|_|_|_|
 
+
+;; Number -> Image
+;; .it consumes a number and produces a Sierpinski carpet of that size.
+
+(check-expect (scar CUTOFF) (square CUTOFF "outline" COLOR))
+
+(check-expect (scar (* CUTOFF 3))
+              (local [(define sub (square CUTOFF "outline" COLOR))]
+                (above (beside sub sub sub)
+                       (beside sub (square CUTOFF "outline" COLOR) sub)
+                       (beside sub sub sub))))
+
+(check-expect (scar (* CUTOFF 9))
+              (local [(define sub  (local [(define sub (square CUTOFF "outline" COLOR))]
+                                     (above (beside sub sub sub)
+                                            (beside sub (square CUTOFF "outline" COLOR) sub)
+                                            (beside sub sub sub))))]
+                (above (beside sub sub sub)
+                       (beside sub (square (* 3 CUTOFF) "outline" COLOR) sub)
+                       (beside sub sub sub))))
+
+
+(check-expect (scar (* CUTOFF 27))
+              (local [(define sub  (local [(define sub  (local [(define sub (square CUTOFF "outline" COLOR))]
+                                                          (above (beside sub sub sub)
+                                                                 (beside sub (square CUTOFF "outline" COLOR) sub)
+                                                                 (beside sub sub sub))))]
+                                     (above (beside sub sub sub)
+                                            (beside sub (square (* 3 CUTOFF) "outline" COLOR) sub)
+                                            (beside sub sub sub))))]
+                (above (beside sub sub sub)
+                       (beside sub (square (* 9 CUTOFF) "outline" COLOR) sub)
+                       (beside sub sub sub))))
+
+
+;(define (scar s) empty-image) stub
+
+(define (scar s)
+  (if (<= s CUTOFF)
+      (square CUTOFF "outline" COLOR)
+      (local [(define sub (scar (/ s 3)))
+              (define blk (square (/ s 3) "outline" COLOR))]
+                (above (beside sub sub sub)
+                       (beside sub blk sub)
+                       (beside sub sub sub)))))
