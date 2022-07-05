@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname sudoku) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-intermediate-reader.ss" "lang")((modname sudoku) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 (require racket/list) ;gets list-ref, take and drop
         
 ;; sudoku.rkt
@@ -238,77 +238,6 @@
   (append (take bd p)
           (list nv)
           (drop bd (add1 p))))
-
-;; Board -> Boolean
-;; consumes a board and validate it
-
-(check-expect (validate-board BD1) false)
-(check-expect (validate-board BD2) false)
-(check-expect (validate-board BD3) false)
-(check-expect (validate-board BD4) false)
-(check-expect (validate-board BD4s) true)
-(check-expect (validate-board BD5) false)
-(check-expect (validate-board BD5s) true)
-(check-expect (validate-board BD7) false)
-
-
-;(define (validate-board b) false) ;stub
-
-(define (validate-board b)
-  (local [(define (validate-board b n)
-            (cond [(empty? n) true]
-                  [(false? (first n)) false]
-                  [else
-                   (and (validate-position b (first n)) (validate-board b (rest n)))]))]
-    (validate-board b b)))
-            
-  
-        
-
-;; Board Pos -> Boolean
-;; It consumes a board and a position and validate the given
-;;    position on the given board
-
-(check-expect (validate-position BD1 10) false)
-(check-expect (validate-position BD2 (r-c->pos 0 0)) true)
-(check-expect (validate-position BD3 (r-c->pos 8 0)) true)
-(check-expect (validate-position BD4 (r-c->pos 0 0)) true)
-(check-expect (validate-position BD4s (r-c->pos 6 5)) true)
-(check-expect (validate-position BD4s (r-c->pos 3 7)) true)
-
-;(define (validate-position b p) false) ;stub
-
-(define (validate-position b p)
-  (local [(define value (read-square b p))]
-    (not (member?
-          value
-          (map (lambda (p) (read-square b p)) (get-units p))))))
-
-;; Pos -> Units
-;; it consumes a Position and produces its units, but withouht the
-;;     given position and duplicated positions
-
-(check-expect (get-units 0)  (list 1  2  3  4  5  6  7  8  9 10 11 18 19 20 27 36 45 54 63 72))
-(check-expect (get-units 72) (list 0  9 18 27 36 45 54 55 56 63 64 65 73 74 75 76 77 78 79 80))
-                                     
-
-;(define (get-units p) empty) ;stub
-
-(define (get-units p)
-  (local [(define (get-units p l r)
-            (cond [(empty? l) r]
-                  [(member? p (first l))
-                   (get-units p (rest l)
-                              (append (remove p (first l)) r))]
-                  [else
-                   (get-units p (rest l) r)]))
-            (define (remove-duplicated l)
-              (cond [(empty? (rest l)) l]
-                    [(= (first l) (second l))
-                     (remove-duplicated (rest l))]
-                    [else
-                     (cons (first l) (remove-duplicated (rest l)))]))]
-   (remove-duplicated (quicksort (get-units p UNITS empty) <))))
 
 
 
