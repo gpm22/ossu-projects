@@ -4,7 +4,7 @@
 (require 2htdp/image)
 (require 2htdp/universe)
 
-;; cantor-starter.rkt
+;; cantor.rkt
 
 
 ;PROBLEM:
@@ -27,38 +27,38 @@
 ;the given width.
 
 (define CUTOFF 1)
-(define HIGHT 10)
+(define HEIGHT 10)
 (define COLOR "green")
 (define COLOR-BLK "black")
 
 ;; Number -> Image
 ;; it consumes a number and produces a cantor set of the given width.
 
-(check-expect (cantor CUTOFF) (rectangle CUTOFF HIGHT "solid" COLOR))
+(check-expect (cantor CUTOFF) (rectangle CUTOFF HEIGHT "solid" COLOR))
 
 (check-expect (cantor (* 3 CUTOFF))
-              (local [(define sub (rectangle CUTOFF HIGHT "solid" COLOR))
-                      (define blk (rectangle CUTOFF HIGHT "solid" COLOR-BLK))]
-                (above (rectangle (* 3 CUTOFF) HIGHT "solid" COLOR)
+              (local [(define sub (rectangle CUTOFF HEIGHT "solid" COLOR))
+                      (define blk (rectangle CUTOFF HEIGHT "solid" COLOR-BLK))]
+                (above (rectangle (* 3 CUTOFF) HEIGHT "solid" COLOR)
                        (beside sub blk sub))))
 
 (check-expect (cantor (* 9 CUTOFF))
-              (local [(define sub (local [(define sub (rectangle CUTOFF HIGHT "solid" COLOR))
-                                          (define blk (rectangle CUTOFF HIGHT "solid" COLOR-BLK))]
-                                    (above (rectangle (* 3 CUTOFF) HIGHT "solid" COLOR)
+              (local [(define sub (local [(define sub (rectangle CUTOFF HEIGHT "solid" COLOR))
+                                          (define blk (rectangle CUTOFF HEIGHT "solid" COLOR-BLK))]
+                                    (above (rectangle (* 3 CUTOFF) HEIGHT "solid" COLOR)
                                            (beside sub blk sub))))
-                      (define blk (rectangle (* 3 CUTOFF) HIGHT "solid" COLOR-BLK))]
-                (above (rectangle (* 9 CUTOFF) HIGHT "solid" COLOR)
+                      (define blk (rectangle (* 3 CUTOFF) HEIGHT "solid" COLOR-BLK))]
+                (above (rectangle (* 9 CUTOFF) HEIGHT "solid" COLOR)
                        (beside sub blk sub))))
 
 ;(define (cantor w) empty-image) ;stub
 
 (define (cantor w)
   (if (<= w CUTOFF)
-      (rectangle CUTOFF HIGHT "solid" COLOR)
+      (rectangle CUTOFF HEIGHT "solid" COLOR)
       (local [(define sub (cantor (/ w 3)))
-                      (define blk (rectangle (/ w 3) HIGHT "solid" COLOR-BLK))]
-                (above (rectangle w HIGHT "solid" COLOR)
+                      (define blk (rectangle (/ w 3) HEIGHT "solid" COLOR-BLK))]
+                (above (rectangle w HEIGHT "solid" COLOR)
                        (beside sub blk sub)))))
 
 ;PROBLEM B:
@@ -80,57 +80,57 @@
 ;; it consumes a number and produces a cantor set of the given width and void area proportion.
 ;; w must be w =(* CUTOFF (expt (/ 2 (- 1 s)) n)), where s is the proportion and n is the number of interactions
 
-(check-expect (cantor-step CUTOFF (/ 1 3) ) (rectangle CUTOFF HIGHT "solid" COLOR))
+(check-expect (cantor-step CUTOFF (/ 1 3) ) (rectangle CUTOFF HEIGHT "solid" COLOR))
 
 (check-expect (cantor-step (* 3 CUTOFF) (/ 1 3))
-              (local [(define sub (rectangle CUTOFF HIGHT "solid" COLOR))
-                      (define blk (rectangle CUTOFF HIGHT "solid" COLOR-BLK))]
-                (above (rectangle (* 3 CUTOFF) HIGHT "solid" COLOR)
+              (local [(define sub (rectangle CUTOFF HEIGHT "solid" COLOR))
+                      (define blk (rectangle CUTOFF HEIGHT "solid" COLOR-BLK))]
+                (above (rectangle (* 3 CUTOFF) HEIGHT "solid" COLOR)
                        (beside sub blk sub))))
 
 (check-expect (cantor-step (* 9 CUTOFF) (/ 1 3))
-              (local [(define sub (local [(define sub (rectangle CUTOFF HIGHT "solid" COLOR))
-                                          (define blk (rectangle CUTOFF HIGHT "solid" COLOR-BLK))]
-                                    (above (rectangle (* 3 CUTOFF) HIGHT "solid" COLOR)
+              (local [(define sub (local [(define sub (rectangle CUTOFF HEIGHT "solid" COLOR))
+                                          (define blk (rectangle CUTOFF HEIGHT "solid" COLOR-BLK))]
+                                    (above (rectangle (* 3 CUTOFF) HEIGHT "solid" COLOR)
                                            (beside sub blk sub))))
-                      (define blk (rectangle (* 3 CUTOFF) HIGHT "solid" COLOR-BLK))]
-                (above (rectangle (* 9 CUTOFF) HIGHT "solid" COLOR)
+                      (define blk (rectangle (* 3 CUTOFF) HEIGHT "solid" COLOR-BLK))]
+                (above (rectangle (* 9 CUTOFF) HEIGHT "solid" COLOR)
                        (beside sub blk sub))))
 
 
-(check-expect (cantor-step CUTOFF (/ 1 2) ) (rectangle CUTOFF HIGHT "solid" COLOR))
+(check-expect (cantor-step CUTOFF (/ 1 2) ) (rectangle CUTOFF HEIGHT "solid" COLOR))
 
 (check-expect (cantor-step (* 4 CUTOFF) (/ 1 2))
-              (local [(define sub (rectangle (/ (- (* 4 CUTOFF) (* 4 CUTOFF (/ 1 2))) 2) HIGHT "solid" COLOR))
-                      (define blk (rectangle (* 4 CUTOFF (/ 1 2))  HIGHT "solid" COLOR-BLK))]
-                (above (rectangle (* 4 CUTOFF) HIGHT "solid" COLOR)
+              (local [(define sub (rectangle (/ (- (* 4 CUTOFF) (* 4 CUTOFF (/ 1 2))) 2) HEIGHT "solid" COLOR))
+                      (define blk (rectangle (* 4 CUTOFF (/ 1 2))  HEIGHT "solid" COLOR-BLK))]
+                (above (rectangle (* 4 CUTOFF) HEIGHT "solid" COLOR)
                        (beside sub blk sub))))
 
 (check-expect (cantor-step (* 16 CUTOFF) (/ 1 2))
-              (local [(define sub (local [(define sub (rectangle (* 16 CUTOFF (/ 1 16)) HIGHT "solid" COLOR))
-                                          (define blk (rectangle (* 16 CUTOFF (/ 1 8)) HIGHT "solid" COLOR-BLK))]
-                                    (above (rectangle (* 16 CUTOFF (/ 1 4)) HIGHT "solid" COLOR)
+              (local [(define sub (local [(define sub (rectangle (* 16 CUTOFF (/ 1 16)) HEIGHT "solid" COLOR))
+                                          (define blk (rectangle (* 16 CUTOFF (/ 1 8)) HEIGHT "solid" COLOR-BLK))]
+                                    (above (rectangle (* 16 CUTOFF (/ 1 4)) HEIGHT "solid" COLOR)
                                            (beside sub blk sub))))
-                      (define blk (rectangle (* 16 CUTOFF (/ 1 2)) HIGHT "solid" COLOR-BLK))]
-                (above (rectangle (* 16 CUTOFF) HIGHT "solid" COLOR)
+                      (define blk (rectangle (* 16 CUTOFF (/ 1 2)) HEIGHT "solid" COLOR-BLK))]
+                (above (rectangle (* 16 CUTOFF) HEIGHT "solid" COLOR)
                        (beside sub blk sub))))
 
 
-(check-expect (cantor-step CUTOFF (/ 1 4) ) (rectangle CUTOFF HIGHT "solid" COLOR))
+(check-expect (cantor-step CUTOFF (/ 1 4) ) (rectangle CUTOFF HEIGHT "solid" COLOR))
 
 (check-expect (cantor-step (/ (* 8 CUTOFF) 3) (/ 1 4))
-              (local [(define sub (rectangle (/ (- (/ (* 8 CUTOFF) 3) (*(/ (* 8 CUTOFF) 3)(/ 1 4))) 2) HIGHT "solid" COLOR))
-                      (define blk (rectangle (* (/ (* 8 CUTOFF) 3) (/ 1 4))  HIGHT "solid" COLOR-BLK))]
-                (above (rectangle (/ (* 8 CUTOFF) 3) HIGHT "solid" COLOR)
+              (local [(define sub (rectangle (/ (- (/ (* 8 CUTOFF) 3) (*(/ (* 8 CUTOFF) 3)(/ 1 4))) 2) HEIGHT "solid" COLOR))
+                      (define blk (rectangle (* (/ (* 8 CUTOFF) 3) (/ 1 4))  HEIGHT "solid" COLOR-BLK))]
+                (above (rectangle (/ (* 8 CUTOFF) 3) HEIGHT "solid" COLOR)
                        (beside sub blk sub))))
 
 (check-expect (cantor-step ( / (* 64 CUTOFF) 9) (/ 1 4))
-              (local [(define sub (local [(define sub (rectangle CUTOFF HIGHT "solid" COLOR))
-                                          (define blk (rectangle (* 2 CUTOFF (/ 1 3)) HIGHT "solid" COLOR-BLK))]
-                                    (above (rectangle ( / (* 8 CUTOFF) 3) HIGHT "solid" COLOR)
+              (local [(define sub (local [(define sub (rectangle CUTOFF HEIGHT "solid" COLOR))
+                                          (define blk (rectangle (* 2 CUTOFF (/ 1 3)) HEIGHT "solid" COLOR-BLK))]
+                                    (above (rectangle ( / (* 8 CUTOFF) 3) HEIGHT "solid" COLOR)
                                            (beside sub blk sub))))
-                      (define blk (rectangle (* ( / (* 64 CUTOFF) 9) (/ 1 4)) HIGHT "solid" COLOR-BLK))]
-                (above (rectangle ( / (* 64 CUTOFF) 9) HIGHT "solid" COLOR)
+                      (define blk (rectangle (* ( / (* 64 CUTOFF) 9) (/ 1 4)) HEIGHT "solid" COLOR-BLK))]
+                (above (rectangle ( / (* 64 CUTOFF) 9) HEIGHT "solid" COLOR)
                        (beside sub blk sub))))
 
 
@@ -138,10 +138,10 @@
 
 (define (cantor-step w s)
   (if (<= w CUTOFF)
-      (rectangle CUTOFF HIGHT "solid" COLOR)
+      (rectangle CUTOFF HEIGHT "solid" COLOR)
       (local [(define sub (cantor-step (/ (- w (* w s)) 2) s))
-                      (define blk (rectangle (* w s) HIGHT "solid" COLOR-BLK))]
-                (above (rectangle w HIGHT "solid" COLOR)
+                      (define blk (rectangle (* w s) HEIGHT "solid" COLOR-BLK))]
+                (above (rectangle w HEIGHT "solid" COLOR)
                        (beside sub blk sub)))))
 
 ;PROBLEM C:
@@ -152,5 +152,44 @@
 ;  The to-draw handler should just call your new cantor function with the
 ;  width of your MTS as its first argument and the last x coordinate of
 ;  the mouse divided by that width as its second argument.
-  
 
+;; My world program  (make this more specific)
+
+;; =================
+;; Constants:
+
+(define MTS-HEIGHT 400)
+(define MTS-WIDTH  400)
+
+(define MTS (empty-scene MTS-WIDTH MTS-HEIGHT "black"))
+
+;; =================
+;; Data definitions:
+
+;; X-Mouse is Natural
+;; .It is the mouse's x coordinate
+
+;; =================
+;; Functions:
+
+;; WS -> WS
+;; start the world with (main (/ 1 3))
+;; 
+(define (main ws)
+  (big-bang ws                   ; WS
+            (to-draw   render)   ; WS -> Image
+            (on-mouse  handle-mouse)))    ; WS Integer Integer MouseEvent -> WS
+
+
+;; WS -> Image
+;; render ... 
+;; !!!
+(define (render ws)
+  (overlay (cantor-step MTS-WIDTH (/ ws MTS-WIDTH)) MTS))
+
+
+
+; WS Integer Integer MouseEvent -> WS
+(define (handle-mouse ws x y me)
+  (cond [(mouse=? me "button-down") x]
+        [else ws]))
