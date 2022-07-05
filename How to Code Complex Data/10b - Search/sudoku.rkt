@@ -217,7 +217,30 @@
 ;; =================
 ;; Functions:
 
+;; Board -> Board or false
+;; produces a solution for a board or false if it is unsolvable
+;; Assume: board is valid
 
+(check-expect (solve BD4) BD4s)
+(check-expect (solve BD5) BD5s)
+(check-expect (solve BD7) false)
+
+;(define (solve bd) false) ;stub
+
+(define (solve bd)
+  (local [(define (solve--bd bd)
+            (if (validate-board bd)
+                bd
+                (solve--lobd (next-boards bd))))
+
+          (define (solve--lobd lobd)
+            (cond [(empty? lobd) false]
+                  [else
+                   (local [(define try (solve-bd (first lobd)))]
+                        (if (not (false? try))
+                            try
+                        	(solve--lobd (rest lobd))))]))]
+    (solve--bd bd)))
 
 
 ;; Board Pos -> Val or false
@@ -302,16 +325,37 @@
                               (append (remove p (first l)) r))]
                   [else
                    (get-units p (rest l) r)]))
-            (define (remove-duplicated l)
-              (cond [(empty? (rest l)) l]
-                    [(= (first l) (second l))
-                     (remove-duplicated (rest l))]
-                    [else
-                     (cons (first l) (remove-duplicated (rest l)))]))]
-   (remove-duplicated (quicksort (get-units p UNITS empty) <))))
+          (define (remove-duplicated l)
+            (cond [(empty? (rest l)) l]
+                  [(= (first l) (second l))
+                   (remove-duplicated (rest l))]
+                  [else
+                   (cons (first l) (remove-duplicated (rest l)))]))]
+    (remove-duplicated (quicksort (get-units p UNITS empty) <))))
 
 
 
+;; Board Position -> (listof Val)
+;; it consumes a Board and a Position and return a list of the
+;;    possible valid values
+
+(check-expect (get-possibilities BD1 0) (list 1 2 3 4 5 6 7 8 9))
+(check-expect (get-possibilities BD7 8) empty)
+(check-expect (get-possibilities BD5 (r-c->pos 4 4)) (list 3 4 9))
+
+;(define (get-possibilities b p) empty) ;stub
+
+(define (get-possibilities b p)
+  (local [(define possibles (list 1 2 3 4 5 6 7 8 9))
+          (define (remove-elements l1 l2)
+            (cond [(empty? l1) empty]
+                  [(member? (first l1) l2)
+                   (remove-elements (rest l1) l2)]
+                  [else
+                   (cons (first l1) (remove-elements (rest l1) l2))]))]
+    (remove-elements possibles (map (lambda (u) (read-square b u)) (get-units p)))))
+
+         
 ;We could have coded read-square and fill-square 'from scratch'
 ;by using the functions operating on 2 one-of data rule. If we 
 ;had, the function definitions would look like this:
