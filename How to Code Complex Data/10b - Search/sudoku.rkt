@@ -138,6 +138,7 @@
         B 6 B B 8 B B B 9
         B B 8 B 7 B B 3 1))
 
+
 (define BD5s               ;solution to 5
   (list 5 3 9 1 6 4 8 7 2
         8 1 2 7 5 3 6 9 4
@@ -229,19 +230,56 @@
 
 (define (solve bd)
   (local [(define (solve--bd bd)
-            (if (validate-board bd)
+            (if (full? bd)
                 bd
                 (solve--lobd (next-boards bd))))
 
           (define (solve--lobd lobd)
             (cond [(empty? lobd) false]
                   [else
-                   (local [(define try (solve-bd (first lobd)))]
+                   (local [(define try (solve--bd (first lobd)))]
                         (if (not (false? try))
                             try
                         	(solve--lobd (rest lobd))))]))]
     (solve--bd bd)))
 
+;; Board -> (listof Board)
+;; it consumes a board and produces a list of the next possibilities
+
+(check-expect (next-boards BD5s) empty)
+(check-expect (next-boards (fill-square BD5s 74 false)) (list BD5s))
+(check-expect (next-boards (cons 1 (rest BD1)))
+              (list (cons 1 (cons 2 (rest (rest BD1))))
+                    (cons 1 (cons 3 (rest (rest BD1))))
+                    (cons 1 (cons 4 (rest (rest BD1))))
+                    (cons 1 (cons 5 (rest (rest BD1))))
+                    (cons 1 (cons 6 (rest (rest BD1))))
+                    (cons 1 (cons 7 (rest (rest BD1))))
+                    (cons 1 (cons 8 (rest (rest BD1))))
+                    (cons 1 (cons 9 (rest (rest BD1))))))
+
+(check-expect (next-boards (cons 1 (cons 2 (rest (rest BD1)))))
+              (list (cons 1 (cons 2 (cons 3 (rest (rest (rest BD1))))))
+                    (cons 1 (cons 2 (cons 4 (rest (rest (rest BD1))))))
+                    (cons 1 (cons 2 (cons 5 (rest (rest (rest BD1))))))
+                    (cons 1 (cons 2 (cons 6 (rest (rest (rest BD1))))))
+                    (cons 1 (cons 2 (cons 7 (rest (rest (rest BD1))))))
+                    (cons 1 (cons 2 (cons 8 (rest (rest (rest BD1))))))
+                    (cons 1 (cons 2 (cons 9 (rest (rest (rest BD1))))))))
+
+;(define (next-boards bd) empty) ;stub
+
+(define (next-boards bd)
+  (local [(define (next-boards bd p)
+            (cond [(> p 80) empty]
+                  [(false? (read-square bd p))
+                   (map (lambda (v)
+                          (fill-square bd p v))
+                        (get-possibilities bd p))]
+                  [else
+                   (next-boards bd (+ p 1))]))]
+    (next-boards bd 0)))
+                     
 
 ;; Board Pos -> Val or false
 ;; Produce value at given position on board.
@@ -261,6 +299,31 @@
   (append (take bd p)
           (list nv)
           (drop bd (add1 p))))
+
+;; Board -> Boolean
+;; consumes a board and validate if it is full
+;;    (if all elements are numbers)
+
+(check-expect (full? BD1) false)
+(check-expect (full? BD2) false)
+(check-expect (full? BD3) false)
+(check-expect (full? BD4) false)
+(check-expect (full? BD4s) true)
+(check-expect (full? BD5) false)
+(check-expect (full? BD5s) true)
+(check-expect (full? BD7) false)
+(check-expect (full? (list 101)) true)
+
+;; without lambda and high order functions
+#;
+(define (full? bd)
+  (cond [(empty? bd) true]
+        [(false? (first bd)) false]
+        [else
+         (full? (rest bd))]))
+
+(define (full? bd)
+  (andmap (lambda (n) (number? n)) bd))
 
 ;; Board -> Boolean
 ;; consumes a board and validate it
@@ -303,9 +366,12 @@
 
 (define (validate-position b p)
   (local [(define value (read-square b p))]
-    (not (member?
-          value
-          (map (lambda (p) (read-square b p)) (get-units p))))))
+    (and (number? value)
+         (> value 0)
+         (< value 10)
+         (not (member?
+               value
+               (map (lambda (p) (read-square b p)) (get-units p)))))))
 
 ;; Pos -> Units
 ;; it consumes a Position and produces its units, but withouht the
