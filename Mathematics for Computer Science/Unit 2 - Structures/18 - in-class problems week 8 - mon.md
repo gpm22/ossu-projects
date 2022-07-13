@@ -47,7 +47,6 @@ The proper subset relation, $\subset$ , defines a strict partial order on the su
    \{2, 5, 6\}, \{3, 4, 5\}, \{3, 4, 6\}, \{3,5, 6\}, \{4, 5, 6\} \}
   $$
   
-
 * **c)** What are the maximal and minimal elements? Are they maximum and minimum?
 
   * The minimal is the empty set and the maximal is the set $[1..6]$
@@ -59,6 +58,43 @@ The proper subset relation, $\subset$ , defines a strict partial order on the su
   * The set $[1..6]$ is the maximum elements and there are no minimum elements. 
 
 ## Problem 3
+
+* **a)** List all the maximum-length increasing subsequences of $S$, and all the maximum-length decreasing subsequences:
+  * $S = (6,4,7,9,1,2,5,3,8)$
+  * maximum-length increasing subsequences:
+    1. $(1,2,3,8)$
+    2. $(1,2,5,8)$
+  * maximum-length decreasing subsequences:
+    1. $(6,4,1)$
+    2. $(6,4,2)$
+    3. $(6,4,3)$
+    4. $(7,5,3)$
+    5. $(9,5,3)$
+    6. $(6,5,3)$
+* **b)** Draw a diagram of the partial order, $\prec$ , on $A$. What are the maximal and minimal elements?
+  * $A = [1..9]$
+  * $S = (6,4,7,9,1,2,5,3,8)$
+  * $\prec$ on $A$:
+    1. $\{2, 5, 3, 8\}$
+    2. $\{5, 3, 8\}$
+    3. $\{8\}$
+    4. $\{7, 9, 5, 8\}$
+    5. $\{8\}$
+    6. $\{7, 9, 8\}$
+    7. $\{9, 8\}$
+    8. $\empty$
+    9. $\empty$
+  * Maximal elements: none
+  * Minimal elements: $\{1, 4, 6\}$
+* **c)** Explain the connection between increasing and decreasing subsequences of $S$, and chains and antichains under $\prec$.
+  * Chains are increasing subsequences of $S$.
+  * Antichains are decreasing subsequences of $S$.
+* **d)** Prove that every sequence, $S$, of length $n$ has an increasing subsequence of length greater than $\sqrt{n}$ or a decreasing subsequence of length at least $\sqrt{n}$.
+  * By Dilworth's lemma, we now that every DAG with $n$ vertices has a chain of size greater than $\sqrt{n}$ or an antichain of size at least $\sqrt{n}$
+  * A DAG can be constructed from $S$ using $\prec$, where:
+    * Chains are increasing subsequences of $S$.
+    * Antichains are decreasing subsequences of $S$.
+  * Therefore, every sequence, $S$, of length $n$ has an increasing subsequence of length greater than $\sqrt{n}$ or a decreasing subsequence of length at least $\sqrt{n}$.
 
 ## Problem 4
 
