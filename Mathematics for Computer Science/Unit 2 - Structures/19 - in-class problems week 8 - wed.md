@@ -27,16 +27,94 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
 
 ## Problem 2
 
-* **a)** Prove that in every simple graph, there are an even number of vertices of odd degree. 
+* **a)** Prove that in every simple graph, there are an even number of vertices of odd degree.
+
+  **Proof.** We prove by induction that in every simple graph, there are an even number of vertices of odd degree.
+
+  As which edge has 2 endpoint, each odd degree vertex will be part of even group with their adjacent vertices. 
+
 * **b)** Conclude that at a party where some people shake hands, the number of people who shake hands an odd number of times is an even number. 
+
+  * As a party where some people shake hands is a simple graph an the number of shake hands of a person is its degree, the number of people who shake hands an odd number of times is an even number;
+
 * **c)** Call a sequence of people at the party a handshake sequence if each person in the sequence has shaken hands with the next person, if any, in the sequence.
-* **d)** Suppose George was at the party and has shaken hands with an odd number of people. Explain why, starting with George, there must be a handshake sequence ending with a different person who has shaken an odd number of hands.
+
+  Suppose George was at the party and has shaken hands with an odd number of people. Explain why, starting with George, there must be a handshake sequence ending with a different person who has shaken an odd number of hands.
+
+  **Answer** Because a sequence stops with a person who cannot shake hand with a next one, so this one has shook hands with only one other person, there it has shook hands an odd number of times.
 
 ## Problem 3
 
+List all the isomorphisms between the two graphs given in Figure 1. Explain why there are no others
+
+* Number of vertices;
+* Number of edges;
+* Degree of the nodes;
+* Sum of degree of the nodes;
+
+There no others, as there are any property which can form a bijection; 
+
 ## Problem 4
+
+* Properties preserved under isomorphism:
+
+  * **a)** The vertices can be numbered 1 through 7.
+
+  * **b)** There is a cycle that includes all the vertices;
+
+  * **c)** There are two degree 8 vertices;
+
+  * **e)** No matter which edge is removed, there is a path between any two vertices.
+
+  * **f)** There are two cycles that do not share any vertices.
+
+  * **i)** The OR of two properties that are preserved under isomorphism.
+
+  * **j)** The negation of a property that is preserved under isomorphism.
+
+    
+
+* Properties not preserved under isomorphism:
+
+  * **d)** Two edges are of equal length
+  * **g)** One vertex is a subset of another one.
+  * **h)** The graph can be pictured in a way that all the edges have the same length.
 
 ## Problem 5
 
+* **a)** Suppose $f$ is an isomorphism from $G$ to another digraph $H$. Prove that $f(G(v)) = H(f(v))$;
 
+  $f$ is a bijection from $G$ to $H$, 
+
+  such that, for all $u, v \in V(G)$,
+  $$
+  \langle u - v \rangle \iff \langle f(u) - f(v) \rangle \in E(H)
+  $$
+  $G(v)$ are the vertices that $v$ is pointing to in $G$ and $H(v)$ are the vertices that $v$ is pointing to in $H$.
+
+   $f(G(v)) = H(f(v))$ means that every node from $G(v)$ can be mapped to every node of $H(f(v))$, where $f(v)$ returns a node;
+
+  As
+  $$
+  u, v \in V(G),\langle u - v \rangle \iff \langle f(u) - f(v) \rangle \in E(H) \\
+  $$
+  Then
+  $$
+  u \in G(v) \iff f(u) \in H(f(v))
+  $$
+  So
+  $$
+  f(u) \in f(G(v)) \iff f(u) \in H(f(v))
+  $$
+  Therefore for every $h \in V(H)$:
+  $$
+  h \in H(f(v)) \iff h \in f(G(v)) \\
+  $$
+  Which means $f(G(v)) = H(f(v))$.
+
+* **b)** Conclude that if $G$ and $H$ are isomorphic graphs, then they have the same number of vertices of out-degree $k$, for all $k \in \N$.
+
+  As they are isomorphic graphs we now that  $f(G(v)) = H(f(v))$, which means that  $|f(G(v))| = |H(f(v))|$, therefore they must posses the same number of vertices of out-degree $k$, for all $k \in \N$.
+
+  
 
