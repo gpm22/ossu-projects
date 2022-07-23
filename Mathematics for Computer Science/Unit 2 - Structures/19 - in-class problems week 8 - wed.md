@@ -19,9 +19,29 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
 
 * **c)**  The data shows that approximately 20% of the females were virgins, while only 5% of the males were. The researcher wonders how excluding virgins from the population would change the averages. If he knew graph theory, the researcher would realize that the nonvirgin male average number of partners will be $x(f/m)$ times the nonvirgin female average number of partners. What is $x$?
 
-  * It is 1, as the sum of degree of all virgin guys are equal to the sum of degree of all female virgin, which are both zero;
+  The sum of degree of nonvirgin male and female must be the same, as the virgins don't count up to it:
+  $$
+  \sum \text{deg}(m_{nv}) = \sum \text{deg}(f_{nv})
+  $$
+  To get the average, we divide each side per $m_{nv}f_{nv}$:
+  $$
+  \text{adeg}(m_{nv}) = \frac{f_{nv}}{m_{nv}} \text{adeg}(f_{nv})
+  $$
+  Was stated that
+  $$
+  \text{adeg}(m_{nv}) = x \frac{f}{m} \text{adeg}(f_{nv})
+  $$
+  Then $x$ is
+  $$
+  x \frac{f}{m} & = & \frac{f_{nv}}{m_{nv}} \\
+  x & = & \frac{m}{m_{nv}} \frac{f{nv}}{f} \\
+  x & = & \frac{0.8}{0.95} \\
+  x & = & \frac{16}{19} \\
+  x & \approx & 0.8421 
+  $$
+  
 
-* **d)**For purposes of further research, it would be helpful to pair each female in the group with a unique male in the group. Explain why this is not possible.
+* **d)** For purposes of further research, it would be helpful to pair each female in the group with a unique male in the group. Explain why this is not possible.
 
   * As we have more female than males;
 
@@ -31,7 +51,7 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
 
   **Proof.** We prove by induction that in every simple graph, there are an even number of vertices of odd degree.
 
-  As which edge has 2 endpoint, each odd degree vertex will be part of even group with their adjacent vertices. 
+  The sum of degree must be even and the sum of even odd numbers gives a even number, there are must exist an even number of vertices of odd degree.
 
 * **b)** Conclude that at a party where some people shake hands, the number of people who shake hands an odd number of times is an even number. 
 
@@ -51,6 +71,9 @@ List all the isomorphisms between the two graphs given in Figure 1. Explain why 
 * Number of edges;
 * Degree of the nodes;
 * Sum of degree of the nodes;
+* Paths;
+* Cycles;
+* No matter which edge is removed, there is a path between any two vertices.
 
 There no others, as there are any property which can form a bijection; 
 
