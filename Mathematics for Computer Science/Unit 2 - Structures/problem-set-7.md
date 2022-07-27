@@ -59,7 +59,7 @@ Determine which among the four graphs pictured in Figure 1 are isomorphic.
 
   * **False Theorem.** Every two-ended graph is a line graph.
   * As a two-end graph does not need to be a complete graph, the following is counterexample:
-  * ![q-3-problem-set-7](C:\studies\ossu-projects\Mathematics for Computer Science\Unit 2 - Structures\q-3-problem-set-7.png)
+  * ![q-3-problem-set-7](https://raw.githubusercontent.com/gpm22/ossu-projects/main/Mathematics%20for%20Computer%20Science/Unit%202%20-%20Structures/q-3-problem-set-7.png)
 
 * **b)** Point out the first erroneous statement in the following bogus proof of the false theorem and describe the error.
 
