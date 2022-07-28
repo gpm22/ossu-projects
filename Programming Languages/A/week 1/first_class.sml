@@ -63,3 +63,4 @@ fun cube (x: int) =
 
 val sixtyfour = cube 4;
 val twentyseven = cube 3;
+val elven = pow(2, 3) + pow(2, 1) + pow(2, 0);  
