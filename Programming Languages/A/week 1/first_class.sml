@@ -64,3 +64,26 @@ fun cube (x: int) =
 val sixtyfour = cube 4;
 val twentyseven = cube 3;
 val elven = pow(2, 3) + pow(2, 1) + pow(2, 0);  
+
+fun list_product (xs : int list) =
+    if null xs
+    then 1
+    else hd xs * list_product(tl xs);
+
+val test_list_product_1 = list_product [] = 1;
+
+val test_list_product_2 = list_product [5] = 5;
+
+val test_list_product_3 = list_product [2, 4, 2] = 16;
+
+fun countdown (x : int) =
+    if x=0
+    then []
+    else x :: countdown(x-1);
+
+fun factorial (n: int) =
+    list_product(countdown n);
+
+val test_factorial_1 = factorial 0 = 1;
+val test_factorial_2 = factorial 1 = 1;
+val test_factorial_3 = factorial 5 = 120;
