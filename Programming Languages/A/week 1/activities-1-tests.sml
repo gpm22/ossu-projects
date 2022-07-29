@@ -22,19 +22,44 @@ val test3_3 = number_in_months ([], [0]) = 0;
 val test3_4 = number_in_months ([], [10]) = 0;
 val test3_5 = number_in_months ([], []) = 0;
 val test3_6 = number_in_months ([(2012,2,28),(2013,12,1)],[]) = 0;
+val test3_7 = number_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]) = 3;
 
-val test3_7 = number_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]) = 3
+val test4_1 = dates_in_month ([], 1) = [];
+val test4_2 = dates_in_month ([(2012,2,28),(2013,12,1)],2) = [(2012,2,28)];
+val test4_3 = dates_in_month ([(2012,2,28),(2013,12,1)],3) = [];
+
+
+val test5_1 = dates_in_months ([], []) = [];
+val test5_2 = dates_in_months ([(2012,2,28)], []) = [];
+val test5_3 = dates_in_months ([], [1]) = [];
+val test5_4 = dates_in_months ([(2012,2,28),(2013,12,1)],[2]) = [(2012,2,28)];
+val test5_5 = dates_in_months ([(2012,2,28),(2013,12,1)],[3]) = [];
+val test5_6 = dates_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]) = [(2012,2,28),(2011,3,31),(2011,4,28)];
+
+val test6_1 = get_nth([], 10) = "";
+val test6_2 = get_nth (["hi", "there", "how", "are", "you"], 0) = "";
+val test6_3 = get_nth (["hi", "there", "how", "are", "you"], ~1) = "";
+val test6_4 = get_nth (["hi", "there", "how", "are", "you"], 6) = "";
+val test6_5 = get_nth (["hi", "there", "how", "are", "you"], 2) = "there";
+
+val test7_1 = date_to_string (2013, 1, 30) = "January 30, 2013";
+val test7_2 = date_to_string (2014, 2, 4) = "February 4, 2014";
+val test7_3 = date_to_string (2015, 3, 5) = "March 5, 2015";
+val test7_4 = date_to_string (2016, 4, 2) = "April 2, 2016";
+val test7_5 = date_to_string (2017, 5, 10) = "May 10, 2017";
+val test7_6 = date_to_string (2018, 6, 1) = "June 1, 2018";
+val test7_7 = date_to_string (2019, 7, 11) = "July 11, 2019";
+val test7_8 = date_to_string (2011, 8, 17) = "August 17, 2011";
+val test7_9 = date_to_string (2012, 9, 14) = "September 14, 2012";
+val test7_10 = date_to_string (2003, 10, 15) = "October 15, 2003";
+val test7_11 = date_to_string (2030, 11, 13) = "November 13, 2030";
+val test7_12 = date_to_string (2000, 12, 23) = "December 23, 2000";
+
+val test8_1 = number_before_reaching_sum (10, []) = 0;
+val test8_2 = number_before_reaching_sum (100, [1,2,3,4,5]) = 0;
+val test8_3 = number_before_reaching_sum (10, [1,2,3,4,5]) = 3;
+val test8_4 = number_before_reaching_sum (3, [10,2,3,4,5]) = 0;
 (*
-val test4 = dates_in_month ([(2012,2,28),(2013,12,1)],2) = [(2012,2,28)]
-
-val test5 = dates_in_months ([(2012,2,28),(2013,12,1),(2011,3,31),(2011,4,28)],[2,3,4]) = [(2012,2,28),(2011,3,31),(2011,4,28)]
-
-val test6 = get_nth (["hi", "there", "how", "are", "you"], 2) = "there"
-
-val test7 = date_to_string (2013, 6, 1) = "June 1, 2013"
-
-val test8 = number_before_reaching_sum (10, [1,2,3,4,5]) = 3
-
 val test9 = what_month 70 = 3
 
 val test10 = month_range (31, 34) = [1,2,2,2]
