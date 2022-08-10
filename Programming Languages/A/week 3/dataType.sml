@@ -14,20 +14,10 @@ fun eval e =
 
 fun largest_constant e =
     case e of
-         Constant i => i
-        | Negate e2 => largest_constant e2
-        | Add(e1,e2) => let val c1 = largest_constant e1;
-                            val c2 = largest_constant e2;
-        				in if c1 > c2
-        				then c1
-        				else c2
-        				end
-        | Multiply(e1,e2) => let val c1 = largest_constant e1;
-                                 val c2 = largest_constant e2;
-        				in if c1 > c2
-        				then c1
-        				else c2
-        				end
+        Constant i => i
+      | Negate e2 => largest_constant e2
+      | Add(e1,e2) => Int.max(largest_constant e1, largest_constant e2)
+      | Multiply(e1,e2) => Int.max(largest_constant e1, largest_constant e2);
 
 fun constants e =
     case e of
@@ -49,4 +39,8 @@ fun number_of_adds e =
          Constant i => 0
         | Negate e2 => number_of_adds e2
         | Add(e1,e2) => 1 + number_of_adds e1 + number_of_adds e2
-        | Multiply(e1,e2) => number_of_adds e1 + number_of_adds e2
+        | Multiply(e1,e2) => number_of_adds e1 + number_of_adds e2;
+
+(* Tests *)
+
+val largest_constant_test = largest_constant(Multiply(Add(Constant(24), Constant(35)), Negate(Constant 48))) = 48;
