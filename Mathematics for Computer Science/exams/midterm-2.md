@@ -84,22 +84,63 @@ $$
   & = & 2^37^4
   $$
   
-
 * **b)** What is the least common multiple $\text{LCM}(m, n, p)$?
   $$
   \text{LCM}(m, n, p) = 2^{9}3^{4}5^{24}7^{6042}11^{211}19^{30}
   $$
   
-
 * $v_k(n) ::= \text{max} \{ i \ | \ k^i \text{ divides } n \}$.
 
-* **c)**
+* set from $A$ $v_k(A) ::= \{v_k(a) \ | \ a \in A  \}$
 
-* **d)**
+* **c)** Express $v_k(\text{GCD}(A))$ in terms of $v_k(A)$.
 
-* **e)**
+
+  * $\text{min}(v_k(A))$
+
+* **d)** Let $p$ be a prime number. Express $v_p(\text{LCM}(A))$ in terms of $v_p(A)$
+
+
+  * $\text{max}(v_p(A))$
+
+* **e)** Give an example of integers $a, b$ where $v_6(\text{LCM}(a,b)) > \text{max}(v_6(a), v_6(b))$.
+
+
+  * Any $a = 2 \cdot 6^x , b =3 \cdot 6^x$, where $x \geq 0$
+
 
 ## Problem 5
 
+Prove that if $a \equiv b \ (\text{mod } 14)$ and $a \equiv b \ (\text{mod } 5)$, then $a \equiv b \ (\text{mod } 70)$;
+
+$a \equiv b \ (\text{mod } 14)$ means that $14 | a -b$. So $a-b = 14A$.
+
+$a \equiv b \ (\text{mod } 5)$ means that $5 | a - b$. So $a - b = 5B$.
+
+Then $a-b = 14A = 5B = 14 \cdot 5 C = 70 C$, therefore $a \equiv b \ (\text{mod } 70)$.
+
 ## Problem 6
+
+Let $\phi$ be Euler's function.
+
+* **a)** What is the value of $\phi(2)$? 
+
+  * 1
+
+* **b)** What are three nonnegative integers $k > 1$ such that $\phi(k) = 2$?
+
+  * $3, 4, 6$
+
+* **c)** Prove that $\phi(k)$ is even for $k> 2$
+
+  We prove by cases that $\phi(k)$ is even for $k> 2$:
+
+  * $k$ is prime
+    * In this case $\phi(k) = k-1$ and all prime numbers, but 2, are odd, therefore the claim holds for this case.
+  * $k$ is $p^n$, where $p$ is prime
+    * In this case $\phi(p^n) = p^n-p^{n-1}$ and all prime numbers, but 2, are odd, so $p^n$ and $p^{n-1}$ are also odd. As the subtraction between two odds results in an even number, the claim holds for this case.
+  * $k$ is $p^{n_1}_1 \cdot p^{n_2}_2 \dots p^{n_i}_i$, where $p_i$ are the prime factors of $k$.
+    * In this case $\phi(k) = \phi(p^{n_1}_1) \phi(p^{n_2}_2) \dots \phi(p^{n_i}_i)$, we proved before that each $\phi(p^n)$ is even and the multiplication between even numbers results in another even number, therefore the claim holds for this case.
+
+  As we proved the claim holds for all 3 cases, $\phi(k)$ is even for $k> 2$.
 
