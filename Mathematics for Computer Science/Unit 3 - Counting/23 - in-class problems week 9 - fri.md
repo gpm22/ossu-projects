@@ -54,6 +54,24 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
 
 ## Problem 3
 
+Let $f:\R^+ \to \R^+$ be a weakly decreasing function. Define
+$$
+S ::= \sum_{i=1}^n f(i), \ I ::= \int_1^n f(x)dx
+$$
+Prove that $I + f(n) \leq S \leq I + f(1)$.
+
+**Answer**
+
+$S$ is the sum of areas of $n$ unit-width rectangles of heights $f(1), f(2), \dots, f(n)$, in turn $I$ is the area under the curve of $f(x)$ from $1$ to $n$.
+
+The area of the rectangle $f(x) \times 1$ is equal or greater than the area of $I_{x-1}^x$, so  $S$ is at least $I$ plus the area of the rightmost rectangle, as it is weakly decreasing. Then, $S \geq I + f(n)$.
+
+On the other hand, $S$ will be at most $I$ plus the are of the leftmost rectangle, then $S \leq I + f(1)$.
+
+Therefore, $I + f(n) \leq S \leq I + f(1)$.
+
+
+
 ## Problem 4
 
 * **a)** What is the client’s debt at the end of the first day?
@@ -61,13 +79,11 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
   (m + f)*p
   $$
   
-
 * **b)**  What is the client’s debt at the end of the second day?
   $$
   ((m + f)*p +f)*p = (m+f)* p^2 + f*p
   $$
   
-
 * **c)** Write a formula for the client’s debt after d days and find an equivalent closed form.
 
   * Open form
@@ -75,13 +91,12 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
     D(n) = mp^n + f \sum_{i=1} ^n p^i
     $$
     
-
   * Closed form
     $$
     D(n) = \frac{mp^n + fp - (m+f)p^{n+1}}{1-p}
     $$
     
-
+  
 * **d)** If you borrowed $10 from Sammy for a year, how much would you owe him?
   $$
   $749.35
