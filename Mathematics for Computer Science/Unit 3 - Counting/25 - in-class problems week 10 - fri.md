@@ -20,13 +20,12 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
     | \{2, \dots, 9 \}| \left( \frac{1-|\{0, 2, \dots, 9 \}|^9}{1-|\{0, 2, \dots, 9 \}|} \right) = 8\left( \frac{1-9^9}{1-9|} \right) =  9^9-1
     $$
     
-
   * Now the subtraction:
     $$
     10^9 - (9^9 - 1) = 10^9 - 9^9 + 1 = 612579512
     $$
     
-
+  
 * **b)** There are 20 books arranged in a row on a shelf. Describe a bijection between ways of choosing 6 of these books so that no two adjacent books are selected and 15-bit strings with exactly 6 ones.
 
   * First you create a 20-bit string, where the selected books are 1, as example:
@@ -73,5 +72,53 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
 
 ## Problem 3
 
+* **a)** Describe a bijection between $S_{n, k} ::= \{ (x_1, x_2, \dots, x_ k) \in \N^k \ | \ \sum_{i=1}^k x_i \leq n \}$ and the set of binary strings with $n$ zeroes and $k$ ones.
+  * $1 \to$ Represents the position of each $x_ k$.
+  * $0 \to$ Represents the Natural number $x_k$, like 4 is $0000$.
+    * In the case where $\sum_{i=1}^k x_i < n$, we put the remaining zeroes to the left.
+* **b)** Describe a bijection between $S_{n, k}$ and $\mathcal{L}_{n, k} ::= \{ (y_1, y_2, \dots, y_ k) \in \N^k \ | \ y_1 \leq y_2 \leq \cdots \leq y_k \leq n \}$.
+  * $k$ and $n$ is the same for both sets, therefore both $n$'s are already related.
+  * Then we just sort the $x$'s so they will be in the same place as they respective $y$'s.
+
 ## Problem 4
 
+Let $X$ and $Y$ be infinite sets.
+
+* **a)** How many binary relations from $X$ to $Y$ are there?
+
+  * Every binary relation of $X$ and $Y$ is a subset of $A \times B$, and there is $2^{|A \times B|}$ subsets, so the number of binary relations from $X$ to $Y$ is:
+    $$
+    2^{|A \times B|} =2^{|A| \cdot |B|}
+    $$
+
+* **b)** Define a bijection between the set $[ X \to Y ]$ of all total functions from $X$ to $Y$ and the set $Y^{|X|}$. Based on that, what is $|[X \to Y]|$?
+
+  * Each total function will be related to one of the elements of $Y^{|X|}$, that is the bijection, just find the same value in both sets.
+  * By the bijection rule: $|[X \to Y]| = |Y|^{|X|}$
+
+* **c)** Using the previous part, how many functions, not necessarily total, are there from $X$ to $Y$? How does the fraction of functions vs. total functions grow as the size of $X$ grows? Is it $O(1), O(|X|), O(2^{|X|}), \dots$?
+
+  * Number of functions from $X$ to $Y$:
+    $$
+    \sum_{i=1}^{|X|}|Y|^{i} = \frac{1-|Y|^{|X|+1}}{1-|Y|}
+    $$
+    
+
+  * Growth of the fraction functions vs. total functions:
+    $$
+    \frac{\frac{1-|Y|^{|X|+1}}{1-|Y|}}{ \frac{|Y|^{|X|}}{1} } = \frac{|Y|^{2|X|+1}-|Y|^{|X|} }{|Y|-1} = \frac{|Y|^{|X|+1}-1 }{|Y|^{1-|X|}-|Y|^{-|X|}} \\ \\
+    $$
+    When $|X|$ and $|Y|$ grows large:
+    $$
+    |Y|^{|X|}
+    $$
+    Therefore $O(|Y|^{|X|})$.
+
+* **d)** Show a bijection between the powerset, $\text{pow}(X)$, and the set $[ X \to \{ 0, 1 \}]$ of $0-1$-valued total functions on $X$.
+
+  * The cardinality of each set in $\text{pow}(X)$ will be the sum of ones for each combination in $[ X \to \{ 0, 1 \}]$, when the cardinality is the same the relation is chosen by the numbers in the set in pow to be the ones in the $[ X \to \{ 0, 1 \}]$.
+
+* **e)** Let $X$ be a set of size $n$ and $B_X$ be the set of all bijections from $X$ to $X$. Describe a bijection from $B_ X$ to the set of permutations of $X$. This implies that there are how may bijections from $X$ to $X$?
+
+  * The bijection is the sequence of values of the codomain. There is one of each for each permutation, which means that each permutation will be the result of a bijection.
+  * There is $n!$ bijections from $X$ to $X$.
