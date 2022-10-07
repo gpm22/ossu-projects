@@ -81,9 +81,61 @@ Questions are available on [**MIT**](https://openlearninglibrary.mit.edu/assets/
 
 * **c)** Suppose we map arrangements of the letters in BO1O2K to arrangements of the letters in BOOK by erasing the subscripts. Indicate with arrows how the arrangements on the left are mapped to the arrangements on the right.
 
-  ![permutation_book](https://raw.githubusercontent.com/gpm22\ossu-projects\Mathematics for Computer Science\Unit 3 - Counting\permutation_book.png)
+  ![permutation_book](https://raw.githubusercontent.com/gpm22/ossu-projects/main/Mathematics%20for%20Computer%20Science/Unit%203%20-%20Counting/permutation_book.png)
 
-* 
+* **d**) What kind of mapping is this, young grasshopper?
+
+  * 2-to-1 mapping.
+
+* **e)** In light of the Division Rule, how many arrangements are there of BOOK?
+
+  * $24/2 = 12$
+
+* **f)** Very good, young master! How many arrangements are there of the letters in $KE_1E_2PE_3R$?
+
+  * $6! = 720$
+
+* **g)** Suppose we map each arrangement of $KE_1E_2PE_3R$ to an arrangement of $KEEPER$ by erasing subscripts. List all the different arrangements of $KE_1E_2PE_3R$ that are mapped to $REPEEK$ in this way.
+  $$
+  RE_1PE_2E_3K \\
+  RE_1PE_3E_2K \\
+  RE_2PE_3E_1K \\
+  RE_2PE_1E_3K \\
+  RE_3PE_2E_1K \\
+  RE_3PE_1E_2K \\
+  $$
+
+* **h)** What kind of mapping is this?
+
+  * 6-to-1 mapping
+
+* **i)** So how many arrangements are there of the letters in KEEPER?
+
+  * $720/6 = 120$
+
+* **j)** How many arrangements of $BO_1O_2K_1K_2E_1E_2PE_3R$ are there?
+
+  * $10! = 3 \ 628 \ 800$
+
+* **k)** How many arrangements of $BOOK_1K_2E_1E_2PE_3R$ are there?
+
+  * $10!/2 = 1 \ 814 \ 400$
+
+* **l)** How many arrangements of $BOOKKE_1E_2PE_3R$ are there?
+
+  * $10!/(2 \cdot 2) = 907 \ 200$
+
+* **m)** How many arrangements of $BOOKKEEPER$ are there?
+
+  * $10!/(2 \cdot 2 \cdot 6) = 151 \ 200$
+
+* **n)** How many arrangements of $VOODOODOLL$ are there?
+
+  * $10!/(5! \cdot 2! \cdot 2!) = 7 \ 560$
+
+* **o)** How many length 52 sequences of digits contain exactly 17 two’s, 23 fives, and 12 nines?
+
+  * $52!/(17! \cdot 23! \cdot 12!) = 1.8312536e+22$
 
 ## Problem 4
 
