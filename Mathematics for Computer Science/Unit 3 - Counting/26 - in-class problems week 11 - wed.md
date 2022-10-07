@@ -26,7 +26,6 @@ Questions are available on [**MIT**](https://openlearninglibrary.mit.edu/assets/
   \binom{12}{3, 3, 3, 3} = \frac{12!}{3!^4} = 369 \ 600
   $$
   
-
 * **d)** In how many ways can $3n$ students be broken up into n groups of $3$?
   $$
   \binom{3n}{3, 3, 3, 3, \dots} = \frac{(3n)!}{3!^n}
@@ -72,7 +71,23 @@ Questions are available on [**MIT**](https://openlearninglibrary.mit.edu/assets/
 
 ## Problem 3
 
+* **a)** In how many ways can you arrange the letters in the word $POKE$?
+
+  * $4! = 24$
+
+* **b)** In how many ways can you arrange the letters in the word $BO_1O_2K$?
+
+  * $4!=24$.
+
+* **c)** Suppose we map arrangements of the letters in BO1O2K to arrangements of the letters in BOOK by erasing the subscripts. Indicate with arrows how the arrangements on the left are mapped to the arrangements on the right.
+
+  ![permutation_book](https://raw.githubusercontent.com/gpm22\ossu-projects\Mathematics for Computer Science\Unit 3 - Counting\permutation_book.png)
+
+* 
+
 ## Problem 4
+
+​	
 
 ## Problem 5
 
