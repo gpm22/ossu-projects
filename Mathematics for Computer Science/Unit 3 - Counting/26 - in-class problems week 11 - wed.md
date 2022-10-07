@@ -139,7 +139,48 @@ Questions are available on [**MIT**](https://openlearninglibrary.mit.edu/assets/
 
 ## Problem 4
 
-​	
+Find the coefficients of
+
+* **a)** $x^5 \text{ in } (1+ x)^{11}$
+  $$
+  \binom{11}{5} = \frac{11!}{6!5!} = 462
+  $$
+  
+
+* **b)** $x^8y^9 \text{ in } (3x+ 2y)^{17}$
+  $$
+  \binom{17}{9} \cdot 3^8 \cdot 2^9 = \frac{17! \cdot 3^8 \cdot 2^9}{9!8!} = 81 \ 662 \ 929 \ 920
+  $$
+  
+
+* **c)** $a^6b^6 \text{ in } (a^2+ b^3)^{5}$
+  $$
+  \binom{5}{2} = \frac{5!}{3!2!} = 10
+  $$
 
 ## Problem 5
+
+* **a)** An independent living group is hosting nine new candidates for membership. Each candidate must be assigned a task: 1 must wash pots, 2 must clean the kitchen, 3 must clean the bathrooms, 1 must clean the common area, and 2 must serve dinner. Write a multinomial coefficient for the number of ways this can be done.
+
+  * There is $24$-to$-1$ mapping between this set and the sequence of 9 distinct letters.
+
+  * Multinomial coefficient:
+    $$
+    \binom{9}{1, 1, 2, 2, 3} = \frac{9!}{1!1!2!2!3!} = 15 \ 120 
+    $$
+    
+
+* **b)** How many nonnegative integers less than 1,000,000 have exactly one digit equal to 9 and have a sum of digits equal to 17?
+
+  * 2-6 digits, 1 digit is 9 and the sum of the others must be 8.
+
+  * There is a relation $1$-to-$6$ between this set and the set of binary strings with 5 ones and 8 zeros, where the first digit is 1.
+
+    * The ones represent the location of the digits in the number, and the zeros the value of the numbers, so 17 is $1111010000000$ and 12320 is $1010010001001$.
+
+  * $$
+    6 \cdot \binom{8 + 5}{5} = 7722
+    $$
+
+    
 
