@@ -105,8 +105,21 @@ $$
 \binom {20} {10} \cdot \binom {19} {10} \cdot \binom {59} {30} = 1009233854658458648157754816
 $$
 
-
 ## Problem 4
 
+* **a)** Prove that every positive integer divides a number such as 70, 7000, 7770, 77000, whose decimal representation consists of one or more 7's followed by one or more 0's.
+  * The numbers 7, 700, 777, and etc are defined as $\text{set}_7 = 7 \times \sum_ {i=0}^{N} 10^i$, for $M \in \N$, which has $N + 1$ elements.
+  * Now consider $a_N \equiv b_ N \ (\text{mod }N)$, there only $N$ possible values for $b$'s.
+  * Then, by the Pigeonhole principle, there exist two $N$ values that are equal.
+  * So considering $x$ and $y$, where $y > x$, as we have $a_y \equiv a_x \ (\text{mod } N)$, $a_y - a_x = \text{set}_7 \text{ number with } i-j \text{ sevens and } j \text{ zeros } = 0 \ (\text{mod N})$.
+* **b)** Conclude that if a positive number is not divisible by 2 or 5, then it divides a number whose decimal representation is all 7's.
+  * A number being not divisible by 2 or 5 means it does not divide even numbers and numbers that the last right digit is 5 or 0, so as it was proved in **a)** that all numbers divide a number that is sevens and zeros, so numbers that are not divisible by 2 or 5 divides number whose decimal representation is all $7$'s.
+
 ## Problem 5
+
+Show that for any set of 201 positive integers less than 300, there must be two whose quotient is a power of three (with no remainder).
+
+Numbers whose quotient is a power of $3$ can be found as $y = 3x$, there 100 pairs of these numbers, as the biggest possible is 297, which is $99 \times 3$.
+
+So there 200 numbers in the range 1-299, which quotient is a power of 3, therefore, by the pigeonhole principle, any set with 201 positive integers less than 300, there must be two whose quotient is a power of three.
 
