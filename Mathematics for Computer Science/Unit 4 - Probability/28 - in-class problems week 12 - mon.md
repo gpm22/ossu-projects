@@ -19,19 +19,128 @@ Use The Four Step Method to find the following probabilities:
   * **Sample Space**
 
     * Randomly-determined quantities:
+
       * The door concealing the car.
       * The door initially chosen by the player.
       * The door that the host opens to reveal a goat.
-      * The unused door
-    * 
+      * The door unused 
 
-  * **Tree Diagram**
+    * Defining the 4-tuple as
 
-    (door concealing prize, door initially chosen, door opened to reveal a goat)
+      * (door concealing prize, door initially chosen, door opened to reveal a goat, door unused)
 
-    
+    * There are 72 possible results:
+      $$
+      S & ::= &  \{(A, A, B, C), (A, A, B, D), (A, A, C, B), (A, A, C, D), (A, A, D, B), (A, A, D, B),\\
+      & &  (A, B, C, A), (A, B, C, D), (A, B, D, A), (A, B, D, C), \\
+      & & (A, C, B, D), (A, C, D, A), (A, C, D, B), (A, D, B, A) \\
+      & & (A, D, B, A), (A, D, B, C), (A, D, C, A), (A, D, C, B) \\
+      
+      & & (B, A, C, D), (B, A, D, B), (B, A, D, C), (B, A, D, C) \\ 
+      & & (B, B, A, C), (B, B, A, D), (B, B, C, A), (B, B, C, D), (B, B, D, A), (B, B, D, C) \\
+      & & (B, C, A, B), (B, C, A, D), (B, C, D, A), (B, C, D, B) \\
+      & & (B, D, A, B), (B, D, A, C), (B, D, C, A), (B, D, C, B) \\
+      
+      & & (C, A, B, C), (C, A, B, D), (C, A, D, B), (C, A, D, C) \\
+      & & (C, B, A, C), (C, B, A, D), (C, B, D, A), (C, B, D, C) \\
+      & & (C, C, A, B), (C, C, A, D), (C, C, B, A), (C, C, B, D), (C, C, D, A), (C, C, D, B) \\ 
+      & & (C, D, A, C), (C, D, B, A), (C, D, B, C), (C, A, B, C) \\
+      
+      & & (D, A, B, C), (D, A, B, D), (D, A, C, B), (D, A, C, D) \\
+      & & (D, B, A, C), (D, B, A, D), (D, B, C, A), (D, B, C, D) \\
+      & & (D, C, A, B), (D, C, A, D), (D, C, B, A), (D, C, B, D)  \\
+      & & (D, D, A, B), (D, D, A, C), (D, D, B, A), (D, D, B, C), (D, D, C, A), (D, D, C, B) \}
+      $$
+      
+
+    * **Step 2: Define events of interest.**
+
+      * The events of interest are the ones where staying results in victory, which are the ones where the door concealing prize and door initially chosen are the same.
+
+      * So we got 24 possible results:
+        $$
+        E & ::= &  \{(A, A, B, C), (A, A, B, D), (A, A, C, B), (A, A, C, D), (A, A, D, B), (A, A, D, B),\\
+        & & (B, B, A, C), (B, B, A, D), (B, B, C, A), (B, B, C, D), (B, B, D, A), (B, B, D, C) \\
+        & & (C, C, A, B), (C, C, A, D), (C, C, B, A), (C, C, B, D), (C, C, D, A), (C, C, D, B) \\ 
+        & & (D, D, A, B), (D, D, A, C), (D, D, B, A), (D, D, B, C), (D, D, C, A), (D, D, C, B) \}
+        $$
+
+    * **Step 3: Determine outcome probabilities.**
+
+      * For outcomes where the door concealing the prize and the door initially chosen are the same, the probability is $1/96$, for the others is $1/64$
+
+    * **Step 4: Compute event probabilities**
+      $$
+      24 \times 1/96 = 24/96 = 1/4
+      $$
+      
 
 * **b)** Contestant Zelda, an alien abduction researcher from Helena, Montana, switches to one of the remaining two doors with equal probability. What is the probability that Zelda wins the prize?
+
+  * **Sample Space**
+
+    * Randomly-determined quantities:
+      * The door concealing the car.
+      * The door initially chosen by the player.
+      * The door that the host opens to reveal a goat.
+      * The door unused 
+      
+    * Defining the 4-tuple as
+      
+      * (door concealing prize, door initially chosen, door opened to reveal a goat, door unused)
+      
+    * There are 72 possible results:
+      $$
+      S & ::= &  \{(A, A, B, C), (A, A, B, D), (A, A, C, B), (A, A, C, D), (A, A, D, B), (A, A, D, B),\\
+      & &  (A, B, C, A), (A, B, C, D), (A, B, D, A), (A, B, D, C), \\
+      & & (A, C, B, D), (A, C, D, A), (A, C, D, B), (A, D, B, A) \\
+      & & (A, D, B, A), (A, D, B, C), (A, D, C, A), (A, D, C, B) \\
+      
+      & & (B, A, C, D), (B, A, D, B), (B, A, D, C), (B, A, D, C) \\ 
+      & & (B, B, A, C), (B, B, A, D), (B, B, C, A), (B, B, C, D), (B, B, D, A), (B, B, D, C) \\
+      & & (B, C, A, B), (B, C, A, D), (B, C, D, A), (B, C, D, B) \\
+      & & (B, D, A, B), (B, D, A, C), (B, D, C, A), (B, D, C, B) \\
+      
+      & & (C, A, B, C), (C, A, B, D), (C, A, D, B), (C, A, D, C) \\
+      & & (C, B, A, C), (C, B, A, D), (C, B, D, A), (C, B, D, C) \\
+      & & (C, C, A, B), (C, C, A, D), (C, C, B, A), (C, C, B, D), (C, C, D, A), (C, C, D, B) \\ 
+      & & (C, D, A, C), (C, D, B, A), (C, D, B, C), (C, A, B, C) \\
+      
+      & & (D, A, B, C), (D, A, B, D), (D, A, C, B), (D, A, C, D) \\
+      & & (D, B, A, C), (D, B, A, D), (D, B, C, A), (D, B, C, D) \\
+      & & (D, C, A, B), (D, C, A, D), (D, C, B, A), (D, C, B, D)  \\
+      & & (D, D, A, B), (D, D, A, C), (D, D, B, A), (D, D, B, C), (D, D, C, A), (D, D, C, B) \}
+      $$
+      
+
+  * **Step 2: Define events of interest.**
+
+    * The events of interest are the ones where switching results in victory, which are the ones where the door concealing prize, door initially chosen, and door unused are different.
+
+    * So we got 24 possible results:
+      $$
+      E & ::= & \{ (A, B, C, D), (A, B, D, C), (A, C, B, D), (A, C, D, B), (A, D, B, C), (A, D, C, B), \\
+      & & (B, A, C, D), (B, A, D, C), (B, C, A, D), (B, C, D, A), (B, D, A, C), (B, D, C, A), \\
+      & & (C, A, B, D), (C, A, D, B), (C, B, A, D), (C, B, D, A), (C, D, A, B), ( C, D, B, A) \\
+      & & (D, A, C, B), (D, A, B, C), (D, B, A, C), (D, B, C, A), (D, C, A, B), (D, C, B, A)
+      \}
+      $$
+    
+  * **Step 3: Determine outcome probabilities.**
+
+    * For outcomes where the door concealing the prize and the door initially chosen are the same, the probability is $1/96$, for the others is $1/64$
+
+  * **Step 4: Compute event probabilities**
+    $$
+    24 \times 1/64 = 24/64 = 3/8
+    $$
+    
+
+* **Tree Diagram**
+
+  (door concealing prize, door initially chosen, door opened to reveal a goat, door unused)
+
+  ![permutation_book](https://raw.githubusercontent.com/gpm22/ossu-projects/main/Mathematics%20for%20Computer%20Science/Unit%204%20-%20Probability/4_door_tree.png)
 
 
 
