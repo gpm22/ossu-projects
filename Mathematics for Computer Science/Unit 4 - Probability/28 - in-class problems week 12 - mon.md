@@ -146,6 +146,14 @@ Use The Four Step Method to find the following probabilities:
 
 ## Problem 2
 
+* **a)** Show that the probability that the system fails could be as small as $p$ by describing appropriate probabilities for the outcomes. Make sure to verify that the sum of your outcome probabilities is 1.
+  * As $\Pr[F_ i] = p$, the smallest subsets only have one component, so the smallest probability is $p$.
+* **b)** Show that the probability that the system fails could actually be as large as $np$ by describing appropriate probabilities for the outcomes. Make sure to verify that the sum of your outcome probabilities is 1.
+  * In the case where components are independent, the probability is the sum of probabilities of the smallest sets, which are $np$, as we got $n$ of these sets.
+* **c)** Prove $p \leq \Pr[F] \leq np$.
+  * In the case where $F$ contains components which are dependent, the probability will be less than $np$, as we have to remove the probability of intersection.
+  * Therefore the maximum possible is $np$, and the minimum value is $p$.
+
 ## Problem 3
 
 ## Problem 4
