@@ -162,35 +162,91 @@ Assume that on each flip, a Head comes up with probability p, regardless of what
 **Answer**
 
 * **Step 1: Sample Space**
-
   * It is infinity.
-
+  
   * Tree:
-
-    ![permutation_book](https://raw.githubusercontent.com/gpm22/ossu-projects/main/Mathematics%20for%20Computer%20Science/Unit%204%20-%20Probability/head_tail_tree.png)
-
+  
+    ![head_tail_tree](https://raw.githubusercontent.com/gpm22/ossu-projects/main/Mathematics%20for%20Computer%20Science/Unit%204%20-%20Probability/head_tail_tree.png)
+  
   * Probability of head is $p$, therefore probability of tail is $1-p$.
-
+  
 * **Step 2: Define events of interest.**
-
-  * Tail forever
-
-  * Head forever
-
-  * 2 tails 2 head forever
-
-  * 2 head 2 tails forever
-
+  
+  * (T, T, ..., H, H, ..., H, T)
+    * 0 to Infinity pairs of tails
+    * 0 to Infinity pairs of heads
+    * 1 (H, T)
+  
 * **Step 3: Determine outcome probabilities.**
 
-  * It will be zero for everyone, 
+  * Assuming $s$ to be the sum of all winning probabilities in the whole tree.
+
+  * $s$ must be equal the sum of probabilities of each branch and the victory in the first 2 flips. therefore
+    $$
+    s = p^2s + (1-p)^2s + p(1-p)
+    $$
+    
 
 * **Step 4: Compute event probabilities**
+  $$
+  s = p^2s + (1-p)^2s + p(1-p) \\
+  (s-p^2s-(1-p)^2s) = p(1-p) \\
+  s(1-p^2-(1-p)^2)=p(1-p) \\
+  s = \frac{p(1-p)}{(1-p^2-(1-p)^2)} \\
+  s = \frac{p(1-p)}{(2p-2p^2)} \\
+  s = \frac{p(1-p)}{2p(1-p)} \\
+  s = 1/2
+  $$
+  
 
 As $p$ and $1-p$ are less than 1, so they elevated to infinity is zero, therefore the probability that neither player wins is zero.
 
 ## Problem 4
 
+Prove the following probabilistic inequality, referred to as the Union Bound. Let  $A_1,  A_2,  \dots , A_n,  \dots$ be events. Then
+$$
+\Pr \left[ \bigcup_{n \in \N} A_n \right] \leq \sum _ {n \in \N} \Pr[A_n]
+$$
+**Answer**
+
+If all events are independent, the value of $\Pr \left[ \bigcup_{n \in \N} A_n \right]$ is $\sum _ {n \in \N} \Pr[A_n]$.
+
+Any probability of a set of codependent event with cardinality pair will be decreased from $\Pr \left[ \bigcup_{n \in \N} A_n \right]$, then the value will be less than $\sum _ {n \in \N} \Pr[A_n]$ for not disjoint events.
+
+Therefore $\Pr \left[ \bigcup_{n \in \N} A_n \right] \leq \sum _ {n \in \N} \Pr[A_n]$.
+
 ## Problem 5
 
+Prove:
+
+* Difference Rule
+* Complement Rule
+* Inclusion-Exclusion
+* 2-event Union Bound
+* Monotonicity
+
 ## Problem 6
+
+The New York Yankees and the Boston Red Sox are playing a two-out-of-three series. In other words, they play until one team has won two games. Then that team is declared the overall winner and the series ends. Assume that the Red Sox win each game with probability $3/5$, regardless of the outcomes of previous games. Answer the questions below using the four step method. You can use the same tree diagram for all three problems. 
+
+* **a)** What is the probability that a total of 3 games are played? 
+  $$
+  \frac 35 \frac 25 \frac 25 + \frac 35 \frac 25 \frac 35 + \frac 25 \frac 35 \frac 35 + \frac 25 \frac 35 \frac 25 =  \frac {60}{125} = \frac{12}{25}
+  $$
+  
+
+* **b)** What is the probability that the winner of the series loses the first game? 
+  $$
+  \frac 35 \frac 25 \frac 25 + \frac 25 \frac 35 \frac 35 =  \frac {30}{125} = \frac{6}{25}
+  $$
+  
+
+* **c)** What is the probability that the correct team wins the series?
+  $$
+  \frac 25 \frac 25 + \frac 25 \frac 35 \frac 25 + \frac 35 \frac 25 \frac 25 = \frac {44}{125}
+  $$
+  
+
+**Tree**
+
+![red_sox_tree](https://raw.githubusercontent.com/gpm22/ossu-projects/main/Mathematics%20for%20Computer%20Science/Unit%204%20-%20Probability/red_sox_tree.png)
