@@ -52,11 +52,10 @@ Use The Four Step Method to find the following probabilities:
       & & (D, D, A, B), (D, D, A, C), (D, D, B, A), (D, D, B, C), (D, D, C, A), (D, D, C, B) \}
       $$
       
-
     * **Step 2: Define events of interest.**
-
+    
       * The events of interest are the ones where staying results in victory, which are the ones where the door concealing prize and door initially chosen are the same.
-
+    
       * So we got 24 possible results:
         $$
         E & ::= &  \{(A, A, B, C), (A, A, B, D), (A, A, C, B), (A, A, C, D), (A, A, D, B), (A, A, D, B),\\
@@ -64,20 +63,20 @@ Use The Four Step Method to find the following probabilities:
         & & (C, C, A, B), (C, C, A, D), (C, C, B, A), (C, C, B, D), (C, C, D, A), (C, C, D, B) \\ 
         & & (D, D, A, B), (D, D, A, C), (D, D, B, A), (D, D, B, C), (D, D, C, A), (D, D, C, B) \}
         $$
-
+    
     * **Step 3: Determine outcome probabilities.**
-
+    
       * For outcomes where the door concealing the prize and the door initially chosen are the same, the probability is $1/96$, for the others is $1/64$
-
+    
     * **Step 4: Compute event probabilities**
       $$
       24 \times 1/96 = 24/96 = 1/4
       $$
       
-
+  
 * **b)** Contestant Zelda, an alien abduction researcher from Helena, Montana, switches to one of the remaining two doors with equal probability. What is the probability that Zelda wins the prize?
 
-  * **Sample Space**
+  * **Step 1: Sample Space**
 
     * Randomly-determined quantities:
       * The door concealing the car.
@@ -155,6 +154,40 @@ Use The Four Step Method to find the following probabilities:
   * Therefore the maximum possible is $np$, and the minimum value is $p$.
 
 ## Problem 3
+
+To determine which of two people gets a prize, a coin is flipped twice. If the flips are a Head and then a Tail, the first player wins. If the flips are a Tail and then a Head, the second player wins. However, if both coins land the same way, the flips don’t count and the whole process starts over.
+
+Assume that on each flip, a Head comes up with probability p, regardless of what happened on other flips. Use the four step method to find a simple formula for the probability that the first player wins. What is the probability that neither player wins?
+
+**Answer**
+
+* **Step 1: Sample Space**
+
+  * It is infinity.
+
+  * Tree:
+
+    ![permutation_book](https://raw.githubusercontent.com/gpm22/ossu-projects/main/Mathematics%20for%20Computer%20Science/Unit%204%20-%20Probability/head_tail_tree.png)
+
+  * Probability of head is $p$, therefore probability of tail is $1-p$.
+
+* **Step 2: Define events of interest.**
+
+  * Tail forever
+
+  * Head forever
+
+  * 2 tails 2 head forever
+
+  * 2 head 2 tails forever
+
+* **Step 3: Determine outcome probabilities.**
+
+  * It will be zero for everyone, 
+
+* **Step 4: Compute event probabilities**
+
+As $p$ and $1-p$ are less than 1, so they elevated to infinity is zero, therefore the probability that neither player wins is zero.
 
 ## Problem 4
 
