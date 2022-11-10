@@ -220,10 +220,71 @@ Therefore $\Pr \left[ \bigcup_{n \in \N} A_n \right] \leq \sum _ {n \in \N} \Pr[
 Prove:
 
 * Difference Rule
+
+  * $\Pr [A-B] = \Pr[A] - \Pr[A \cap B]$
+
+  * From sum rule:
+    $$
+    \Pr[B] = \Pr[B-A] + \Pr[A \cap B]
+    $$
+    
+
+  * Therefore
+    $$
+    \Pr[B-A] = \Pr[B] - \Pr[A \cap B]
+    $$
+    
 * Complement Rule
+
+  * $\Pr[\overline A] = 1 - \Pr[A]$
+  * The sum of all values in a probability space is 1.
+  * So, as $A + \overline A$ forms a complete probability space: $\Pr[A + \overline A] = 1$
+  * As they are also disjoint sets: $\Pr[A] + \Pr[\overline A] = 1$
+  * Therefore $\Pr[\overline A] = 1 - \Pr[A]$.
+
 * Inclusion-Exclusion
+
+  * $\Pr[A \cup B] = \Pr[A] + \Pr[B] - \Pr[A \cap B]$
+  * From difference rule: 
+
+    * $\Pr [A-B] = \Pr[A] - \Pr[A \cap B]$
+    * $\Pr [B-A] = \Pr[B] - \Pr[A \cap B]$
+
+  * So $Pr[A] + \Pr[B]$
+    $$
+    \Pr[A] + \Pr [B] = \Pr [A-B] + 2\Pr[A \cap B] + \Pr [B-A]
+    $$
+    
+
+  * $\Pr[A-B] + \Pr[B-A]$ is the sum of probabilities of $A$ independent of $B$ with the probabilities of $B$ independent of $A$, then it is equal the probabilities of the union of $A$ and $B$ minus the probabilities of the intersection between $A$ and $B$:
+    $$
+    \Pr[A-B] + \Pr[B-A] = \Pr[A \cup B] - \Pr[A \cap B]
+    $$
+    
+
+  * So
+    $$
+    \Pr[A] + \Pr [B] & = &  \Pr[A \cup B] - \Pr[A \cap B] + 2\Pr[A \cap B] \\
+    & = &  \Pr[A \cup B] + \Pr[A \cap B]
+    $$
+    
+
+  * Therefore
+    $$
+    \Pr[A \cup B] = \Pr[A] + \Pr [B] - \Pr[A \cap B]
+    $$
+    
+
 * 2-event Union Bound
+
+  * $\Pr[A \cup B] \leq \Pr[A] + \Pr[B]$
+  * It follows directly from the Inclusion-Exclusion.
+
 * Monotonicity
+
+  * If $A \subseteq B$, then $\Pr[A] \leq \Pr[B]$.
+  * As there are no negative values of probability, $\Pr[B]$ will sum also $\Pr[A]$, therefore If $A \subseteq B$, then $\Pr[A] \leq \Pr[B]$.
+
 
 ## Problem 6
 
@@ -234,13 +295,11 @@ The New York Yankees and the Boston Red Sox are playing a two-out-of-three serie
   \frac 35 \frac 25 \frac 25 + \frac 35 \frac 25 \frac 35 + \frac 25 \frac 35 \frac 35 + \frac 25 \frac 35 \frac 25 =  \frac {60}{125} = \frac{12}{25}
   $$
   
-
 * **b)** What is the probability that the winner of the series loses the first game? 
   $$
   \frac 35 \frac 25 \frac 25 + \frac 25 \frac 35 \frac 35 =  \frac {30}{125} = \frac{6}{25}
   $$
   
-
 * **c)** What is the probability that the correct team wins the series?
   $$
   \frac 25 \frac 25 + \frac 25 \frac 35 \frac 25 + \frac 35 \frac 25 \frac 25 = \frac {44}{125}
