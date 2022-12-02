@@ -31,13 +31,11 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
   \frac{7}{12}
   $$
   
-
 * **c)** What is the probability that Sally attends Yale, given that she is happy in college?
   $$
   \Pr[Y \ | \ H] = \frac{\Pr[Y \cap H]}{\Pr[H]} = \frac{16/144}{7/12} = \frac{4}{21}
   $$
   
-
 * **d)** Show that the event that Sally attends Yale **is not** independent of the event that she is happy.
 
   * If it would independent $\Pr[Y \ | \ H] = \Pr[Y] = 4/12$, but it is not, therefore it is not independent.
@@ -55,15 +53,14 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
     \{ HHH, HHT, HTH, HTT, THH, THT, TTH, TTT \}
     $$
     
-
   * Probability of $A$ is $1/2$
-
+  
   * Probability of $B$ is $1/2$
-
+  
   * Probability of $C$ is $1/2$
-
+  
   * Probability of $D$ is $4/8$
-
+  
 * **b)** Show that these events are not mutually independent
 
   * If they are mutually independent $\Pr [ A \cap B \cap C \cap D] = \Pr[A] \cdot \Pr[B] \cdot \Pr[C] \cdot \Pr[D] = 4/36$, but is zero as it is not possible to all 4 happens at the same time.
@@ -81,3 +78,61 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
 
 ## Problem 4
 
+Prove it or give a counterexample:
+
+* **a)** If $A$ is independent of $B$, then $A$ is also independent of $\overline B$
+
+  * If $A$ is independent of $B$, then $\Pr[A \cap B] = \Pr[A] \cdot \Pr[B]$
+
+  * If $A$ is independent of $\overline B$, then $\Pr[A \cap \overline B] = \Pr[A] \cdot \Pr[ \overline B]$
+
+  * We know that $\Pr[\overline B] = 1 - \Pr[B]$, so
+    $$
+    \Pr[A] & = & \Pr[A \cap B] + \Pr[A \cap \overline B] \\
+    & = & \Pr[A] \cdot \Pr[B] + \Pr[A] \cdot \Pr[ \overline B] \\
+    & = & \Pr[A] \cdot ([\Pr[B] + \Pr[\overline B]]) \\
+    & = & \Pr[A] \cdot 1 \\
+    & = & \Pr[A]
+    $$
+
+  * Therefore it is true.
+
+* **b)** If $A$ is independent of $B$, and $A$ is independent of $C$, then A is independent of $B \cap C$
+
+  * Lets assume them to be pairwise, but not mutually independent, therefore
+  * If $A$ is independent of $B$, then $\Pr[A \cap B] = \Pr[A] \cdot \Pr[B]$
+  * If $A$ is independent of $C$, then $\Pr[A \cap C] = \Pr[A] \cdot \Pr[C]$
+  * If $B$ is independent of $C$, then $\Pr[B \cap C] = \Pr[B] \cdot \Pr[C]$
+  * If $A$ is independent of $B \cap C$, then $\Pr[A \cap B \cap C] = \Pr[A] \cdot \Pr[B \cap C] = \Pr[A] \cdot \Pr[B] \cdot \Pr[C]$, which is a contradiction since they are not mutually independent.
+  * Therefore it is false.
+
+* **c)**  If $A$ is independent of $B$, and $A$ is independent of $C$, then A is independent of $B \cup C$
+
+  * Lets assume them to be pairwise, but not mutually independent.
+
+  * As intersection is associative over union:
+    $$
+    \Pr[A \cap (B \cup C)] & = & \Pr [(A \cap B) \cup (A \cap C)] \\
+    & = & \Pr[A \cap B] + \Pr[A \cap C] - \Pr [A \cap B \cap C]
+    $$
+     
+
+  * By inclusion-exclusion principle, $\Pr[B \cup C] = \Pr[B] + \Pr[C] - \Pr[B \cap C]$
+
+  * Multiplying both sides for $\Pr[A]$:
+    $$
+    \Pr[A] \Pr[B \cup C] = \Pr[A]\Pr[B] + \Pr[A]\Pr[C] - \Pr[A]\Pr[B \cap C] \\
+    $$
+    
+
+  * So, if $A$ is independent of $B \cup C$, $B$, and $C$
+    $$
+    \Pr[A \cap (B \cup C)] = \Pr[A \cap B] + \Pr[A \cap C] - \Pr[A]\Pr[B \cap C]
+    $$
+    
+
+  * So, for both be equal $A$ must be independent of $B \cap C$, which we already know is not true, therefore it is false.
+
+* **d)** If $A$ is independent of $B$, and $A$ is independent of $C$, and A is independent of $B \cap C$, then $A$ is independent to $A \cup B$.
+
+  * Using the proof of the last example, we can infer that if  A is independent of $B \cap C$, then $A$ is independent to $A \cup B$, therefore it is true.
