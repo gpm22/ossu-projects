@@ -76,6 +76,33 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
 
 ## Problem 3
 
+Let $G$ be an undirected simple graph with $n > 3$ vertices. Let $E(x, y)$ mean that $G$ has an edge between vertices $x$ and $y$, and let $P(x, y)$ mean that there is a length 2 walk in $G$ between $x$ and $y$.
+
+* **a)** Write a predicate-logic formula defining $P(x, y)$ in terms of $E(x,y)$
+  * $P(x,y) ::= \exist z. E(x, z) \and E(y, z)$
+    * If $P(x, y)$, then there is a $z$ where $E(x, z)$ and $E(y, z)$.
+
+Let $V$ be a fixed set of $n > 3$ vertices, and let $G$ be a graph with these vertices constructed randomly as follows:
+
+* For all distinct vertices $x, y \in V$, independently include edge $<x-y>$ as an edge of $G$ with probability $p$.
+* In particular, $\Pr[E(x,y)] = p$ for all $x \neq y$.
+  * Therefore $\Pr[P(x, y)] = \Pr[E(x, z) \cap E(y, z)]^{n-2} = (\Pr[E(x,z)]\Pr[E(y, z)])^{n-2} = p^{2n-4}$
+
+* **b)** For distinct vertices $w, x, y,z \in V$, mark the event pairs that are independent.
+  1. $E(w, x)$ versus $E(x, y)$. **Independent**
+  2. $E(w, x) \and E(w, y)$ versus $E(z, x) \and E(z, y)$. **Independent**
+  3. $E(w, x)$ versus $P(w, x)$.**Independent**
+  4. $P(w, x)$ versus $P(x, y)$.
+  5. $P(w, x)$ versus $P(y, z)$.
+* **c)** Write a simple formula in terms of $n$ and $p$ for $\Pr[\text{NOT } P(x, y)]$, for distinct vertices $x$ and $y$ in $V$.
+  * As $\Pr[P(x, y)] = p^{2n-4}$, $\Pr[\overline P(x, y)] = 1- p^{2n-4}$.
+* **d)** What is the probability that two distinct vertices $x$ and $y$ lie on a three-cycle in $G$? Answer with a simple expression in terms of $p$ and $r$, where $r ::= \Pr[\overline P(x, y)]$.
+  * If $x$, $y$ lies on a 3-cycle, that means there is a $z$ where $P(x, y)$, $P(x, z)$ and $P(y, z)$ are true.
+  * So this probability will be 1 minus $\Pr[\overline P(x, y)] \cap \Pr[\overline P(x, z)] \cap \Pr[\overline P(y, z)]$, as they are independent:
+  * The probability is $1-r^3$.
+
+
+
 ## Problem 4
 
 Prove it or give a counterexample:
@@ -115,24 +142,21 @@ Prove it or give a counterexample:
     \Pr[A \cap (B \cup C)] & = & \Pr [(A \cap B) \cup (A \cap C)] \\
     & = & \Pr[A \cap B] + \Pr[A \cap C] - \Pr [A \cap B \cap C]
     $$
-     
-
+    
   * By inclusion-exclusion principle, $\Pr[B \cup C] = \Pr[B] + \Pr[C] - \Pr[B \cap C]$
-
+  
   * Multiplying both sides for $\Pr[A]$:
     $$
     \Pr[A] \Pr[B \cup C] = \Pr[A]\Pr[B] + \Pr[A]\Pr[C] - \Pr[A]\Pr[B \cap C] \\
     $$
     
-
   * So, if $A$ is independent of $B \cup C$, $B$, and $C$
     $$
     \Pr[A \cap (B \cup C)] = \Pr[A \cap B] + \Pr[A \cap C] - \Pr[A]\Pr[B \cap C]
     $$
     
-
   * So, for both be equal $A$ must be independent of $B \cap C$, which we already know is not true, therefore it is false.
-
+  
 * **d)** If $A$ is independent of $B$, and $A$ is independent of $C$, and A is independent of $B \cap C$, then $A$ is independent to $A \cup B$.
 
   * Using the proof of the last example, we can infer that if  A is independent of $B \cap C$, then $A$ is independent to $A \cup B$, therefore it is true.
