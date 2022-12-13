@@ -133,7 +133,8 @@ You have just been married and you both want to have children. Of course, any ch
 
   * Assuming $i$ as the number of boys, the $\text{PDF}_B$ is
     $$
-    \text{PDF}_B = \left( \frac 12 \right)^{i+1}
+    \text{PDF}_B = \begin{cases} \left( \frac 12 \right)^{i} & \mbox{if } i > 0 \\
+    \frac 12 & \mbox{if } i =0 \end{cases}
     $$
     
 
@@ -141,10 +142,22 @@ You have just been married and you both want to have children. Of course, any ch
 
   * Knowing that $\text{CDF}_B(i) = \sum_{j \leq i} \text{PDF}_B(j)$:
     $$
-    \text{CDF}_B(i) & = & \sum_{j \leq i} \text{PDF}_B(j) \\
-    & = & \sum_{j \leq i} \left( \frac 12 \right)^{j+1} \\
-    & = & \frac 12 \cdot \sum_{j=0}^{i} \left( \frac 12 \right)^{j} \\
-    & = & \frac 12 \cdot \left( \frac {1-(1/2)^{i+1}}{1-(1/2)} \right) \\
-    & = & 1 - \left( \frac 12 \right)^{i+1}
+    \text{CDF}_B(i) & = & \begin{cases} \sum_{0 < j \leq i} \left( \frac 12 \right)^{j} & \mbox{if } i > 0 \\
+    \frac 12 & \mbox{if } i =0 \end{cases} \\
+    $$
+  
+  *  So, for that case where $i > 0$:
+    $$
+    \sum_{j \leq i} \text{PDF}_B(j)
+    & = & \sum_{0 < j \leq i} \left( \frac 12 \right)^{j} \\
+    & = & \sum_{j=1}^{i} \left( \frac 12 \right)^{j} \\
+    & = & \frac 12 \cdot \left( \frac {1-(1/2)^{i}}{1-(1/2)} \right) \\
+    & = & 1 - \left( \frac 12 \right)^i
+    $$
+  
+  * Therefore:
+    $$
+    \text{CDF}_B(i) & = & \begin{cases}  1 - \left( \frac 12 \right)^i & \mbox{if } i > 0 \\
+    \frac 12 & \mbox{if } i =0 \end{cases} \\
     $$
     
