@@ -126,3 +126,25 @@ Let $R_1, R_2, \dots, R_m$, be mutually independent random variables with unifor
   
 
 ## Problem 5
+
+You have just been married and you both want to have children. Of course, any child is a blessing, but your spouse prefers girls, so you decide to keep having children until you have a girl. In other words, if your 1st child is a girl, you’ll stop there. If it’s a boy, then you’ll have a 2nd child, too. If that one is a girl, you’ll stop there. Otherwise, you’ll have a 3rd child, and so on. Assume that you will never abandon this ingenious plan and that every child is equally likely to be a boy or a girl, independently of the number of its brothers so far. Let $B$ be the **boys** that you will eventually have to put up with to enjoy the company of your beloved daughter.
+
+* **a)** For $i=0,1,2,\dots$, what is the value of $\text{PDF}_B(i)$?
+
+  * Assuming $i$ as the number of boys, the $\text{PDF}_B$ is
+    $$
+    \text{PDF}_B = \left( \frac 12 \right)^{i+1}
+    $$
+    
+
+* **b)** For $i=0,1,2,\dots$, what is the value of $\text{CDF}_B(i)$?
+
+  * Knowing that $\text{CDF}_B(i) = \sum_{j \leq i} \text{PDF}_B(j)$:
+    $$
+    \text{CDF}_B(i) & = & \sum_{j \leq i} \text{PDF}_B(j) \\
+    & = & \sum_{j \leq i} \left( \frac 12 \right)^{j+1} \\
+    & = & \frac 12 \cdot \sum_{j=0}^{i} \left( \frac 12 \right)^{j} \\
+    & = & \frac 12 \cdot \left( \frac {1-(1/2)^{i+1}}{1-(1/2)} \right) \\
+    & = & 1 - \left( \frac 12 \right)^{i+1}
+    $$
+    
