@@ -11,7 +11,7 @@ import android.widget.EditText;
  */
 public class AddContactActivity extends AppCompatActivity {
 
-    private ContactList contact_list = new ContactList();
+    final private ContactList contact_list = new ContactList();
     private Context context;
 
     private EditText username;
@@ -22,8 +22,8 @@ public class AddContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
 
-        username = (EditText) findViewById(R.id.username);
-        email = (EditText) findViewById(R.id.email);
+        username = findViewById(R.id.username);
+        email = findViewById(R.id.email);
 
         context = getApplicationContext();
         contact_list.loadContacts(context);

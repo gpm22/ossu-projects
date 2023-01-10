@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,10 +19,10 @@ import java.util.ArrayList;
 public class ItemList {
 
     private static ArrayList<Item> items;
-    private String FILENAME = "items.sav";
+    final private String FILENAME = "items.sav";
 
     public ItemList() {
-        items = new ArrayList<Item>();
+        items = new ArrayList<>();
     }
 
     public void setItems(ArrayList<Item> item_list) {
@@ -70,10 +69,8 @@ public class ItemList {
             Type listType = new TypeToken<ArrayList<Item>>() {}.getType();
             items = gson.fromJson(isr, listType); // temporary
             fis.close();
-        } catch (FileNotFoundException e) {
-            items = new ArrayList<Item>();
         } catch (IOException e) {
-            items = new ArrayList<Item>();
+            items = new ArrayList<>();
         }
     }
 
@@ -85,8 +82,6 @@ public class ItemList {
             gson.toJson(items, osw);
             osw.flush();
             fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,7 +99,7 @@ public class ItemList {
 
     public ArrayList<Contact> getActiveBorrowers() {
 
-        ArrayList<Contact> active_borrowers = new ArrayList<Contact>();
+        ArrayList<Contact> active_borrowers = new ArrayList<>();
         for (Item i : items) {
             Contact borrower = i.getBorrower();
             if (borrower != null) {

@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -40,7 +39,7 @@ public abstract class ItemsFragment extends Fragment {
 
     public void setVariables(int resource, int id ) {
         rootView = inflater.inflate(resource, container, false);
-        list_view = (ListView) rootView.findViewById(id);
+        list_view = rootView.findViewById(id);
         selected_items = filterItems();
     }
 
@@ -50,22 +49,18 @@ public abstract class ItemsFragment extends Fragment {
         adapter.notifyDataSetChanged();
 
         // When item is long clicked, this starts EditItemActivity
-        list_view.setOnItemLongClickListener(new android.widget.AdapterView.OnItemLongClickListener() {
+        list_view.setOnItemLongClickListener((parent, view, pos, id) -> {
 
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) {
+            Item item = adapter.getItem(pos);
 
-                Item item = adapter.getItem(pos);
+            int meta_pos = item_list.getIndex(item);
+            if (meta_pos >= 0) {
 
-                int meta_pos = item_list.getIndex(item);
-                if (meta_pos >= 0) {
-
-                    Intent edit = new Intent(context, EditItemActivity.class);
-                    edit.putExtra("position", meta_pos);
-                    startActivity(edit);
-                }
-                return true;
+                Intent edit = new Intent(context, EditItemActivity.class);
+                edit.putExtra("position", meta_pos);
+                startActivity(edit);
             }
+            return true;
         });
     }
 

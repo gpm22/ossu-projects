@@ -2,6 +2,7 @@ package com.example.sharingapp;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,19 +18,17 @@ import java.util.ArrayList;
  */
 public class ItemAdapter extends ArrayAdapter<Item> {
 
-    private LayoutInflater inflater;
-    private Fragment fragment;
-    private Context context;
+    final private Fragment fragment;
+    final private Context context;
 
     public ItemAdapter(Context context, ArrayList<Item> items, Fragment fragment) {
         super(context, 0, items);
         this.context = context;
-        this.inflater = LayoutInflater.from(context);
         this.fragment = fragment;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
         // getItem(position) gets the "item" at "position" in the "items" ArrayList
         // (where "items" is a parameter in the ItemAdapter creator as seen above ^^)
@@ -37,6 +36,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         // The "Item" in the method name is a coincidence...
         Item item = getItem(position);
 
+        assert item != null;
         String title = "Title: " + item.getTitle();
         String description = "Description: " + item.getDescription();
         Bitmap thumbnail = item.getImage();
@@ -44,13 +44,13 @@ public class ItemAdapter extends ArrayAdapter<Item> {
 
         // Check if an existing view is being reused, otherwise inflate the view.
         if (convertView == null) {
-            convertView = inflater.from(context).inflate(R.layout.itemlist_item, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.itemlist_item, parent, false);
         }
 
-        TextView title_tv = (TextView) convertView.findViewById(R.id.title_tv);
-        TextView status_tv = (TextView) convertView.findViewById(R.id.status_tv);
-        TextView description_tv = (TextView) convertView.findViewById(R.id.description_tv);
-        ImageView photo = (ImageView) convertView.findViewById(R.id.image_view);
+        TextView title_tv = convertView.findViewById(R.id.title_tv);
+        TextView status_tv = convertView.findViewById(R.id.status_tv);
+        TextView description_tv = convertView.findViewById(R.id.description_tv);
+        ImageView photo = convertView.findViewById(R.id.image_view);
 
         if (thumbnail != null) {
             photo.setImageBitmap(thumbnail);

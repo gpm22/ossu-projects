@@ -24,9 +24,9 @@ public class AddItemActivity extends AppCompatActivity {
 
     private ImageView photo;
     private Bitmap image;
-    private int REQUEST_CODE = 1;
+    final private int REQUEST_CODE = 1;
 
-    private ItemList item_list = new ItemList();
+    final private ItemList item_list = new ItemList();
     private Context context;
 
     @Override
@@ -34,13 +34,13 @@ public class AddItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
-        title = (EditText) findViewById(R.id.title);
-        maker = (EditText) findViewById(R.id.maker);
-        description = (EditText) findViewById(R.id.description);
-        length = (EditText) findViewById(R.id.length);
-        width = (EditText) findViewById(R.id.width);
-        height = (EditText) findViewById(R.id.height);
-        photo = (ImageView) findViewById(R.id.image_view);
+        title = findViewById(R.id.title);
+        maker = findViewById(R.id.maker);
+        description = findViewById(R.id.description);
+        length = findViewById(R.id.length);
+        width = findViewById(R.id.width);
+        height = findViewById(R.id.height);
+        photo = findViewById(R.id.image_view);
 
         photo.setImageResource(android.R.drawable.ic_menu_gallery);
 
@@ -114,6 +114,7 @@ public class AddItemActivity extends AppCompatActivity {
     protected void onActivityResult(int request_code, int result_code, Intent intent){
         if (request_code == REQUEST_CODE && result_code == RESULT_OK){
             Bundle extras = intent.getExtras();
+            assert extras != null;
             image = (Bitmap) extras.get("data");
             photo.setImageBitmap(image);
         }

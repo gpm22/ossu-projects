@@ -1,6 +1,7 @@
 package com.example.sharingapp;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,33 +16,32 @@ import java.util.ArrayList;
  */
 public class ContactAdapter extends ArrayAdapter<Contact> {
 
-    private LayoutInflater inflater;
-    private Context context;
+    final private Context context;
 
     public ContactAdapter(Context context, ArrayList<Contact> contacts) {
         super(context, 0, contacts);
         this.context = context;
-        this.inflater = LayoutInflater.from(context);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
         // getItem(position) gets the "contact" at "position" in the "contacts" ArrayList
         // (where "contacts" is a parameter in the ContactAdapter creator as seen above ^^)
         Contact contact = getItem(position);
 
+        assert contact != null;
         String username = "Username: " + contact.getUsername();
         String email = "Email: " + contact.getEmail();
 
         // Check if an existing view is being reused, otherwise inflate the view.
         if (convertView == null) {
-            convertView = inflater.from(context).inflate(R.layout.contactlist_contact, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.contactlist_contact, parent, false);
         }
 
-        TextView username_tv = (TextView) convertView.findViewById(R.id.username_tv);
-        TextView email_tv = (TextView) convertView.findViewById(R.id.email_tv);
-        ImageView photo = (ImageView) convertView.findViewById(R.id.contacts_image_view);
+        TextView username_tv = convertView.findViewById(R.id.username_tv);
+        TextView email_tv = convertView.findViewById(R.id.email_tv);
+        ImageView photo = convertView.findViewById(R.id.contacts_image_view);
 
         photo.setImageResource(android.R.drawable.ic_menu_gallery);
 

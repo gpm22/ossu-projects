@@ -14,7 +14,7 @@ import android.widget.EditText;
  */
 public class EditContactActivity extends AppCompatActivity {
 
-    private ContactList contact_list = new ContactList();
+    final private ContactList contact_list = new ContactList();
     private Contact contact;
     private EditText email;
     private EditText username;
@@ -33,8 +33,8 @@ public class EditContactActivity extends AppCompatActivity {
 
         contact = contact_list.getContact(pos);
 
-        username = (EditText) findViewById(R.id.username);
-        email = (EditText) findViewById(R.id.email);
+        username = findViewById(R.id.username);
+        email = findViewById(R.id.email);
 
         username.setText(contact.getUsername());
         email.setText(contact.getEmail());

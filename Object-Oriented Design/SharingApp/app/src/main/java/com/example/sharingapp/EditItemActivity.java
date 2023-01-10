@@ -22,14 +22,14 @@ import android.widget.TextView;
  */
 public class EditItemActivity extends AppCompatActivity{
 
-    private ItemList item_list = new ItemList();
+    final private ItemList item_list = new ItemList();
     private Item item;
     private Context context;
 
-    private ContactList contact_list = new ContactList();
+    final private ContactList contact_list = new ContactList();
 
     private Bitmap image;
-    private int REQUEST_CODE = 1;
+    final private int REQUEST_CODE = 1;
     private ImageView photo;
 
     private EditText title;
@@ -48,17 +48,17 @@ public class EditItemActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_item);
 
-        title = (EditText) findViewById(R.id.title);
-        maker = (EditText) findViewById(R.id.maker);
-        description = (EditText) findViewById(R.id.description);
-        length = (EditText) findViewById(R.id.length);
-        width = (EditText) findViewById(R.id.width);
-        height = (EditText) findViewById(R.id.height);
-        borrower_spinner = (Spinner) findViewById(R.id.borrower_spinner);
-        borrower_tv = (TextView) findViewById(R.id.borrower_tv);
-        photo = (ImageView) findViewById(R.id.image_view);
-        status = (Switch) findViewById(R.id.available_switch);
-        invisible = (EditText) findViewById(R.id.invisible);
+        title = findViewById(R.id.title);
+        maker = findViewById(R.id.maker);
+        description = findViewById(R.id.description);
+        length = findViewById(R.id.length);
+        width = findViewById(R.id.width);
+        height = findViewById(R.id.height);
+        borrower_spinner = findViewById(R.id.borrower_spinner);
+        borrower_tv = findViewById(R.id.borrower_tv);
+        photo = findViewById(R.id.image_view);
+        status = findViewById(R.id.available_switch);
+        invisible = findViewById(R.id.invisible);
 
         invisible.setVisibility(View.GONE);
 
@@ -66,7 +66,7 @@ public class EditItemActivity extends AppCompatActivity{
         item_list.loadItems(context);
         contact_list.loadContacts(context);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, contact_list.getAllUsernames());
         borrower_spinner.setAdapter(adapter);
 
@@ -123,6 +123,7 @@ public class EditItemActivity extends AppCompatActivity{
     protected void onActivityResult(int request_code, int result_code, Intent intent){
         if (request_code == REQUEST_CODE && result_code == RESULT_OK){
             Bundle extras = intent.getExtras();
+            assert extras != null;
             image = (Bitmap) extras.get("data");
             photo.setImageBitmap(image);
         }
