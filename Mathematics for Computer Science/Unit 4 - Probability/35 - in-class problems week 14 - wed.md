@@ -44,8 +44,8 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
 
   * Therefore:
 
-    * $\Pr[\text{at } w] = 10/19$.
-    * $\Pr[\text{at } z] = 9/19$.
+    * $\Pr[\text{at } w] = 9/19$.
+    * $\Pr[\text{at } z] = 10/19$.
 
 * **d)** If you start at node $w$ Figure 2 and take a (long) random walk, does the distribution over nodes ever get close to the stationary distribution?
 
