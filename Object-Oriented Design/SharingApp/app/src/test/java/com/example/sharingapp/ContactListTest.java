@@ -85,16 +85,16 @@ public class ContactListTest {
     public void testHasContact() {
 
         Contact contact = new Contact("c", "c", "c");
-        Assert.assertEquals(false, contactList.hasContact(contact));
+        Assert.assertFalse(contactList.hasContact(contact));
         contacts.add(contact);
         contactList.setContacts(contacts);
-        Assert.assertEquals(true, contactList.hasContact(contact));
+        Assert.assertTrue(contactList.hasContact(contact));
     }
 
     @Test
     public void testIsUsernameAvailable() {
-        Assert.assertEquals(true, contactList.isUsernameAvailable("a"));
+        Assert.assertTrue(contactList.isUsernameAvailable("a"));
         contactList.setContacts(contacts);
-        Assert.assertEquals(false, contactList.isUsernameAvailable("a"));
+        Assert.assertFalse(contactList.isUsernameAvailable("a"));
     }
 }

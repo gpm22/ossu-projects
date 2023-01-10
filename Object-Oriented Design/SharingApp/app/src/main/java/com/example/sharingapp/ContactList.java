@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,10 +17,10 @@ import java.util.stream.Collectors;
 public class ContactList {
 
     private ArrayList<Contact> contacts;
-    private String FILENAME = "contacts.sav";
+    final private String FILENAME = "contacts.sav";
 
     public ContactList() {
-        contacts = new ArrayList<Contact>();
+        contacts = new ArrayList<>();
     }
 
     public void setContacts(ArrayList<Contact> contact_list) {
@@ -54,23 +53,11 @@ public class ContactList {
     }
 
     public int getIndex(Contact contact) {
-        int pos = 0;
-        for (Contact i : contacts) {
-            if (contact.getId().equals(i.getId())) {
-                return pos;
-            }
-            pos = pos+1;
-        }
-        return -1;
+        return contacts.indexOf(contact);
     }
 
     public boolean hasContact(Contact contact){
-        for (Contact i : contacts) {
-            if (contact.getId().equals(i.getId())) {
-                return true;
-            }
-        }
-        return false;
+        return contacts.contains(contact);
     }
 
     public Contact getContactByUsername(String username){
@@ -92,10 +79,8 @@ public class ContactList {
             Type listType = new TypeToken<ArrayList<Contact>>() {}.getType();
             contacts = gson.fromJson(isr, listType); // temporary
             fis.close();
-        } catch (FileNotFoundException e) {
-            contacts = new ArrayList<Contact>();
         } catch (IOException e) {
-            contacts = new ArrayList<Contact>();
+            contacts = new ArrayList<>();
         }
     }
 
@@ -108,8 +93,6 @@ public class ContactList {
             gson.toJson(contacts, osw);
             osw.flush();
             fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,11 +100,7 @@ public class ContactList {
 
 
     public boolean isUsernameAvailable(String username){
-        if(this.getContactByUsername(username) == null){
-            return true;
-        }
-
-        return  false;
+        return this.getContactByUsername(username) == null;
     }
 
     @Override
