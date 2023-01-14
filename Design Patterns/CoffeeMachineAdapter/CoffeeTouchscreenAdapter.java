@@ -6,6 +6,10 @@ public class CoffeeTouchscreenAdapter implements CoffeeMachineInterface {
         oldCoffeeMachine = new OldCoffeeMachine();
     }
 
+    public CoffeeTouchscreenAdapter(OldCoffeeMachine oldCoffeeMachine) {
+        this.oldCoffeeMachine = oldCoffeeMachine;
+    }
+
     @Override
     public void chooseFirstSelection() {
         oldCoffeeMachine.selectA();
