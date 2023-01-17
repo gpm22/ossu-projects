@@ -99,7 +99,7 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
   * The number of ringwraiths is defined by the largest antichain, so the smallest number of ringwraiths is $n/t$
   * The DAG of problem 1 illustrates this;
 * **c)** Write a simple formula involving $n$ and $t$ for the largest number of Ringwraiths that could possibly be able to complete all $n$ tasks in $t$ weeks. 
-  * If he is unlucky, then the largest chain is bigger than $t$, so he is need at most $n$;
+  * If he is unlucky, then the largest chain is bigger than $t$, so he is need at most $n-t+1$;
 
 
 ## Problem 4
