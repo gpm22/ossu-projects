@@ -146,7 +146,7 @@ In a standard 52-card deck (13 ranks and 4 suits), a hand is a 5-card subset of 
     $$
     |H_S| = 10 \times 4^5 = 10240
     $$
-     
+    
 
 * **c)** Let $H_F$ be the set of all hands that are flushes; that is, the suits of the five cards are identical. What is $|H_F|$?
 
@@ -174,10 +174,192 @@ In a standard 52-card deck (13 ranks and 4 suits), a hand is a 5-card subset of 
 
 ## Problem 8
 
+Here’s a variation of Monty Hall’s game: the contestant still picks one of three doors, with a prize randomly placed behind one door and goats behind the other two. But now, instead of always opening a door to reveal a goat, Monty instructs Carol to randomly open one of the two doors that the contestant hasn’t picked. This means she may reveal a goat, or she may reveal the prize. If she reveals the prize, then the entire game is restarted, that is, the prize is again randomly placed behind some door, the contestant again picks a door, and so on until Carol finally picks a door with a goat behind it. Then the contestant can choose to stick with his original choice of door or switch to the other unopened door. He wins if the prize is behind the door he finally chooses. 
+
+To analyze this setup, we define two events:
+
+* $GP$: The event that the contestant **g**uesses the door with the **p**rize behind it on his first guess.
+* $OP$: The event that the game is restarted at least once. 
+  * Another way to describe this is as the event that the door Carol first **o**pens has a **p**rize behind it. 
+
+Give the values of the following probabilities: 
+
+* **a)** $\Pr[OP | \overline{GP}]$
+
+  * 1/2
+
+* **b**) $\Pr[OP]$
+
+  * 1/3
+
+* **c**) The probability that the game will continue forever.
+
+  * 0
+
+* **d**) When Carol finally picks the goat, the contestant has the choice of sticking or switching. Let’s say that the contestant adopts the strategy of sticking. Let $W$ be the event that the contestant wins with this strategy, and let $w ::= \Pr[W]$. Express the following conditional probabilities as simple closed forms in terms of $w$. 
+
+  1. $\Pr[W | GP]$
+     * 1
+  2. $\Pr[W \ | \ \overline{GP} \ \cap \ OP]$
+     * w
+  3. $\Pr[W \ | \ \overline{GP} \ \cap \ \overline{OP}]$
+     * 0
+
+* **e) **What is the value of $\Pr[W]$?
+
+  * Analyzing the tree of outcomes we have that 
+
+
+  $$
+  \Pr[W] = \frac 13 + \frac {\Pr[W]} 3
+  $$
+
+  * Therefore
+    $$
+    \Pr[W] = 1/2
+    $$
+
+* **f)** Let $R$ be the number of times the game is restarted before Carol picks a goat. What is $\text{Ex}[R]$?
+  $$
+  \text{Ex}[R] = \frac{1}{3} + \frac{2}{3^2} + \frac{3}{3^3} + \cdots = \sum_{i=1}^\infty \frac{i}{3^i} = \frac 34
+  $$
+  
+
+
+Probability tree:
+
+```
+ Car		Player's  	Door	   Switch		Probability
+ location	 Initial 	Revealed	Wins
+ 			 Guess
+    
+             1/3  A  --B---.  1/2					1/18
+                /   \--C---. 1/2					1/18
+               /
+             .- 1/3 B --C---. 1/2		1			1/18
+            / \       \--A---. 1/2		?            1/18
+           /   \      
+     1/3  /      1/3 C --B---. 1/2		1			1/18
+      A  /            \--A---. 1/2		?			1/18
+        /
+       /      1/3  A --C---. 1/2	    1			1/18
+      /       /	   \ --B---. 1/2 		?			1/18	
+     /       /
+    .  -B-- .- 1/3 B --A---.1/2						1/18
+     \ 1/3   \	   \----C---.1/2					1/18
+      \       \
+       \     1/3  C --A---. 1/2			1			1/18
+      C \          \--B---. 1/2 		?			1/18
+    1/3  \  1/3  A --B---. 1/2			1			1/18
+          \    /  \--C---. 1/2			?			1/18
+           \ /
+            \.- 1/3 B --A---. 1/2		1			1/18
+             \      \ --C---. 1/2 		?			1/18
+              \
+           1/3 C --A---.1/2							1/18
+                \--C---.1/2							1/18
+                  
+                  
+                  
+                  
+                  
+
+
+
+
+```
+
+* Probability of **winning** in the first interaction:
+  * 1/3
+* Probability of **repeating** in the first interaction:
+  * 1/3
+* Probability of **losing** in the first interaction:
+  * 1/3
+
 ## Problem 9
+
+A simple graph with $n$ vertices is constructed by randomly placing an edge between every two vertices with probability $p$. These random edge placements are performed independently.
+
+* **a)** What is the probability that a given vertex of the graph has degree two?
+  $$
+  \Pr[d2] = p^2(1-p)^{n-2}
+  $$
+  
+
+* **b)** What is the expected number of nodes with degree two?
+  $$
+  \text{Ex}[d2] = np^2(1-p)^{n-2}
+  $$
+  
 
 ## Problem 10
 
+You have a coin with probability $p$ of flipping heads. For your first try, you flip it once. For your second try, you independently flip it twice. You continue until the $n$th try, where you independently flip it $n$ times. You win a try if you flip all heads. Let $W$ be the number of winning tries. Write a closed-form expression for $\text{Var}[W]$.
+
+**Answer**
+
+$W$ has a $([n(n+1)/2], p)$-distribution, therefore:
+$$
+\text{Var}[W] = \frac {np(n+1)(1-p)}{2}
+$$
+
 ## Problem 11
 
+Albert has a gambling problem. He plays 35 hands of draw poker, 30 hands of black jack, and 20 hands of stud poker per day. He wins a hand of draw poker with probability 1/7, a hand of black jack with probability 1/6, and a hand of stud poker with probability 1/5. Let $W$ be the expected number of hands that Albert wins in a day. 
+
+* **a)** What is $\text{Ex}[W]$?
+  $$
+  \text{Ex}[W] = 35/7 + 30/6 + 20/5 = 14
+  $$
+  
+
+* **b)** What would the Markov bound be on the probability that Albert will win at least 45 hands on a given day? 
+  $$
+  \Pr[W \geq 45] \leq \frac {\text{Ex}[W]}{45} = \frac {14}{45}
+  $$
+
+* **c)** Assume the outcomes of the card games are pairwise independent. What is $\text{Var}[W]$? 
+
+  * As the $W$'s have binomial distribution, we will have $\text{Var}[W_i]=n_ip_ i(1-p_ i)$.
+
+  * Variance of draw poker
+    $$
+    \text{Var}[W_{dp}] = 35 \times \frac 17 \times \frac 6 7 = \frac {30}  {7}
+    $$
+    
+
+  * Variance of black jack
+    $$
+    \text{Var}[W_{bj}] = 30 \times \frac 16 \times \frac 5 6 = \frac {25} {6}
+    $$
+    
+
+  * Variance of stud poker
+    $$
+    \text{Var}[W_{sp}] = 20 \times \frac 15 \times \frac 4 5 = \frac {16}{5}
+    $$
+    
+
+  * $\text{Var}[W]$
+    $$
+    \text{Var}[W] = \text{Var}[W_{dp}] + \text{Var}[W_{bj}] + \text{Var}[W_{sp}] = \frac {2447}{210} \approx 11.65
+    $$
+    
+
+* **d)** What would the Chebyshev bound be on the probability that Albert will win at least 45 hands on a given day? 
+
+  * $x = 45 - \text{Ex}[W] = 45- 14= 31$
+
+  * Therefore
+    $$
+    \Pr[|W-\text{Ex}[W]| \geq 31] = \frac {2447}{210\cdot31} \approx 0.376
+    $$
+    
+
 ## Problem 12
+
+Give simple examples of random walk graphs with the following properties. 
+
+* **a)** A graph with an uncountable number of stationary distributions.
+* **b)** A graph with unique stationary distribution that is not strongly connected. 
+* **c)** A strongly connected graph with an initial distribution that does not converge to the stationary distribution. 
