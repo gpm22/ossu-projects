@@ -210,9 +210,9 @@ Give the values of the following probabilities:
   * Analyzing the tree of outcomes we have that 
 
 
-  $$
+$$
   \Pr[W] = \frac 13 + \frac {\Pr[W]} 3
-  $$
+$$
 
   * Therefore
     $$
@@ -285,7 +285,6 @@ A simple graph with $n$ vertices is constructed by randomly placing an edge betw
   \Pr[d2] = p^2(1-p)^{n-2}
   $$
   
-
 * **b)** What is the expected number of nodes with degree two?
   $$
   \text{Ex}[d2] = np^2(1-p)^{n-2}
@@ -312,7 +311,6 @@ Albert has a gambling problem. He plays 35 hands of draw poker, 30 hands of blac
   \text{Ex}[W] = 35/7 + 30/6 + 20/5 = 14
   $$
   
-
 * **b)** What would the Markov bound be on the probability that Albert will win at least 45 hands on a given day? 
   $$
   \Pr[W \geq 45] \leq \frac {\text{Ex}[W]}{45} = \frac {14}{45}
@@ -327,25 +325,22 @@ Albert has a gambling problem. He plays 35 hands of draw poker, 30 hands of blac
     \text{Var}[W_{dp}] = 35 \times \frac 17 \times \frac 6 7 = \frac {30}  {7}
     $$
     
-
   * Variance of black jack
     $$
     \text{Var}[W_{bj}] = 30 \times \frac 16 \times \frac 5 6 = \frac {25} {6}
     $$
     
-
   * Variance of stud poker
     $$
     \text{Var}[W_{sp}] = 20 \times \frac 15 \times \frac 4 5 = \frac {16}{5}
     $$
     
-
   * $\text{Var}[W]$
     $$
     \text{Var}[W] = \text{Var}[W_{dp}] + \text{Var}[W_{bj}] + \text{Var}[W_{sp}] = \frac {2447}{210} \approx 11.65
     $$
     
-
+  
 * **d)** What would the Chebyshev bound be on the probability that Albert will win at least 45 hands on a given day? 
 
   * $x = 45 - \text{Ex}[W] = 45- 14= 31$
@@ -361,5 +356,48 @@ Albert has a gambling problem. He plays 35 hands of draw poker, 30 hands of blac
 Give simple examples of random walk graphs with the following properties. 
 
 * **a)** A graph with an uncountable number of stationary distributions.
-* **b)** A graph with unique stationary distribution that is not strongly connected. 
-* **c)** A strongly connected graph with an initial distribution that does not converge to the stationary distribution. 
+
+  * $V = \{a,b,c,d \}$
+  * $E = \{\langle a \to a \rangle :1, \langle b \to a \rangle :1/2, \langle b \to c \rangle :1/2, \langle c \to b \rangle :1/2, \langle c \to d \rangle :1/2, \langle d \to d \rangle :1 \}$
+
+  ```
+               -------------
+   1      1/2  |    1/2    ↓	 1/2	 1
+  --- a <----- b           c ------> d ---
+  | ↗          ↑    1/2    |           ↖ |
+               -------------
+  ```
+
+  
+
+* **b)** A graph with unique stationary distribution that is not strongly connected.
+
+  * $V = {a, b, c}$
+  * $E = \{\langle a \to b \rangle, \langle b \to c \rangle, \langle c \to a \rangle \}$
+
+  ```
+       1
+  a ------> b 
+   ↖       /
+  1 \     / 1
+     \   ↙
+       c
+  ```
+
+  
+
+* **c)** A strongly connected graph with an initial distribution that does not converge to the stationary distribution.
+
+  *  $V = \{x, y\}$
+  * $E = \{\langle x \to y \rangle, \langle y \to x \rangle\}$
+    * both with weight 1.
+
+  ```
+  -------------
+  |     1     ↓
+  X           y
+  ↑     1     |
+  -------------
+  ```
+
+  

@@ -19,7 +19,7 @@ My OSSU progress can be seen in [OSSU progress](https://trello.com/b/DIZv8gOk/os
 
 ### Core Math
 
-* [Mathematics for Computer Science](https://github.com/gpm22/ossu-projects/tree/main/Mathematics%20for%20Computer%20Science) (In progress)
+* [Mathematics for Computer Science](https://github.com/gpm22/ossu-projects/tree/main/Mathematics%20for%20Computer%20Science) (**Done**)
 
 ### CS Tools
 

@@ -105,7 +105,7 @@ Questions available on [**MIT**](https://openlearninglibrary.mit.edu/assets/cour
     \Pr[\text{at $d$ | starting at $b$}] = \sum_{i=1}^{\infty}\frac {1}{2^{2i}} = \frac 13
     $$
 
-* **g)** Give an example of a random walk graph that is not strongly connected but has a unique stationary distribution. Hint.
+* **g)** Give an example of a random walk graph that is not strongly connected but has a unique stationary distribution. 
 
   * The graph 
     * $V = {a, b, c}$
