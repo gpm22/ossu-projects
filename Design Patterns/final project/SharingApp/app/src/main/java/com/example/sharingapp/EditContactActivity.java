@@ -8,7 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 
 /**
- * Editing a pre-existing contact consists of deleting the old contact and adding a new contact with the old
+ * Editing a pre-existing contact consists of deleting the old contact and
+ * adding a new contact with the old
  * contact's id.
  * Note: You will not be able contacts which are "active" borrowers
  */
@@ -19,6 +20,7 @@ public class EditContactActivity extends AppCompatActivity {
     private EditText email;
     private EditText username;
     private Context context;
+    private String email_str;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +44,9 @@ public class EditContactActivity extends AppCompatActivity {
 
     public void saveContact(View view) {
 
-        String email_str = email.getText().toString();
+        email_str = email.getText().toString();
 
-        if (email_str.equals("")) {
-            email.setError("Empty field!");
-            return;
-        }
-
-        if (!email_str.contains("@")){
-            email.setError("Must be an email address!");
+        if (!validateInput()) {
             return;
         }
 
@@ -59,7 +55,8 @@ public class EditContactActivity extends AppCompatActivity {
 
         contact_list.deleteContact(contact);
 
-        // Check that username is unique AND username is changed (Note: if username was not changed
+        // Check that username is unique AND username is changed (Note: if username was
+        // not changed
         // then this should be fine, because it was already unique.)
         if (!contact_list.isUsernameAvailable(username_str) && !(contact.getUsername().equals(username_str))) {
             username.setError("Username already taken!");
@@ -73,6 +70,20 @@ public class EditContactActivity extends AppCompatActivity {
 
         // End EditContactActivity
         finish();
+    }
+
+    public boolean validateInput() {
+        if (email_str.equals("")) {
+            email.setError("Empty field!");
+            return false;
+        }
+
+        if (!email_str.contains("@")) {
+            email.setError("Must be an email address!");
+            return false;
+        }
+
+        return true;
     }
 
     public void deleteContact(View view) {

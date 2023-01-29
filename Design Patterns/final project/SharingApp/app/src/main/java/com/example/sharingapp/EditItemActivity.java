@@ -15,12 +15,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 /**
- * Editing a pre-existing item consists of deleting the old item and adding a new item with the old
+ * Editing a pre-existing item consists of deleting the old item and adding a
+ * new item with the old
  * item's id.
- * Note: invisible EditText is used to setError for status. For whatever reason we cannot .setError to
+ * Note: invisible EditText is used to setError for status. For whatever reason
+ * we cannot .setError to
  * the status Switch so instead an error is set to an "invisible" EditText.
  */
-public class EditItemActivity extends AppCompatActivity{
+public class EditItemActivity extends AppCompatActivity {
 
     final private ItemList item_list = new ItemList();
     private Item item;
@@ -39,9 +41,15 @@ public class EditItemActivity extends AppCompatActivity{
     private EditText width;
     private EditText height;
     private Spinner borrower_spinner;
-    private TextView  borrower_tv;
+    private TextView borrower_tv;
     private Switch status;
     private EditText invisible;
+    private String title_str;
+    private String maker_str;
+    private String description_str;
+    private String length_str;
+    private String width_str;
+    private String height_str;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +78,13 @@ public class EditItemActivity extends AppCompatActivity{
                 android.R.layout.simple_spinner_dropdown_item, contact_list.getAllUsernames());
         borrower_spinner.setAdapter(adapter);
 
-        Intent intent = getIntent();   // Get intent from ItemsFragment
+        Intent intent = getIntent(); // Get intent from ItemsFragment
         int pos = intent.getIntExtra("position", 0);
 
         item = item_list.getItem(pos);
 
         Contact contact = item.getBorrower();
-        if (contact != null){
+        if (contact != null) {
             int contact_pos = contact_list.getIndex(contact);
             borrower_spinner.setSelection(contact_pos);
         }
@@ -120,8 +128,8 @@ public class EditItemActivity extends AppCompatActivity{
     }
 
     @Override
-    protected void onActivityResult(int request_code, int result_code, Intent intent){
-        if (request_code == REQUEST_CODE && result_code == RESULT_OK){
+    protected void onActivityResult(int request_code, int result_code, Intent intent) {
+        if (request_code == REQUEST_CODE && result_code == RESULT_OK) {
             Bundle extras = intent.getExtras();
             assert extras != null;
             image = (Bitmap) extras.get("data");
@@ -141,12 +149,12 @@ public class EditItemActivity extends AppCompatActivity{
 
     public void saveItem(View view) {
 
-        String title_str = title.getText().toString();
-        String maker_str = maker.getText().toString();
-        String description_str = description.getText().toString();
-        String length_str = length.getText().toString();
-        String width_str = width.getText().toString();
-        String height_str = height.getText().toString();
+        title_str = title.getText().toString();
+        maker_str = maker.getText().toString();
+        description_str = description.getText().toString();
+        length_str = length.getText().toString();
+        width_str = width.getText().toString();
+        height_str = height.getText().toString();
 
         Contact contact = null;
         if (!status.isChecked()) {
@@ -156,33 +164,7 @@ public class EditItemActivity extends AppCompatActivity{
 
         Dimensions dimensions = new Dimensions(length_str, width_str, height_str);
 
-        if (title_str.equals("")) {
-            title.setError("Empty field!");
-            return;
-        }
-
-        if (maker_str.equals("")) {
-            maker.setError("Empty field!");
-            return;
-        }
-
-        if (description_str.equals("")) {
-            description.setError("Empty field!");
-            return;
-        }
-
-        if (length_str.equals("")) {
-            length.setError("Empty field!");
-            return;
-        }
-
-        if (width_str.equals("")) {
-            width.setError("Empty field!");
-            return;
-        }
-
-        if (height_str.equals("")) {
-            height.setError("Empty field!");
+        if (!validateInput()) {
             return;
         }
 
@@ -206,11 +188,45 @@ public class EditItemActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
+    public boolean validateInput() {
+        if (title_str.equals("")) {
+            title.setError("Empty field!");
+            return false;
+        }
+
+        if (maker_str.equals("")) {
+            maker.setError("Empty field!");
+            return false;
+        }
+
+        if (description_str.equals("")) {
+            description.setError("Empty field!");
+            return false;
+        }
+
+        if (length_str.equals("")) {
+            length.setError("Empty field!");
+            return false;
+        }
+
+        if (width_str.equals("")) {
+            width.setError("Empty field!");
+            return false;
+        }
+
+        if (height_str.equals("")) {
+            height.setError("Empty field!");
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Checked = Available
      * Unchecked = Borrowed
      */
-    public void toggleSwitch(View view){
+    public void toggleSwitch(View view) {
         if (status.isChecked()) {
             // Means was previously borrowed, switch was toggled to available
             borrower_spinner.setVisibility(View.GONE);
@@ -220,7 +236,7 @@ public class EditItemActivity extends AppCompatActivity{
 
         } else {
             // Means not borrowed
-            if (contact_list.getSize()==0){
+            if (contact_list.getSize() == 0) {
                 // No contacts, need to add contacts to be able to add a borrower.
                 invisible.setEnabled(false);
                 invisible.setVisibility(View.VISIBLE);
