@@ -33,11 +33,11 @@ The running time for Merge is at most $l_1+l_2 = 2n$, where $l_1$ is the length 
 
 The $k$ steps will be:
 
-1. 2n
-2. 3n
-3. 4n
-4. ...
-5. kn
+1. $2n$
+2. $3n$
+3. $4n$
+4. $\vdots$
+5. $kn$
 
 as the sum from 1 to $k$ grows with $k^2$ the answer is:
 
