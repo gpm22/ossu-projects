@@ -28,10 +28,10 @@ Arrange the following functions in order of increasing growth rate, with $g(n)$ 
 
 **Answer**
 
-1. a) $\sqrt{n}$
-2. c) $n^{1.5}$
-3. e) $n^{5/3}$
-4. d) $2^{\sqrt{\log_2 n}}$
+1. d) $2^{\sqrt{\log_2 n}}$
+2. a) $\sqrt{n}$
+3. c) $n^{1.5}$
+4. e) $n^{5/3}$
 5. b) $10^n$
 
 ### Problem 2.4
