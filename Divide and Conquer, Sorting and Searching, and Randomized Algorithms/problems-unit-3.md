@@ -184,36 +184,38 @@ Implement in your favorite programming language the `CountInv` algorithm from Se
 ```ruby
 def countInv (a)
     n = a.length
+    n_half = (n / 2).round
     if n <= 1
-        (a, 0)
+        [a, 0]
     else
-        (c, leftInv) = countInv(a[0..n/2])  #first half of a
-        (d, rightInv) = countInv(a[n/2..n-1]) #second half of a
-        (b, splitInv) = mergeAndCountSplitInv(c, d)
-        (b, leftInv + rightInv + splitInv)
+        c, leftInv = countInv(a.take(n_half))  #first half of a
+        d, rightInv = countInv(a.drop(n_half)) #second half of a
+        b, splitInv = mergeAndCountSplitInv(c, d)
+        [b, leftInv + rightInv + splitInv]
     end
 end
 
 def mergeAndCountSplitInv (c, d)
-    n = 2* c.length
-    i = 0
-    j = 0
     splitInv = 0
     b = []
-    for k = 0 to n-1
-        if c[i] < d[j]
-            b[k] = c[i]
-            i = i+1
+    while (c.length > 0 and d.length > 0)
+        if c[0] < d[0]
+            b.push(c.shift)
         else
-            b[k] = d[i]
-            j = j+1
-            splitInv = splitInv + (n/2 - i + 2) #left in C
+            b.push(d.shift)
+            splitInv = splitInv + c.length
         end
     end
-    
-    (b, splitInv)
-end
+   
+    if c.length > 0 
+        b.concat(c)
+    end
 
-    
+    if d.length > 0
+        b.concat(d)
+    end
+
+    [b, splitInv]
+end
 ```
 
