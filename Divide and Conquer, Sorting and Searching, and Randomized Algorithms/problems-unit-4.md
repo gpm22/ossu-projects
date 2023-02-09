@@ -93,8 +93,14 @@ Suppose the running time $T(n)$ of an algorithm is bounded by the (non-standard!
 
 The recurrence shows that each level does 1 recursive call and decrease the level of $n$ by its square.
 
-This means that the tree has $\text{floor}(\log_2(n))$ levels.
+Lets use the substitutions $n = 2^m$ or $m = \log_2 n$ and $R(m) = T(n)$.
 
-The work done by each level is $O(1)$, therefore the running time is $O(\log n))$.
+We assume that $T(\text{floor}(2^{m/2})) \approx  T(2^{m/2}) =  R(m/2)$
 
-Therefore, the correct answer is **c) $O(\log n)$**.
+Thus $R(m) < R(m/2) + 1$.
+
+By the master method, $R(m) = O(\log m)$.
+
+So, $T(n) = O(\log \log n)$.
+
+Therefore, the correct answer is **b) $O(\log \log n)$**.
