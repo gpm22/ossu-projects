@@ -70,7 +70,7 @@ end
     
 def quickSortLastElement(arr, l, r)
     count = Enumerator.new { |y| i = -1; loop { y << (i+=1) } } 
-	quickSort(arr, l, r, method(:choosePivotLastElement), count)
+    quickSort(arr, l, r, method(:choosePivotLastElement), count)
     count.next - 1
 end
     
@@ -89,30 +89,30 @@ end
 def testCase(arr)
     header = "Array: " + arr.to_s
 
-    arr1 = arr
+    arr1 = Array.new(arr)
     count1 = quickSortFirstElement(arr1, 0, arr1.length-1)
 
-    arr2 = arr
-    count2 = quickSortLastElement(arr2, 0, arr1.length-1)
+    arr2 = Array.new(arr)
+    count2 = quickSortLastElement(arr2, 0, arr2.length-1)
 
     count3 = 0
-    for i in 1..10
-        arr3 = arr
-        count3 = count3 + quickSortRandomElement(arr3, 0, arr1.length-1)
+    for i in 1..50
+        arr3 = Array.new(arr)
+        count3 = count3 + quickSortRandomElement(arr3, 0, arr3.length-1)
     end
 
-    count3 = count3/10
+    count3 = count3/50
 
-    arr4 = arr
-    count4 = quickSortMedianOfThree(arr4, 0, arr1.length-1)
+    arr4 = Array.new(arr)
+    count4 = quickSortMedianOfThree(arr4, 0, arr4.length-1)
 
     arrSorted = arr.sort
 
     
-    firstElement = "firstElement - is correct? " + (arr1 == arrSorted).to_s + " - count: " + count1.to_s
-    lastElement = "lastElement - is correct? " + (arr2 == arrSorted).to_s + " - count: " + count2.to_s
-    randomElement = "randomElement - is correct? " + (arr3 == arrSorted).to_s + " - count: " + count3.to_s
-    medianOfThree = "medianOfThree - is correct? " + (arr4 == arrSorted).to_s + " - count: " + count4.to_s
+    firstElement = "firstElement - is correct? " + (arr1 == arrSorted).to_s + " - count: " + count1.to_s 
+    lastElement = "lastElement - is correct? " + (arr2 == arrSorted).to_s + " - count: " + count2.to_s 
+    randomElement = "randomElement - is correct? " + (arr3 == arrSorted).to_s + " - count: " + count3.to_s 
+    medianOfThree = "medianOfThree - is correct? " + (arr4 == arrSorted).to_s + " - count: " + count4.to_s 
 
     header + "\n" + firstElement + "\n" + lastElement + "\n" + randomElement + "\n" + medianOfThree + "\n"
 end
@@ -125,5 +125,37 @@ def test()
 
     arrays.each { |a| puts testCase(a)}
 end
+
+def getArrayFromFile()
+    arr = File.open("quicksort_array.txt").readlines.map(&:chomp).map(&:to_i)
+end
+
+def testCaseFile(arr, arrSorted)
+    arr1 = Array.new(arr)
+    count1 = quickSortFirstElement(arr1, 0, arr1.length-1)
+
+    puts "firstElement - is correct? " + (arr1 == arrSorted).to_s + " - count: " + count1.to_s
+    arr2 = Array.new(arr)
+    count2 = quickSortLastElement(arr2, 0, arr2.length-1)
+
+    puts "lastElement - is correct? " + (arr2 == arrSorted).to_s + " - count: " + count2.to_s
+    count3 = 0
+    for i in 1..50
+        arr3 = Array.new(arr)
+        count3 = count3 + quickSortRandomElement(arr3, 0, arr3.length-1)
+    end
+    count3 = count3/50
+
+    puts "randomElement - is correct? " + (arr3 == arrSorted).to_s + " - count: " + count3.to_s
+    arr4 = Array.new(arr)
+    count4 = quickSortMedianOfThree(arr4, 0, arr4.length-1)
+
+    puts "medianOfThree - is correct? " + (arr4 == arrSorted).to_s + " - count: " + count4.to_s
+end
+puts "file test"
+
+testCaseFile(getArrayFromFile, getArrayFromFile.sort)
+
+puts "\n my test"
 
 test
