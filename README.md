@@ -17,6 +17,7 @@ My OSSU progress can be seen in [OSSU progress](https://trello.com/b/DIZv8gOk/os
 * [Programming Languages - A](https://github.com/gpm22/ossu-projects/tree/main/Programming%20Languages/A) (**Done**)
 * [Object-Oriented Design](https://github.com/gpm22/ossu-projects/tree/main/Object-Oriented%20Design)(**Done**)
 * [Design Patterns](https://github.com/gpm22/ossu-projects/tree/main/Design%20Patterns)(**Done**)
+* [Software Architecture](https://github.com/gpm22/ossu-projects/tree/main/Software%20Architecture)(**Done**)
 
 ### Core Math
 

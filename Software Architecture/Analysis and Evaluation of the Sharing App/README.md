@@ -6,7 +6,7 @@ This activity is about using the **ATAM Process** to analyze and evaluate the Sh
 
 It is needed to create a tree diagram and explanations using the provided **Attribute Utility Tree** and **Quality Attribute Scenarios** according to the following rules:
 
-1. For each Quality Attribute Scenario provided, identify if it is a risk, non-risk, tradeoff, or sensitivity point in the applications architecture and give a brief explanation for each.
+1. For each Quality Attribute Scenario provided, identify if it is a **risk**, **non-risk**, **trade-off**, or **sensitivity point** in the applications architecture and give a brief explanation for each.
 2. Once the evaluation is finished, **update** the Utility Tree to reflect the Scenarios.
    * You should be able to make 4-5 changes, including adding a Quality Attribute and adding more Attribute Refinements and ASRs to reflect the risks.
    * You may also update the current ASRs to reflect the Scenarios or (if justified in the evaluation) change their priorities.
@@ -92,16 +92,42 @@ It is needed to create a tree diagram and explanations using the provided **Attr
 
 #### Scenario 1
 
+* It is a  **risk** scenario.
+* As it does request to database in a **heavy load environment**, which can be **slow**.
+* Must be prioritized highly.
+
 #### Scenario 2
+
+* It is a **non-risk**.
+* As it is in a **normal operations environment** and does nothing risky.
 
 #### Scenario 3
 
+* It is a **non-risk**.
+* As it is in a **normal operations environment** and does nothing risky.
+
 #### Scenario 4
+
+* It is a **non-risk**.
+* As it is in a **normal operations environment** and does nothing risky.
 
 #### Scenario 5
 
+* It is a **non-risk**.
+* As it is in a **normal operations environment** and does nothing risky.
+
 #### Scenario 6
+
+* It is a **non-risk**.
+* As it is in a **normal operations environment** and does nothing risky.
 
 #### Scenario 7
 
+* It is a **risk** scenario.
+* As it can only processes one request at a time to changes to the same data.
+* So it can cause some inconveniences to users, as someone's changes maybe not be made.
+* Must be **prioritized highly**.
+
 ### Updated Attribute Utility Tree
+
+![Final_Attribute_Utility_Tree](https://raw.githubusercontent.com/gpm22/ossu-projects/main/Software%20Architecture/Analysis%20and%20Evaluation%20of%20the%20Sharing%20App/Final_Attribute_Utility_Tree.png)
