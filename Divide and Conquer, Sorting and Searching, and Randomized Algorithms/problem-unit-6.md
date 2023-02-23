@@ -39,7 +39,7 @@ Thus the correct answer is **d)** $2\alpha - 1$.
 
 ### Problem 6.2
 
-Let $\alpha$ be some constant, independent of the input array length $n$, strictly between $\frac 1 2$ and $1$. Assume that every recursive call to RSelect makes progress as in the preceding problem—so whenever a recursive call is given an array of length $k$, its recursive call is passed a subarray with length at most $\alpha k$. What is the maximum number of successive recursive calls that can occur before triggering the base case?
+Let $\alpha$ be some constant, independent of the input array length $n$, strictly between $\frac 1 2$ and $1$. Assume that every recursive call to `RSelect` makes progress as in the preceding problem—so whenever a recursive call is given an array of length $k$, its recursive call is passed a subarray with length at most $\alpha k$. What is the maximum number of successive recursive calls that can occur before triggering the base case?
 
 * **a)** $- \frac{\ln n}{\ln \alpha}$
 * **b)** $- \frac{\ln n}{\alpha}$
@@ -173,7 +173,9 @@ So
 $$
 T(n) \leq T\left(\frac n3 \right) + T\left(\frac {2n}{3} \right) + cn
 $$
-Let use the guess and check considering $T(n) \leq l n \log n$.
+This solves to $O(n \log n)$.
+
+To prove this claim, lets use the guess and check considering $T(n) \leq l n \log n$.
 $$
 \begin{align*}
 	T(n) & \leq T\left(\frac n3 \right) + T\left(\frac {2n}{3} \right) + cn \\
@@ -191,3 +193,42 @@ Therefore it takes longer than the 7 and 5 versions.
 ### Problem 6.5
 
 Implement in your favorite programming language the `RSelect` algorithm from Section 6.1. Your implementation should operate in place, using an in-place implementation of `Partition` (which you might have implemented for Problem 5.6) and passing indices through the recursion to keep track of the still-relevant portion of the original input array.
+
+**ANSWER**
+
+```ruby
+def rSelect (arr, i, l, r)
+    if l >= r  # 0- or 1-element subarray
+    	return arr[l]
+    end
+    pivot_position = choosePivot(arr, l, r)
+    new_pivot_position = partition(arr, pivot_position, l, r)
+	
+    if new_pivot_position == i # you got lucky!
+        return arr[new_pivot_position]
+    elsif new_pivot_position > i
+        return rSelect(arr, i, l, new_pivot_position-1)
+    else
+    	return rSelect(arr, i, new_pivot_position+1, r)
+    end
+end
+    
+def partition(arr, pivot_position, l, r)
+    arr[l], arr[pivot_position] = arr[pivot_position], arr[l] # make pivot first
+    p = arr[l]
+    i = l + 1
+    for j in (l + 1)..r
+    	if arr[j] < p # if arr[j] > p do nothing
+    		arr[j], arr[i] = arr[i], arr[j]
+    		i = i + 1 # restores invariant
+        end
+    end
+    arr[l], arr[i - 1] = arr[i - 1], arr[l] # place pivot correctly
+    i - 1 # report final pivot position
+end
+
+def choosePivot(arr, l, r)
+    rand(l..r)
+end
+```
+
