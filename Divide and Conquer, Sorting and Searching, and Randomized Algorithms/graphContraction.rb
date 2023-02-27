@@ -97,31 +97,30 @@ def calulate_size(sub1, sub2)
 end
 
 def get_a_min_global_cut(graph)
+    puts "Starting get a min global cut"
     results = []
     n = graph.nodes.length
-    n = n*n
-
-    # run contraction n² times and get the sub sets of nodes as strings
-    (0..n).each do
+    n = n*n/2
+    min = n*2
+    min_r = nil
+    # run contraction n²/2 times
+    (0..n).each do |i|
+        puts "running contraction #{i}/#{n}"
         g = graph.clone
         graph_contraction(g)
-
-        result = [g.nodes[0].value.split("-"), g.nodes[1].value.split("-") ]
-        results.push(result)
+        result = []
+        result[0]= g.nodes[0].value.split("-").map {|value| graph.nodes.find {|n1| n1.value == value}}
+        result[1]= g.nodes[1].value.split("-").map {|value| graph.nodes.find {|n1| n1.value == value}}
+        result[2] = calulate_size(result[0], result[1]) 
+        if result[2] < min
+            min = result[2]
+            min_r = result
+            puts "new min is #{min}"
+        end
     end
 
-    # transform the sets of nodes from string to a set of nodes
-    # and calculate the size of the cut
-    results = results.map do |r| 
-        r[0]= r[0].map {|value| graph.nodes.find {|n1| n1.value == value}}
-        r[1]= r[1].map {|value| graph.nodes.find {|n1| n1.value == value}}
-        r[2] = calulate_size(r[0], r[1]) 
-        r
-    end
-
-    min = results.min {|r1, r2| r1[2] <=> r2[2]}
-
-    [min[0], min[1]]
+    puts "returning minimal global cut"
+    min_r
 end
 
 def get_test_graph_min_cut_size_1
@@ -147,12 +146,38 @@ def get_test_graph_min_cut_size_2
     d = Node.new("d", [c, a])
     Graph.new([a, b, c, d])
 end
-# test cut with size 1
-puts (get_a_min_global_cut(get_test_graph_min_cut_size_1).map do |r|
-    r.map{|n| n.to_s.gsub! '"', ''}
-end).to_s.gsub! '],', "]\n"
 
-# test cut with size 2
-puts (get_a_min_global_cut(get_test_graph_min_cut_size_2).map do |r|
+def get_graph_from_file
+    arr = File.open("graph.txt").readlines.map{ |l| l.split("\t").map(&:to_i).filter(&:positive?)}
+    nodes = [] 
+
+    # creating the nodes
+    arr.each {|line| nodes.push(Node.new(line[0].to_s, []))}
+
+    # adding the neighbors
+
+    arr.each do |line|
+        node = nodes.find{ |n| n.value == line[0].to_s}
+
+        line.drop(1).each do |neighbor|
+            node_neighbor = nodes.find{|n| n.value == neighbor.to_s}
+            node.neighbors.push(node_neighbor)
+        end
+    end
+
+    Graph.new(nodes)
+end
+
+puts "test cut with size 1\n #{(get_a_min_global_cut(get_test_graph_min_cut_size_1).take(2).map do |r|
     r.map{|n| n.to_s.gsub! '"', ''}
-end).to_s.gsub! '],', "]\n"
+end).to_s.gsub! '],', "]\n"}"
+
+puts "test cut with size 2\n #{(get_a_min_global_cut(get_test_graph_min_cut_size_2).take(2).map do |r|
+    r.map{|n| n.to_s.gsub! '"', ''}
+end).to_s.gsub! '],', "]\n"}"
+
+
+#min_cut_real_graph = get_a_min_global_cut(get_graph_from_file)  
+#puts "test cut with real graph\n size: #{min_cut_real_graph[2]}\n#{(min_cut_real_graph.take(2).map do |r|
+    #r.map{|n| n.to_s.gsub! '"', ''}
+#end).to_s.gsub! ', "value', "\n\"value"}"
