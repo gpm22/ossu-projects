@@ -88,7 +88,43 @@ def graph_contraction(graph)
     graph_contraction(graph)
 end
 
-def get_graph
+def calulate_size(sub1, sub2)
+    size = 0
+    sub1.each  do |n_1|
+        size = size + (n_1.neighbors & sub2).length
+    end
+    size
+end
+
+def get_a_min_global_cut(graph)
+    results = []
+    n = graph.nodes.length
+    n = n*n
+
+    # run contraction n² times and get the sub sets of nodes as strings
+    (0..n).each do
+        g = graph.clone
+        graph_contraction(g)
+
+        result = [g.nodes[0].value.split("-"), g.nodes[1].value.split("-") ]
+        results.push(result)
+    end
+
+    # transform the sets of nodes from string to a set of nodes
+    # and calculate the size of the cut
+    results = results.map do |r| 
+        r[0]= r[0].map {|value| graph.nodes.find {|n1| n1.value == value}}
+        r[1]= r[1].map {|value| graph.nodes.find {|n1| n1.value == value}}
+        r[2] = calulate_size(r[0], r[1]) 
+        r
+    end
+
+    min = results.min {|r1, r2| r1[2] <=> r2[2]}
+
+    [min[0], min[1]]
+end
+
+def get_test_graph_min_cut_size_1
     a = Node.new("a", [])
     b = Node.new("b", [])
     c = Node.new("c", [a, b])
@@ -100,21 +136,23 @@ def get_graph
     Graph.new([a, b, c, d])
 end
 
-def run_contraction(graph)
-    results = []
-    n = graph.nodes.length
-    n = n*n
+def get_test_graph_min_cut_size_2
+    a = Node.new("a", [])
+    b = Node.new("b", [])
+    c = Node.new("c", [a, b])
 
-    (0..n).each do
-        g = graph.clone
-        graph_contraction(g)
+    b.neighbors = [a, c]
+    a.neighbors = [b, c]
 
-        result = [g.nodes[0].value.split("-"), g.nodes[1].value.split("-") ]
-        results.push(result)
-    end
-    # TODO return the min cut
-    results
+    d = Node.new("d", [c, a])
+    Graph.new([a, b, c, d])
 end
+# test cut with size 1
+puts (get_a_min_global_cut(get_test_graph_min_cut_size_1).map do |r|
+    r.map{|n| n.to_s.gsub! '"', ''}
+end).to_s.gsub! '],', "]\n"
 
-
-puts run_contraction(get_graph).map {|x| x.to_s}
+# test cut with size 2
+puts (get_a_min_global_cut(get_test_graph_min_cut_size_2).map do |r|
+    r.map{|n| n.to_s.gsub! '"', ''}
+end).to_s.gsub! '],', "]\n"
