@@ -33,10 +33,28 @@ class Graph
         self
     end
 
-    def get_random_edge()
+    def get_random_edge
         u = self.nodes.sample
         v = u.neighbors.sample
         [u, v]
+    end
+
+    def clone
+        new_nodes = @nodes.map{|n| Node.new(n.value, [])}
+
+        new_nodes.each do |n|
+            old_node = @nodes.find{|n1| n1.value == n.value }
+
+            next if old_node.nil?
+
+            old_node.neighbors.each do |old_neighbor|
+                new_neighbor = new_nodes.find{|n1| n1.value == old_neighbor.value}
+                next if new_neighbor.nil?
+                n.neighbors.push(new_neighbor)
+            end
+        end
+
+        Graph.new(new_nodes)
     end
 end
 
@@ -52,9 +70,7 @@ class Node
     end
 
     def ==(other)
-        if !(other.instance_of? Node)
-            return false
-        end
+        false if !(other.instance_of? Node)
         self.value == other.value && self.neighbors == other.neighbors
     end
 
@@ -84,13 +100,13 @@ def get_graph
     Graph.new([a, b, c, d])
 end
 
-def run_contraction()
+def run_contraction(graph)
     results = []
-    n = get_graph.nodes.length
+    n = graph.nodes.length
     n = n*n
 
     (0..n).each do
-        g = get_graph
+        g = graph.clone
         graph_contraction(g)
 
         result = [g.nodes[0].value.split("-"), g.nodes[1].value.split("-") ]
@@ -101,5 +117,4 @@ def run_contraction()
 end
 
 
-puts run_contraction.map {|x| x.to_s}
-
+puts run_contraction(get_graph).map {|x| x.to_s}
