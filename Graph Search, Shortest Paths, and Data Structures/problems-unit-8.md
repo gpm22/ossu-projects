@@ -158,10 +158,170 @@ Design an algorithm that determines whether or not a given 2SAT instance has at 
 
 [Hint: Show how to solve the problem by computing the strongly connected components of a suitably defined directed graph.]
 
+**ANSWER**
 
+The idea is to create an implication graph and then compute the strongly connected components of it.
+
+To define an implication graph we first rewrite each statement $x_0 \or x_1$ in the form:
+$$
+\neg x_0 \to x_1 \\
+\neg x_1 \to x_0 \\
+$$
+In the graph, we will have the literal and its negative as nodes, so in this case $\neg x_0$ has a outgoing edge pointing to $x_1$.
+
+So then we create the implication graph using the rewritten statements.
+
+Now it is only needed to compute its strongly connected components, so it will have two SCCs, one for true and other for false.
+
+Clearly the algorithm runs in $O(m+n)$, as the graph creation takes also $O(m + n)$.
 
 ## Programming Problems
 
 ### Problem 8.10
 
 Implement in your favorite programming language the `Kosaraju` algorithm from Section 8.6, and use it to compute the sizes of the five biggest strongly connected components of different directed graphs. You can implement the iterative version of depth-first search, the recursive version (though see footnote 24), or both.
+
+```ruby
+class Graph
+    attr_accessor :nodes
+
+    def initialize(nodes)
+        @nodes = nodes
+    end
+
+    def to_s
+        @nodes.map{|n| n.to_s.gsub! '"', ''}.to_s
+    end
+
+    def clone
+        getCopy(false)
+    end
+
+    def getReversed
+        getCopy(true)
+    end
+
+    def unexploreAll
+        @nodes.each {|n| n.explored = false}
+    end
+
+    private
+
+    def getCopy(reversed)
+        new_nodes = @nodes.map{|n| Node.new(n.value, [])}
+
+        new_nodes.each do |n|
+            old_node = @nodes.find{|n1| n1.value == n.value }
+
+            next if old_node.nil?
+
+            old_node.neighbors.each do |old_neighbor|
+                new_neighbor = new_nodes.find{|n1| n1.value == old_neighbor.value}
+                next if new_neighbor.nil?
+                if reversed
+                    new_neighbor.neighbors.push(n)
+                else 
+                    n.neighbors.push(new_neighbor)
+                end
+            end
+        end
+
+        Graph.new(new_nodes)
+    end
+end
+
+class Node
+    attr_accessor :neighbors, :value, :explored, :scc
+    def initialize(value, neighbors)
+        @value = value
+        @neighbors = neighbors
+        @explored = false
+        @scc = -1
+    end
+
+    def to_s
+        "value: " + @value.to_s + " - neighbors: "+ @neighbors.map{|v| v.value.to_s}.to_s
+    end
+
+    def ==(other)
+        false if !(other.instance_of? Node)
+        self.value == other.value
+    end
+
+    def explored?
+        @explored
+    end
+
+    def unexplored?
+        !@explored
+    end
+
+    def hash
+        self.value.hash
+    end
+end
+
+def kosaraju(graph)
+    graph_rev = graph.getReversed 
+    graph_rev.unexploreAll
+
+    # first pass of depth-first search
+    # (computes f(w)’s, the magical ordering)
+    nodes_sorted = topoSort(graph_rev).map{|n| graph.nodes.find{|n1| n==n1}}
+
+    # second pass of depth-first search
+    # (finds SCCs in reverse topological order)
+    graph.unexploreAll
+    numSCC = 0
+    nodes_sorted.each do |w| 
+        if w.unexplored? 
+        	numSCC = numSCC + 1
+        	# assign scc-values (details below)
+        	dfs_scc(graph, w, numSCC)
+        end
+    end
+end
+
+
+def dfs_scc(graph, s, numSCC)
+    s.explored = true
+    s.scc = numSCC 
+    s.neighbors.each do |v|
+        if v.unexplored?
+           dfs_scc(graph, v, numSCC)
+        end
+    end
+end
+
+def topoSort(graph)
+    graph.unexploreAll
+    sortedNodes = []
+    graph.nodes.each do |v| 
+        if v.unexplored? # in a prior DFS
+        	dfs_topo(graph, v, sortedNodes)
+        end
+    end
+    sortedNodes
+end
+
+def dfs_topo(graph, s, sortedNodes)
+    s.explored = true
+    s.neighbors.each do |v| 
+        if v.unexplored? 
+        	dfs_topo(graph, v, sortedNodes)
+        end
+    end
+    sortedNodes.unshift(s)
+end
+
+def scc_groups(graph)
+    kosaraju(graph)
+    max = graph.nodes.map{|n| n.scc}.max
+    groups = []
+    (1..max).each do |i|
+        groups.push(graph.nodes.filter{|n| n.scc == i}.map{|n| n.value})
+    end
+    groups
+end
+```
+
