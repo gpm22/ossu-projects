@@ -40,21 +40,21 @@ class Graph
     end
 
     def clone
-        new_nodes = @nodes.map{|n| Node.new(n.value, [])}
+        new_nodes = Hash[@nodes.map{|n| Node.new(n.value, [])}.collect { |n| [n.value, n]}]
 
-        new_nodes.each do |n|
-            old_node = @nodes.find{|n1| n1.value == n.value }
-
+        old_nodes = Hash[@nodes.collect { |n| [n.value, n]}]
+        new_nodes.values.each do |n|
+            old_node = old_nodes[n.value]
             next if old_node.nil?
 
             old_node.neighbors.each do |old_neighbor|
-                new_neighbor = new_nodes.find{|n1| n1.value == old_neighbor.value}
+                new_neighbor = new_nodes[old_neighbor.value]
                 next if new_neighbor.nil?
                 n.neighbors.push(new_neighbor)
             end
         end
 
-        Graph.new(new_nodes)
+        Graph.new(new_nodes.values)
     end
 end
 
@@ -89,11 +89,13 @@ def graph_contraction(graph)
 end
 
 def calulate_size(sub1, sub2)
-    size = 0
-    sub1.each  do |n_1|
-        size = size + (n_1.neighbors & sub2).length
-    end
-    size
+#    size = 0
+    #sub1.each  do |n_1|
+        #size = size + (n_1.neighbors & sub2).length
+    #end
+    #size
+
+    sub1.sum(0){ |n| (n.neighbors & sub2).length}
 end
 
 def get_a_min_global_cut(graph)
@@ -103,14 +105,16 @@ def get_a_min_global_cut(graph)
     n = n*n/2
     min = n*2
     min_r = nil
+
+    hash_nodes = Hash[graph.nodes.collect { |n| [n.value, n]}]
     # run contraction n²/2 times
     (0..n).each do |i|
-        puts "running contraction #{i}/#{n}"
+        puts "running contraction #{i}/#{n} - min: #{min}"
         g = graph.clone
         graph_contraction(g)
         result = []
-        result[0]= g.nodes[0].value.split("-").map {|value| graph.nodes.find {|n1| n1.value == value}}
-        result[1]= g.nodes[1].value.split("-").map {|value| graph.nodes.find {|n1| n1.value == value}}
+        result[0]= g.nodes[0].value.split("-").map {|value| hash_nodes[value]}
+        result[1]= g.nodes[1].value.split("-").map {|value| hash_nodes[value]}
         result[2] = calulate_size(result[0], result[1]) 
         if result[2] < min
             min = result[2]
