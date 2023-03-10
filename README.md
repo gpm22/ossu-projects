@@ -32,3 +32,7 @@ My OSSU progress can be seen in [OSSU progress](https://trello.com/b/DIZv8gOk/os
 
 * [The Missing Semester of Your CS Education](https://github.com/gpm22/ossu-projects/tree/main/Missing%20CS%20Semester) (In progress)
 
+### Core Systems
+
+* [Build a Modern Computer from First Principles: From Nand to Tetris](https://github.com/gpm22/ossu-projects/tree/main/Nand2Tetris) (In progress)
+
