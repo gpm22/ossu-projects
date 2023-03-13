@@ -17,13 +17,21 @@ CHIP Mux4Way16 {
 
     PARTS:
     // Put your code here:
-    Not(in=sel[0], out=notsel[0]);
-    Not(in=sel[1], out=notsel[1]);
+    Not(in=sel[0], out=notesel0);
+    Not(in=sel[1], out=notesel1);
 
-    And(a=notsel[0], b=notsel[1], out=w1);
-    And(a=sel[0], b=notsel[1], out=w2);
-    And(a=notsel[0], b=sel[1], out=w3);
+    And(a=notesel0, b=notesel1, out=w1);
+    And(a=sel[0], b=notesel1, out=w2);
+    And(a=notesel0, b=sel[1], out=w3);
     And(a=sel[0], b=sel[1], out=w4);
 
-    And16(a=a, b=) 
+    And16(a=a, b[0]=w1, b[1]=w1, b[2]=w1, b[3]=w1, b[4]=w1, b[5]=w1, b[6]=w1, b[7]=w1, b[8]=w1, b[9]=w1, b[10]=w1, b[11]=w1, b[12]=w1, b[13]=w1, b[14]=w1, b[15]=w1, out=w5);
+    And16(a=b, b[0]=w2, b[1]=w2, b[2]=w2, b[3]=w2, b[4]=w2, b[5]=w2, b[6]=w2, b[7]=w2, b[8]=w2, b[9]=w2, b[10]=w2, b[11]=w2, b[12]=w2, b[13]=w2, b[14]=w2, b[15]=w2, out=w6);
+    And16(a=c, b[0]=w3, b[1]=w3, b[2]=w3, b[3]=w3, b[4]=w3, b[5]=w3, b[6]=w3, b[7]=w3, b[8]=w3, b[9]=w3, b[10]=w3, b[11]=w3, b[12]=w3, b[13]=w3, b[14]=w3, b[15]=w3, out=w7);
+    And16(a=d, b[0]=w4, b[1]=w4, b[2]=w4, b[3]=w4, b[4]=w4, b[5]=w4, b[6]=w4, b[7]=w4, b[8]=w4, b[9]=w4, b[10]=w4, b[11]=w4, b[12]=w4, b[13]=w4, b[14]=w4, b[15]=w4, out=w8);
+
+    Or16(a=w5, b=w6, out=w9);
+    Or16(a=w7, b=w8, out=w10);
+
+    Or16(a=w9, b=w10, out=out);
 }
