@@ -19,4 +19,40 @@ CHIP Mux8Way16 {
 
     PARTS:
     // Put your code here:
+    Not(in=sel[0], out=notesel0);
+    Not(in=sel[1], out=notesel1);
+    Not(in=sel[2], out=notesel2);
+
+    And(a=notesel0, b=notesel1, out=w1);
+    And(a=sel[0], b=notesel1, out=w2);
+    And(a=notesel0, b=sel[1], out=w3);
+    And(a=sel[0], b=sel[1], out=w4);
+
+    And(a=notesel2, b=w1, out=wa);
+    And(a=notesel2, b=w2, out=wb);
+    And(a=notesel2, b=w3, out=wc);
+    And(a=notesel2, b=w4, out=wd);
+    And(a=sel[2], b=w1, out=we);
+    And(a=sel[2], b=w2, out=wf);
+    And(a=sel[2], b=w3, out=wg);
+    And(a=sel[2], b=w4, out=wh);
+
+    And16(a=a, b[0]=wa, b[1]=wa, b[2]=wa, b[3]=wa, b[4]=wa, b[5]=wa, b[6]=wa, b[7]=wa, b[8]=wa, b[9]=wa, b[10]=wa, b[11]=wa, b[12]=wa, b[13]=wa, b[14]=wa, b[15]=wa, out=w5);
+    And16(a=b, b[0]=wb, b[1]=wb, b[2]=wb, b[3]=wb, b[4]=wb, b[5]=wb, b[6]=wb, b[7]=wb, b[8]=wb, b[9]=wb, b[10]=wb, b[11]=wb, b[12]=wb, b[13]=wb, b[14]=wb, b[15]=wb, out=w6);
+    And16(a=c, b[0]=wc, b[1]=wc, b[2]=wc, b[3]=wc, b[4]=wc, b[5]=wc, b[6]=wc, b[7]=wc, b[8]=wc, b[9]=wc, b[10]=wc, b[11]=wc, b[12]=wc, b[13]=wc, b[14]=wc, b[15]=wc, out=w7);
+    And16(a=d, b[0]=wd, b[1]=wd, b[2]=wd, b[3]=wd, b[4]=wd, b[5]=wd, b[6]=wd, b[7]=wd, b[8]=wd, b[9]=wd, b[10]=wd, b[11]=wd, b[12]=wd, b[13]=wd, b[14]=wd, b[15]=wd, out=w8);
+    And16(a=e, b[0]=we, b[1]=we, b[2]=we, b[3]=we, b[4]=we, b[5]=we, b[6]=we, b[7]=we, b[8]=we, b[9]=we, b[10]=we, b[11]=we, b[12]=we, b[13]=we, b[14]=we, b[15]=we, out=w9);
+    And16(a=f, b[0]=wf, b[1]=wf, b[2]=wf, b[3]=wf, b[4]=wf, b[5]=wf, b[6]=wf, b[7]=wf, b[8]=wf, b[9]=wf, b[10]=wf, b[11]=wf, b[12]=wf, b[13]=wf, b[14]=wf, b[15]=wf, out=w10);
+    And16(a=g, b[0]=wg, b[1]=wg, b[2]=wg, b[3]=wg, b[4]=wg, b[5]=wg, b[6]=wg, b[7]=wg, b[8]=wg, b[9]=wg, b[10]=wg, b[11]=wg, b[12]=wg, b[13]=wg, b[14]=wg, b[15]=wg, out=w11);
+    And16(a=h, b[0]=wh, b[1]=wh, b[2]=wh, b[3]=wh, b[4]=wh, b[5]=wh, b[6]=wh, b[7]=wh, b[8]=wh, b[9]=wh, b[10]=wh, b[11]=wh, b[12]=wh, b[13]=wh, b[14]=wh, b[15]=wh, out=w12);
+
+    Or16(a=w5, b=w6, out=w13);
+    Or16(a=w7, b=w8, out=w14);
+    Or16(a=w9, b=w10, out=w15);
+    Or16(a=w11, b=w12, out=w16);
+
+    Or16(a=w13, b=w14, out=w17);
+    Or16(a=w15, b=w16, out=w18);
+
+    Or16(a=w17, b=w18, out=out);
 }
