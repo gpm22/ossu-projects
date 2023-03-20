@@ -56,7 +56,7 @@ class Node
     end
 
     def to_s
-        "value: " + @value + " - neighbors: "+ @neighbors.map(&:value).to_s
+        "value: " + @value + " - neighbors: "+ @neighbors.map{|pair| [pair[0].value.to_s, pair[1].to_s]}.to_s
     end
 
     def ==(other)
@@ -78,6 +78,7 @@ class Node
 end
 
 def dijkstra(graph, starting_vertex)
+    puts "starting dijkstra"
     shortest_distance = Hash[graph.nodes.collect { |n| [n.value, nil]}]
     shortest_distance[starting_vertex.value] = 0
 
@@ -100,7 +101,6 @@ def dijkstra(graph, starting_vertex)
 end
 
 def get_minimum_edge(edges, shortest_distance)
-    puts "edges: #{edges.to_s}"
     initial_key = edges.keys[0]
     initial_len = edges[initial_key]
     minimal_dijkstra_number = shortest_distance[initial_key[0]] + initial_len
@@ -142,6 +142,35 @@ def getTestGraph
     Graph.new([a, b, c, d])
 end
 
-g = getTestGraph
+def get_graph_from_file
+    puts "getting graph from file"
+    nodes = Hash.new 
+    arr = File.open("dijkstra_without_heap_graph.txt").each_line do |line|
+        values = line.split(" ")
+        new_node = Node.new(values[0], [])
+        nodes[values[0]] = new_node
 
-puts dijkstra(g, g.nodes[0])
+        values.drop(1).each do |pair|
+
+            neighbor_value, lenght = pair.split(",")
+
+            neighbor = nodes[neighbor_value]
+
+            if neighbor.nil?
+                neighbor = Node.new(neighbor_value, [])
+                nodes[neighbor_value] = neighbor
+            end
+            new_node.neighbors.push([neighbor, lenght.to_i])
+        end
+    end
+    Graph.new(nodes.values)
+end
+
+def getDistanceFromSpecificNodes
+    nodes = ["7","37","59","82","99","115","133","165","188","197"]
+    g = get_graph_from_file 
+    shortest_distance = dijkstra(g, g.nodes[0])
+    nodes.map{|n| shortest_distance[n]}
+end
+
+puts getDistanceFromSpecificNodes.to_s 
