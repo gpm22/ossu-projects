@@ -1,3 +1,5 @@
+require 'benchmark'
+
 class Graph
     attr_accessor :nodes
 
@@ -9,45 +11,20 @@ class Graph
         @nodes.map{|n| n.to_s.gsub! '"', ''}.to_s
     end
 
-    def clone
-        getCopy(false)
-    end
-
-    def getReversed
-        getCopy(true)
-    end
-
-    def unexploreAll
-        @nodes.each {|n| n.explored = false}
-    end
-
-    private
-
-    def getCopy(reversed)
-        new_nodes = Hash[@nodes.map{|n| Node.new(n.value, [])}.collect { |n| [n.value, n]}]
-
-        old_nodes = Hash[@nodes.collect { |n| [n.value, n]}]
-        new_nodes.values.each do |n|
-            old_node = old_nodes[n.value]
-            next if old_node.nil?
-
-            old_node.neighbors.each do |old_neighbor|
-                new_neighbor = new_nodes[old_neighbor.value]
-                next if new_neighbor.nil?
-                if reversed
-                    new_neighbor.neighbors.push(n)
-                else 
-                    n.neighbors.push(new_neighbor)
-                end
-            end
+    def self.newCompleteGraphWithRandomLenghts(number_of_vertices)
+        nodes = (0..number_of_vertices).map {|i| Node.new(i.to_s, [])}
+        nodes.each_index do |i|
+            neighbors = nodes.map {|n| [n, rand(0..100000)]} 
+            neighbors.delete_at(i)
+            nodes[i].neighbors = neighbors
         end
-
-        Graph.new(new_nodes.values)
+        Graph.new(nodes)
     end
+
 end
 
 class Node
-    attr_accessor :neighbors, :value, :explored, :scc
+    attr_accessor :neighbors, :value
     def initialize(value, neighbors)
         @value = value
         @neighbors = neighbors
@@ -62,14 +39,6 @@ class Node
     def ==(other)
         false if !(other.instance_of? Node)
         self.value == other.value
-    end
-
-    def explored?
-        @explored
-    end
-
-    def unexplored?
-        !@explored
     end
 
     def hash
@@ -173,4 +142,14 @@ def getDistanceFromSpecificNodes
     nodes.map{|n| shortest_distance[n]}
 end
 
-puts getDistanceFromSpecificNodes.to_s 
+# puts getDistanceFromSpecificNodes.to_s 
+
+puts "starting test to verify size of the graph so dijkstra runs in less than 5 minutes" 
+n = 1350
+puts "creating graph with #{n} nodes"
+g = Graph.newCompleteGraphWithRandomLenghts(n)
+puts "running dijkstra"
+time = Benchmark.measure {
+    dijkstra(g, g.nodes[0])
+}
+puts "finishing test executed in #{time.real} s"
