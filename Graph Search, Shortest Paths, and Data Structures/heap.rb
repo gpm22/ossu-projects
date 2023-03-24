@@ -11,11 +11,7 @@ class Heap
     end
 
     def extractMin
-        @elements[0], @elements[-1], @positions[@elements[0][1]], @positions[@elements[-1][1]] = @elements[-1], @elements[0] , @positions[@elements[-1][1]], @positions[@elements[0][1]]
-        min = @elements.pop
-        @positions.delete(min[1])
-        self.bubbleDown(1)
-        min
+        self.delete(@elements[0][1])
     end
 
     def heapify(arr)
