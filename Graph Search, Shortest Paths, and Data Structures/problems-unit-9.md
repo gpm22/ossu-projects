@@ -253,5 +253,5 @@ Implement in your favorite programming language the Dijkstra algorithm from Sect
   puts "finishing test executed in #{time.real} s"
   ```
 
-* A complete graph of 1350 nodes took 303 s to run, so as for complete graphs $mn = (n^3-n^2)/2$, the maximum size is $mn \approx 1.23 \times 10^9$
+* A complete graph of 1350 nodes took 303 s to run, so as for complete graphs $m + n = (n^2+n)/2$, the maximum size is $m+n \approx 912 \times 10^3$
 

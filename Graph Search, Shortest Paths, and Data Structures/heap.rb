@@ -24,7 +24,7 @@ class Heap
 
     def insert(element)
         @elements.push(element)
-        @positions[element[1]] = @elements.size -1 
+        @positions[element[1]] = (@elements.size) - 1 
         self.bubbleUp
         element
     end
@@ -40,6 +40,14 @@ class Heap
 
     def to_s
         "elements: #{@elements.to_s}\npositions: #{@positions.to_s}"
+    end
+
+    def empty?
+        @elements.empty?
+    end
+
+    def include?(element)
+        @positions.has_key?(element)
     end
 
     private

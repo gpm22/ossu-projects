@@ -138,3 +138,223 @@ The paper [**On the bottleneck shortest path problem** (KAIBEL, Volker; PEINHARD
 ### Problem 10.8
 
 Implement in your favorite programming language the heap-based version of the Dijkstra algorithm from Section 10.4, and use it to solve the single-source shortest path problem in different directed graphs. With this heap-based implementation, what’s the size of the largest problem you can solve in five minutes or less?
+
+**ANSWER**
+
+* `Heap` class
+
+  ```ruby
+  class Heap
+      attr_accessor :elements
+  
+      def initialize
+          @elements=[]
+          @positions=Hash.new
+      end
+  
+      def findMin
+          @elements[0]
+      end
+  
+      def extractMin
+          self.delete(@elements[0][1])
+      end
+  
+      def heapify(arr)
+          @elements = arr
+          @positions = Hash[@elements.collect.with_index {|e, i| [e[1], i]}]
+          (1..arr.size).each do |i|
+              self.bubbleDown(i)
+          end
+      end
+  
+      def insert(element)
+          @elements.push(element)
+          @positions[element[1]] = (@elements.size) - 1 
+          self.bubbleUp
+          element
+      end
+  
+      def delete(element)
+          position = @positions[element]
+          @elements[position], @elements[-1], @positions[element], @positions[@elements[-1][1]] = @elements[-1], @elements[position] , @positions[@elements[-1][1]], @positions[element]
+          deleted = @elements.pop
+          @positions.delete(element)
+          self.bubbleDown(position+1)
+          deleted
+      end
+  
+      def to_s
+          "elements: #{@elements.to_s}\npositions: #{@positions.to_s}"
+      end
+  
+      def empty?
+          @elements.empty?
+      end
+  
+      def include?(element)
+          @positions.has_key?(element)
+      end
+  
+      private
+  
+      def bubbleUp
+          position = @elements.size
+          parentPosition = getParentPosition(position)
+          while @elements[parentPosition][0] > @elements[position-1][0]
+              @elements[parentPosition], @elements[position-1] , @positions[@elements[parentPosition][1]], @positions[@elements[position-1][1]] = @elements[position-1], @elements[parentPosition], @positions[@elements[position -1][1]], @positions[@elements[parentPosition][1]]
+              position = parentPosition+1
+              return if parentPosition == 0
+              parentPosition = getParentPosition(position)
+          end
+      end
+  
+      def bubbleDown(startPosition)
+          position = startPosition
+          smallerChildPosition = getSmallerChildPosition(position)
+          return if smallerChildPosition > @elements.size-1
+          while @elements[smallerChildPosition][0] < @elements[position-1][0]
+              @elements[smallerChildPosition], @elements[position-1] , @positions[@elements[smallerChildPosition][1]], @positions[@elements[position-1][1]] = @elements[position-1], @elements[smallerChildPosition], @positions[@elements[position-1][1]], @positions[@elements[smallerChildPosition][1]]
+              position = smallerChildPosition+1
+              smallerChildPosition = getSmallerChildPosition(position)
+              return if smallerChildPosition > @elements.size-1
+          end
+      end
+  
+      def getParentPosition(position)
+          (position/2).floor - 1
+      end
+  
+      def getLeftChildPosition(position)
+          2*position-1
+      end
+  
+      def getRightChildPosition(position)
+          2*position
+      end
+  
+      def getSmallerChildPosition(position)
+          left = getLeftChildPosition(position)
+          right = getRightChildPosition(position)
+  
+          return left if right > (@elements.size - 1)
+  
+          if @elements[left][0] < @elements[right][0]
+              left
+          else
+              right
+          end
+      end
+  end
+  ```
+
+* `Graph` and `Node` Classes
+
+  ```ruby
+  class Graph
+      attr_accessor :nodes
+  
+      def initialize(nodes)
+          @nodes = nodes
+      end
+  
+      def to_s
+          @nodes.map{|n| n.to_s.gsub! '"', ''}.to_s
+      end
+  
+      def self.newCompleteGraphWithRandomLenghts(number_of_vertices)
+          nodes = (0..number_of_vertices).map {|i| Node.new(i.to_s, [])}
+          nodes.each_index do |i|
+              puts "Filling node with neighbors #{i}/#{nodes.size}"
+              neighbors = nodes.map {|n| [n, rand(0..100000)]} 
+              neighbors.delete_at(i)
+              nodes[i].neighbors = neighbors
+          end
+          Graph.new(nodes)
+      end
+  
+  end
+  
+  class Node
+      attr_accessor :neighbors, :value
+      def initialize(value, neighbors)
+          @value = value
+          @neighbors = neighbors
+          @explored = false
+          @scc = -1
+      end
+  
+      def to_s
+          "value: " + @value + " - neighbors: "+ @neighbors.map{|pair| [pair[0].value.to_s, pair[1].to_s]}.to_s
+      end
+  
+      def ==(other)
+          false if !(other.instance_of? Node)
+          self.value == other.value
+      end
+  
+      def hash
+          self.value.hash
+      end
+  end
+  ```
+
+* `dijkstra` implementation
+
+  ```ruby
+  def dijkstra(graph, starting_vertex)
+      puts "starting dijkstra"
+  
+      nodesMap = Hash[graph.nodes.collect { |n| [n.value, n]}]
+      shortest_distance = Hash[graph.nodes.collect { |n| [n.value, nil]}]
+      shortest_distance[starting_vertex.value] = 0
+  
+      vertices_to_visit = Heap.new
+      vertices_to_visit.heapify(graph.nodes.map do |n| 
+          if n == starting_vertex
+              [0, n.value]
+          else
+              [Float::INFINITY, n.value] 
+          end 
+      end)
+      
+  
+      visited_vertices = Hash.new
+  
+      while !vertices_to_visit.empty? 
+          new_vertice = vertices_to_visit.extractMin
+          new_vertice_node = nodesMap[new_vertice[1]]
+          visited_vertices[new_vertice[1]] =  new_vertice_node
+          shortest_distance[new_vertice[1]] = new_vertice[0]
+  
+          new_vertice_node.neighbors.each do |neighbor|
+              if vertices_to_visit.include?(neighbor[0].value)
+                  deleted = vertices_to_visit.delete(neighbor[0].value)
+                  new_key = [deleted[0], shortest_distance[new_vertice[1]] + neighbor[1]].min
+                  vertices_to_visit.insert([new_key, neighbor[0].value])
+              end
+          end 
+  
+      end
+  
+      shortest_distance
+  end
+  ```
+
+* Code to verify largest possible graph to be solved in less than 5 minutes:
+
+  ```ruby
+  require 'benchmark'
+  
+  puts "starting test to verify size of the graph so dijkstra runs in less than 5 minutes" 
+  n = 14700 #number of nodes of the complete graph
+  puts "creating graph with #{n} nodes"
+  g = Graph.newCompleteGraphWithRandomLenghts(n)
+  puts "running dijkstra"
+  time = Benchmark.measure {
+      dijkstra(g, g.nodes[0])
+  }
+  puts "finishing test executed in #{time.real} s"
+  ```
+
+* A complete graph of 14700 nodes took 297 s to run, so as for complete graphs $m+n = (n^2+n)/2$, the maximum size is $m + n \approx 108 \times 10^6$
