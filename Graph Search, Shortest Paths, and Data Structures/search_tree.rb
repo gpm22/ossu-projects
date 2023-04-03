@@ -114,6 +114,7 @@ class TreeNode
       @size += leftChild.size
       leftChild.parent = self
     end
+    @parent.updatedSize unless isRoot?
     @leftChild = leftChild
   end
 
@@ -124,6 +125,7 @@ class TreeNode
       rightChild.parent = self
       @size += rightChild.size
     end
+    @parent.updatedSize unless isRoot?
     @rightChild = rightChild
   end
 
@@ -172,12 +174,12 @@ class TreeNode
   def insert(newNode)
     if newNode.key < @key
       if @leftChild.nil?
-        @leftChild = newNode
+        self.leftChild = newNode
       else
         @leftChild.insert(newNode)
       end
     elsif @rightChild.nil?
-      @rightChild = newNode
+      self.rightChild = newNode
     else
       @rightChild.insert(newNode)
     end
@@ -243,6 +245,14 @@ class TreeNode
 
     @parent.successorHelper
   end
+
+  def updatedSize
+    leftSize = @leftChild.nil? ? 0 : @leftChild.size
+    rightSize = @rightChild.nil? ? 0 : @rightChild.size
+    @size = leftSize + rightSize + 1
+
+    @parent.updatedSize unless isRoot?
+  end
 end
 
 def generateTestTree
@@ -271,7 +281,7 @@ end
 
 testTree = generateTestTree
 
-puts testTree.outputSorted.map(&:key).to_s
+puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
 puts testTree.successor('a')
 
@@ -279,10 +289,10 @@ puts testTree.predecessor('d')
 
 testTree.insert(-5, 'h')
 
-puts testTree.outputSorted.map(&:key).to_s
+puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
 puts testTree.min
 
 testTree.delete(20)
 
-puts testTree.outputSorted.map(&:key).to_s
+puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
