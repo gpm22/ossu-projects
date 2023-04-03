@@ -66,6 +66,12 @@ class SearchTree
     delete(key)
   end
 
+  def select(position)
+    return nil if position < 1 || position > @root.size
+
+    @root.select(position)
+  end
+
   :private
 
   def outputSortedHelper(node, sorted)
@@ -185,6 +191,18 @@ class TreeNode
     end
   end
 
+  def select(position)
+    leftSize = @leftChild.nil? ? 0 : @leftChild.size
+
+    reference = leftSize + 1
+
+    return self if position == reference
+
+    return @leftChild.select(position) if position < reference
+
+    @rightChild.select(position - leftSize - 1)
+  end
+
   def swap(other)
     intermediateParent = other.parent
     intermediateLeftChild = other.leftChild
@@ -296,3 +314,10 @@ puts testTree.min
 testTree.delete(20)
 
 puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+
+
+puts testTree.select(1)
+
+puts testTree.select(4)
+
+puts testTree.select(7)
