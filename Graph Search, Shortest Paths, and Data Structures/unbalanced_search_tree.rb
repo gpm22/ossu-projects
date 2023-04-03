@@ -1,4 +1,4 @@
-class SearchTree
+class UnbalancedSearchTree
   attr_accessor :root
 
   def initialize(root)
@@ -294,7 +294,7 @@ def generateTestTree
   node7.leftChild = node3
   node7.rightChild = node6
 
-  SearchTree.new(node7)
+  UnbalancedSearchTree.new(node7)
 end
 
 testTree = generateTestTree
