@@ -21,6 +21,6 @@ Here are the projects made for the course and book and the book's problems.
    * [Heap Data Structure](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/heap.rb)
    * [Dijkstra with heap, which is WAY faster than the non-heap version](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/dijkstra_with_heap.rb)
 4. Unit 11
-   * [Unbalanced Search Tree]()
-   * [Red-Black Search Tree ]()(**TO BE DONE**)
-   * [Median Maintenance problem]()(**TO BE DONE**)
+   * [Unbalanced Search Tree](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/unbalanced_search_tree.rb)
+   * [Red-Black Search Tree ](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/red_black_tree.rb)
+   * [Median Maintenance problem](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/median_maintenance.rb)(**TO BE DONE**)
