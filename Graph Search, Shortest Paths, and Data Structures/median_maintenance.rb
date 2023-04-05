@@ -6,8 +6,7 @@ require 'benchmark'
 class MendianMaintenanceBaseTree
     def insert(number)
         @elements.insert(number, number)
-
-        median = (@elements.root.size/2).floor
+        median = (@elements.root.size/2).floor+1
 
         @elements.select(median)
     end
@@ -43,7 +42,6 @@ class MendianMaintenanceHeap
 
     def insertNumber(number)
         negativeNumber = number * (-1)
-        return @smallerHeap.insert([negativeNumber, number]) if @smallerHeap.elements.empty?
         return @biggerHeap.insert([number, number]) if @biggerHeap.elements.empty?
 
         biggerHeapMin = @biggerHeap.findMin[1]
@@ -82,12 +80,63 @@ class MendianMaintenanceHeap
     end
 end
 
-def testMedianHeap 
+def testMedian 
 
-    medianMaintenance = MendianMaintenanceHeap.new
-    (0..10).each do |i|
-        puts medianMaintenance.insert(i)
+    timeHeapAscending = runTestAscending(MendianMaintenanceHeap.new) 
+    timeUnbalancedAscending = runTestAscending(MendianMaintenanceUnbalanced.new)
+    timeRedAndBlackAscending = runTestAscending(MendianMaintenanceRedAndBlack.new)
+
+    puts "Ascending test:"
+    puts "heap: #{timeHeapAscending} - Unbalanced: #{timeUnbalancedAscending} - Red and Black: #{timeRedAndBlackAscending}"
+
+    timeHeapDescending = runTestDescending(MendianMaintenanceHeap.new) 
+    timeUnbalancedDescending = runTestDescending(MendianMaintenanceUnbalanced.new)
+    timeRedAndBlackDescending = runTestDescending(MendianMaintenanceRedAndBlack.new)
+
+    puts "Descending test:"
+    puts "heap: #{timeHeapDescending} - Unbalanced: #{timeUnbalancedDescending} - Red and Black: #{timeRedAndBlackDescending}"
+
+    timeHeapRandom = 0.0
+    timeUnbalancedRandom = 0.0
+    timeRedAndBlackRandom = 0.0
+
+    (0..14).each do 
+        timeHeapRandom = timeHeapRandom + runTestRandom(MendianMaintenanceHeap.new)
+        timeUnbalancedRandom = timeUnbalancedRandom + runTestRandom(MendianMaintenanceUnbalanced.new)
+        timeRedAndBlackRandom = timeRedAndBlackRandom + runTestRandom(MendianMaintenanceRedAndBlack.new)
     end
+
+    timeHeapRandom = timeHeapRandom/15
+    timeUnbalancedRandom = timeUnbalancedRandom/15
+    timeRedAndBlackRandom = timeRedAndBlackRandom/15
+
+    puts "Random test:"
+    puts "heap: #{timeHeapRandom} - Unbalanced: #{timeUnbalancedRandom} - Red and Black: #{timeRedAndBlackRandom}"
 end 
 
-testMedianHeap
+def runTestAscending(medianMaintenance)
+    Benchmark.measure do
+        (0..4500).each do |i|
+            medianMaintenance.insert(i)  
+        end
+    end.real
+end
+
+def runTestDescending(medianMaintenance)
+    Benchmark.measure do
+        4500.downto(0) do |i|
+            medianMaintenance.insert(i)  
+        end
+    end.real
+end
+
+def runTestRandom(medianMaintenance)
+    Benchmark.measure do
+        (0..10000).each do
+            i = rand(-100000000..100000000)
+            medianMaintenance.insert(i)  
+        end
+    end.real
+end
+
+testMedian
