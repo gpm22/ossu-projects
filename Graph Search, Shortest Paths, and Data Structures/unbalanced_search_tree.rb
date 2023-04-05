@@ -5,7 +5,8 @@ class UnbalancedSearchTree
     @root = root
 
     @nodesMap = {}
-    initializeMap(@root)
+    
+    initializeMap(@root) unless root.nil?
   end
 
   def search(key)
@@ -37,15 +38,35 @@ class UnbalancedSearchTree
   def insert(key, value)
     newNode = TreeNode.new(key, value)
     @nodesMap[value] = newNode
+    if @root.nil?
+        @root = newNode
+        return 
+    end
     @root.insert(newNode)
   end
 
   def delete(key)
     nodeToDelete = search(key)
+    deleteHelper(nodeToDelete)
+  end
 
+  def select(position)
+    return nil if position < 1 || position > @root.size
+
+    @root.select(position)
+  end
+
+  :private
+
+  def deleteHelper(nodeToDelete)
     return if nodeToDelete.nil?
 
     @nodesMap.delete(nodeToDelete.value)
+
+    if nodeToDelete.isRoot? && nodeToDelete.isLeaf?
+        @root = nil
+        return 
+    end
 
     return updateParentCorrectlyWithChild(nodeToDelete, nil) if nodeToDelete.isLeaf?
 
@@ -60,19 +81,13 @@ class UnbalancedSearchTree
     end
 
     maxLeftDescendant = nodeToDelete.leftChild.max
-
+    if nodeToDelete.isRoot?
+        @root = maxLeftDescendant
+    end
     nodeToDelete.swap(maxLeftDescendant)
 
-    delete(key)
+    deleteHelper(nodeToDelete)
   end
-
-  def select(position)
-    return nil if position < 1 || position > @root.size
-
-    @root.select(position)
-  end
-
-  :private
 
   def outputSortedHelper(node, sorted)
     outputSortedHelper(node.leftChild, sorted) unless node.leftChild.nil?
@@ -95,12 +110,17 @@ class UnbalancedSearchTree
   end
 
   def updateParentCorrectlyWithChild(nodeToDelete, child)
-    if nodeToDelete.isLeftChild?
-      nodeToDelete.parent.leftChild = child
-    else
-      nodeToDelete.parent.rightChild = child
-    end
 
+    if !nodeToDelete.isRoot?
+        if nodeToDelete.isLeftChild?
+            nodeToDelete.parent.leftChild = child
+        else
+            nodeToDelete.parent.rightChild = child
+        end
+    elsif !child.nil?
+        @root = child
+        child.parent = nil
+    end
     nodeToDelete
   end
 end
@@ -120,7 +140,7 @@ class TreeNode
       @size += leftChild.size
       leftChild.parent = self
     end
-    @parent.updatedSize unless isRoot?
+    @parent.updateSize unless isRoot?
     @leftChild = leftChild
   end
 
@@ -131,7 +151,7 @@ class TreeNode
       rightChild.parent = self
       @size += rightChild.size
     end
-    @parent.updatedSize unless isRoot?
+    @parent.updateSize unless isRoot?
     @rightChild = rightChild
   end
 
@@ -203,31 +223,48 @@ class TreeNode
     @rightChild.select(position - leftSize - 1)
   end
 
-  def swap(other)
+  def swap(other)    
     intermediateParent = other.parent
+    isOtherRightSide = other.isRightChild?
     intermediateLeftChild = other.leftChild
     intermediateRightChild = other.rightChild
 
-    other.parent = @parent
-    other.leftChild = @leftChild
-    other.rightChild = @rightChild
+    updateParentDuringSwaping(other)
 
-    @parent = intermediateParent
-
-    self.leftChild = intermediateLeftChild
+    if intermediateParent == self
+      if isOtherRightSide 
+        other.setLeftChildWithoutUpdatingSize @leftChild
+        other.setRightChildWithoutUpdatingSize self 
+      else 
+        other.setLeftChildWithoutUpdatingSize self
+        other.setRightChildWithoutUpdatingSize @rightChild
+      end
+    else
+      other.setLeftChildWithoutUpdatingSize @leftChild 
+      other.setRightChildWithoutUpdatingSize @rightChild
+    end
+    self.leftChild =  intermediateLeftChild
     self.rightChild = intermediateRightChild
 
-    self
+    if intermediateParent == self 
+      intermediateParent = other
+    end
+
+    if isOtherRightSide
+      intermediateParent.rightChild = self
+    else
+      intermediateParent.leftChild = self
+    end
   end
 
   def isRightChild?
-    return false if @parent.nil?
+    return false if @parent.nil? || @parent.rightChild.nil?
 
     @parent.rightChild.key == key
   end
 
   def isLeftChild?
-    return false if @parent.nil?
+    return false if @parent.nil? || @parent.leftChild.nil?
 
     @parent.leftChild.key == key
   end
@@ -237,7 +274,7 @@ class TreeNode
   end
 
   def hasOnlyOneChild?
-    @leftChild.nil? ^ @@rightChild.nil?
+    @leftChild.nil? ^ @rightChild.nil?
   end
 
   def isRoot?
@@ -248,7 +285,26 @@ class TreeNode
     "key: #{@key} - value: #{@value} - size: #{size}"
   end
 
+  def == other
+    return false if other.nil? || !(other.is_a? TreeNode)
+    self.key == other.key
+  end
+
   :private
+
+    def updateParentDuringSwaping(other)
+      unless self.isRoot?
+          if self.isRightChild?
+              @parent.setRightChildWithoutUpdatingSize other
+          else
+              @parent.setLeftChildWithoutUpdatingSize other
+          end
+      else
+          other.parent = nil
+      end
+    end
+
+
 
   def predecessorHelper
     return @parent if isRightChild?
@@ -264,13 +320,27 @@ class TreeNode
     @parent.successorHelper
   end
 
-  def updatedSize
+  def updateSize
     leftSize = @leftChild.nil? ? 0 : @leftChild.size
     rightSize = @rightChild.nil? ? 0 : @rightChild.size
     @size = leftSize + rightSize + 1
 
-    @parent.updatedSize unless isRoot?
+    @parent.updateSize unless isRoot?
   end
+
+    def setRightChildWithoutUpdatingSize(child)
+      unless child.nil?
+        child.parent = self
+      end
+        @rightChild = child
+    end
+
+    def setLeftChildWithoutUpdatingSize(child)
+      unless child.nil?
+        child.parent = self
+      end
+        @leftChild = child
+    end
 end
 
 def generateTestTree
@@ -297,27 +367,27 @@ def generateTestTree
   UnbalancedSearchTree.new(node7)
 end
 
-testTree = generateTestTree
+#testTree = generateTestTree
 
-puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
-puts testTree.successor('a')
+#puts testTree.successor('a')
 
-puts testTree.predecessor('d')
+#puts testTree.predecessor('d')
 
-testTree.insert(-5, 'h')
+#testTree.insert(-5, 'h')
 
-puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
-puts testTree.min
+#puts testTree.min
 
-testTree.delete(20)
+#testTree.delete(20)
 
-puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
 
-puts testTree.select(1)
+#puts testTree.select(1)
 
-puts testTree.select(4)
+#puts testTree.select(4)
 
-puts testTree.select(7)
+#puts testTree.select(7)
