@@ -6,8 +6,11 @@ require 'benchmark'
 class MendianMaintenanceBaseTree
     def insert(number)
         @elements.insert(number, number)
-        median = (@elements.root.size/2).floor+1
-
+        median = if @elements.root.size.even?
+                    @elements.root.size / 2
+                 else
+                    (@elements.root.size+1)/2
+                 end
         @elements.select(median)
     end
 end
@@ -139,4 +142,29 @@ def runTestRandom(medianMaintenance)
     end.real
 end
 
-testMedian
+def gettingModulosOfMedians
+  sumHeap = 0
+  sumUnbalanced = 0
+  sumRedAndBlack = 0
+
+  heap = MendianMaintenanceHeap.new
+  unbalanced = MendianMaintenanceUnbalanced.new
+  redAndBlack = MendianMaintenanceRedAndBlack.new
+  
+  File.open('median_maintenance.txt').each_line do |line|
+    number = line.to_i
+    sumHeap = sumHeap + heap.insert(number)
+    sumUnbalanced = sumUnbalanced + unbalanced.insert(number).key
+    sumRedAndBlack = sumRedAndBlack + redAndBlack.insert(number).key
+  end
+
+  puts "sums:\nheap: #{sumHeap} -- unbalanced: #{sumUnbalanced} -- red and black: #{sumRedAndBlack}"
+
+  moduloHeap = sumHeap.modulo(10000)
+  moduloUnbalanced = sumUnbalanced.modulo(10000)
+  moduloRedAndBlack = sumRedAndBlack.modulo(10000)
+  
+  puts "modulos:\nheap: #{moduloHeap} -- unbalanced: #{moduloUnbalanced} -- red and black: #{moduloRedAndBlack}"
+end
+gettingModulosOfMedians
+#testMedian
