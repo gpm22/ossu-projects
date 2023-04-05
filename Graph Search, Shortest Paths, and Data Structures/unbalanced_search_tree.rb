@@ -47,6 +47,15 @@ class UnbalancedSearchTree
 
   def delete(key)
     nodeToDelete = search(key)
+    return if nodeToDelete.nil?
+
+    @nodesMap.delete(nodeToDelete.value)
+
+    if nodeToDelete.isRoot? && nodeToDelete.isLeaf?
+        @root = nil
+        return 
+    end
+
     deleteHelper(nodeToDelete)
   end
 
@@ -59,16 +68,7 @@ class UnbalancedSearchTree
   :private
 
   def deleteHelper(nodeToDelete)
-    return if nodeToDelete.nil?
-
-    @nodesMap.delete(nodeToDelete.value)
-
-    if nodeToDelete.isRoot? && nodeToDelete.isLeaf?
-        @root = nil
-        return 
-    end
-
-    return updateParentCorrectlyWithChild(nodeToDelete, nil) if nodeToDelete.isLeaf?
+     return updateParentCorrectlyWithChild(nodeToDelete, nil) if nodeToDelete.isLeaf?
 
     if nodeToDelete.hasOnlyOneChild?
       child = if nodeToDelete.leftChild.nil?

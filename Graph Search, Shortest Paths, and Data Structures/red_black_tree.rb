@@ -67,24 +67,9 @@ class RedBlackTree<UnbalancedSearchTree
       end until parent.isRoot?
     end
 
-  def delete(key)
-    nodeToDelete = search(key)
-    deleteHelper(nodeToDelete)
-  end
-
-
   :private
 
   def deleteHelper(nodeToDelete)
-
-    return if nodeToDelete.nil?
-
-    @nodesMap.delete(nodeToDelete.value)
-
-    if nodeToDelete.isRoot? && nodeToDelete.isLeaf?
-        @root = nil
-        return 
-    end
 
     if nodeToDelete.isRed? && nodeToDelete.isLeaf?
       return updateParentCorrectlyWithChild(nodeToDelete, nil)
@@ -325,7 +310,7 @@ def testInsertHelper(tree, key, value)
     puts "--------------------------"
 end
 
-testTree = testInsert #generateRedBlackTestTree
+#testTree = testInsert #generateRedBlackTestTree
 
 #puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
@@ -333,22 +318,22 @@ testTree = testInsert #generateRedBlackTestTree
 
 #puts testTree.predecessor('d')
 
-testTree.insert(-5, 'h')
+#testTree.insert(-5, 'h')
 
 #puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
 #puts testTree.min
 
-puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
-keyToDelete = 1 
-puts "deletando #{keyToDelete}"
-testTree.delete(keyToDelete)
+#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+#keyToDelete = 1 
+#puts "deletando #{keyToDelete}"
+#testTree.delete(keyToDelete)
 
-puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
 
-puts testTree.select(1)
+#puts testTree.select(1)
 
-puts testTree.select(4)
+#puts testTree.select(4)
 
-puts testTree.select(7)
+#puts testTree.select(7)
