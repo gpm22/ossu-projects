@@ -5,7 +5,7 @@ class UnbalancedSearchTree
     @root = root
 
     @nodesMap = {}
-    
+
     initializeMap(@root) unless root.nil?
   end
 
@@ -39,8 +39,8 @@ class UnbalancedSearchTree
     newNode = TreeNode.new(key, value)
     @nodesMap[value] = newNode
     if @root.nil?
-        @root = newNode
-        return 
+      @root = newNode
+      return
     end
     @root.insert(newNode)
   end
@@ -52,8 +52,8 @@ class UnbalancedSearchTree
     @nodesMap.delete(nodeToDelete.value)
 
     if nodeToDelete.isRoot? && nodeToDelete.isLeaf?
-        @root = nil
-        return 
+      @root = nil
+      return
     end
 
     deleteHelper(nodeToDelete)
@@ -68,7 +68,7 @@ class UnbalancedSearchTree
   :private
 
   def deleteHelper(nodeToDelete)
-     return updateParentCorrectlyWithChild(nodeToDelete, nil) if nodeToDelete.isLeaf?
+    return updateParentCorrectlyWithChild(nodeToDelete, nil) if nodeToDelete.isLeaf?
 
     if nodeToDelete.hasOnlyOneChild?
       child = if nodeToDelete.leftChild.nil?
@@ -81,9 +81,7 @@ class UnbalancedSearchTree
     end
 
     maxLeftDescendant = nodeToDelete.leftChild.max
-    if nodeToDelete.isRoot?
-        @root = maxLeftDescendant
-    end
+    @root = maxLeftDescendant if nodeToDelete.isRoot?
     nodeToDelete.swap(maxLeftDescendant)
 
     deleteHelper(nodeToDelete)
@@ -110,16 +108,15 @@ class UnbalancedSearchTree
   end
 
   def updateParentCorrectlyWithChild(nodeToDelete, child)
-
     if !nodeToDelete.isRoot?
-        if nodeToDelete.isLeftChild?
-            nodeToDelete.parent.leftChild = child
-        else
-            nodeToDelete.parent.rightChild = child
-        end
+      if nodeToDelete.isLeftChild?
+        nodeToDelete.parent.leftChild = child
+      else
+        nodeToDelete.parent.rightChild = child
+      end
     elsif !child.nil?
-        @root = child
-        child.parent = nil
+      @root = child
+      child.parent = nil
     end
     nodeToDelete
   end
@@ -223,7 +220,7 @@ class TreeNode
     @rightChild.select(position - leftSize - 1)
   end
 
-  def swap(other)    
+  def swap(other)
     intermediateParent = other.parent
     isOtherRightSide = other.isRightChild?
     intermediateLeftChild = other.leftChild
@@ -232,23 +229,21 @@ class TreeNode
     updateParentDuringSwaping(other)
 
     if intermediateParent == self
-      if isOtherRightSide 
+      if isOtherRightSide
         other.setLeftChildWithoutUpdatingSize @leftChild
-        other.setRightChildWithoutUpdatingSize self 
-      else 
+        other.setRightChildWithoutUpdatingSize self
+      else
         other.setLeftChildWithoutUpdatingSize self
         other.setRightChildWithoutUpdatingSize @rightChild
       end
     else
-      other.setLeftChildWithoutUpdatingSize @leftChild 
+      other.setLeftChildWithoutUpdatingSize @leftChild
       other.setRightChildWithoutUpdatingSize @rightChild
     end
     self.leftChild =  intermediateLeftChild
     self.rightChild = intermediateRightChild
 
-    if intermediateParent == self 
-      intermediateParent = other
-    end
+    intermediateParent = other if intermediateParent == self
 
     if isOtherRightSide
       intermediateParent.rightChild = self
@@ -285,26 +280,23 @@ class TreeNode
     "key: #{@key} - value: #{@value} - size: #{size}"
   end
 
-  def == other
+  def ==(other)
     return false if other.nil? || !(other.is_a? TreeNode)
-    self.key == other.key
+
+    key == other.key
   end
 
   :private
 
-    def updateParentDuringSwaping(other)
-      unless self.isRoot?
-          if self.isRightChild?
-              @parent.setRightChildWithoutUpdatingSize other
-          else
-              @parent.setLeftChildWithoutUpdatingSize other
-          end
-      else
-          other.parent = nil
-      end
+  def updateParentDuringSwaping(other)
+    if isRoot?
+      other.parent = nil
+    elsif isRightChild?
+      @parent.setRightChildWithoutUpdatingSize other
+    else
+      @parent.setLeftChildWithoutUpdatingSize other
     end
-
-
+  end
 
   def predecessorHelper
     return @parent if isRightChild?
@@ -328,19 +320,15 @@ class TreeNode
     @parent.updateSize unless isRoot?
   end
 
-    def setRightChildWithoutUpdatingSize(child)
-      unless child.nil?
-        child.parent = self
-      end
-        @rightChild = child
-    end
+  def setRightChildWithoutUpdatingSize(child)
+    child.parent = self unless child.nil?
+    @rightChild = child
+  end
 
-    def setLeftChildWithoutUpdatingSize(child)
-      unless child.nil?
-        child.parent = self
-      end
-        @leftChild = child
-    end
+  def setLeftChildWithoutUpdatingSize(child)
+    child.parent = self unless child.nil?
+    @leftChild = child
+  end
 end
 
 def generateTestTree
@@ -367,27 +355,26 @@ def generateTestTree
   UnbalancedSearchTree.new(node7)
 end
 
-#testTree = generateTestTree
+# testTree = generateTestTree
 
-#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+# puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
-#puts testTree.successor('a')
+# puts testTree.successor('a')
 
-#puts testTree.predecessor('d')
+# puts testTree.predecessor('d')
 
-#testTree.insert(-5, 'h')
+# testTree.insert(-5, 'h')
 
-#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+# puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
-#puts testTree.min
+# puts testTree.min
 
-#testTree.delete(20)
+# testTree.delete(20)
 
-#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+# puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
+# puts testTree.select(1)
 
-#puts testTree.select(1)
+# puts testTree.select(4)
 
-#puts testTree.select(4)
-
-#puts testTree.select(7)
+# puts testTree.select(7)

@@ -1,7 +1,6 @@
 require './unbalanced_search_tree'
 
-class RedBlackTree<UnbalancedSearchTree
-
+class RedBlackTree < UnbalancedSearchTree
   def initialize(root)
     super(root)
   end
@@ -10,71 +9,69 @@ class RedBlackTree<UnbalancedSearchTree
     newNode = RedBlackNode.new(key, value, false)
     @nodesMap[value] = newNode
     if @root.nil?
-        @root = newNode
-        return 
+      @root = newNode
+      return
     end
     @root.insert(newNode)
-    begin  
-        if newNode.isRoot?
-            @root = newNode
-            return
+    begin
+      if newNode.isRoot?
+        @root = newNode
+        return
+      end
+
+      parent = newNode.parent
+
+      return if parent.isBlack?
+
+      if parent.isRoot?
+        parent.black = true
+        return
+      end
+
+      grandParent = parent.parent
+
+      uncle = if parent.isRightChild?
+                grandParent.leftChild
+              else
+                grandParent.rightChild
+              end
+
+      if uncle.nil? or uncle.isBlack?
+        if newNode.isInnerGranchild?
+          parent.rotate(newNode.isRightChild?)
+          newNode = parent
+          parent = newNode.parent
         end
 
-        parent = newNode.parent
+        isGrandParentRoot = grandParent.isRoot?
 
-        return if parent.isBlack?
-
-        if parent.isRoot?
-            parent.black = true
-            return 
-        end
-
-       grandParent = parent.parent
-
-       uncle = if parent.isRightChild?
-                   grandParent.leftChild
-                else
-                    grandParent.rightChild
-                end 
-    
-        if uncle.nil? or uncle.isBlack?
-           if newNode.isInnerGranchild?
-                parent.rotate(newNode.isRightChild?)
-                newNode = parent
-                parent = newNode.parent
-           end 
-
-           isGrandParentRoot = grandParent.isRoot?
-
-           grandParent.rotate(parent.isRightChild?)
-
-           parent.black = true
-
-           grandParent.black = false
-
-           @root = parent if isGrandParentRoot
-       
-           return 
-        end
+        grandParent.rotate(parent.isRightChild?)
 
         parent.black = true
 
-        uncle.black = true
-
         grandParent.black = false
 
-        newNode = grandParent
-      end until parent.isRoot?
-    end
+        @root = parent if isGrandParentRoot
+
+        return
+      end
+
+      parent.black = true
+
+      uncle.black = true
+
+      grandParent.black = false
+
+      newNode = grandParent
+    end until parent.isRoot?
+  end
 
   :private
 
   def deleteHelper(nodeToDelete)
+    return updateParentCorrectlyWithChild(nodeToDelete, nil) if nodeToDelete.isRed? && nodeToDelete.isLeaf?
 
-    if nodeToDelete.isRed? && nodeToDelete.isLeaf?
-      return updateParentCorrectlyWithChild(nodeToDelete, nil)
-    end
-    if nodeToDelete.hasOnlyOneChild? #the child must be red
+    if nodeToDelete.hasOnlyOneChild? # the child must be red
       child = if nodeToDelete.leftChild.nil?
                 nodeToDelete.rightChild
               else
@@ -86,20 +83,18 @@ class RedBlackTree<UnbalancedSearchTree
     end
 
     if nodeToDelete.hasTwoChildren?
-    
-        maxLeftDescendant = nodeToDelete.leftChild.max
 
-        nodeToDelete.black, maxLeftDescendant.black = maxLeftDescendant.black ,nodeToDelete.black
+      maxLeftDescendant = nodeToDelete.leftChild.max
 
-        if nodeToDelete.isRoot?
-            @root = maxLeftDescendant
-        end
-        nodeToDelete.swap(maxLeftDescendant)
+      nodeToDelete.black, maxLeftDescendant.black = maxLeftDescendant.black, nodeToDelete.black
 
-        return deleteHelper(nodeToDelete)
+      @root = maxLeftDescendant if nodeToDelete.isRoot?
+      nodeToDelete.swap(maxLeftDescendant)
+
+      return deleteHelper(nodeToDelete)
     end
 
-    #the node is black non-root lead
+    # the node is black non-root lead
 
     deleteBlackNonRootLeaf(nodeToDelete)
   end
@@ -111,151 +106,149 @@ class RedBlackTree<UnbalancedSearchTree
     updateParentCorrectlyWithChild(nodeToDelete, nil)
 
     begin
-        parent = nodeToDelete.parent
+      parent = nodeToDelete.parent
 
-        if firstIteration
-            sibling = if isNodeToDeleteRightChild 
-                          parent.leftChild
-                      else
-                          parent.rightChild
-                      end
-            firstIteration = false
-        else
-            sibling = if nodeToDelete.isLeftChild?
-                        parent.rightChild
-                      else 
-                        parent.leftChild 
-                      end
-        end
-
-        if sibling.nil?
-            distantNephew = nil
-            closeNephew = nil
-        else
-            distantNephew = if nodeToDelete.isLeftChild?
-                        sibling.rightChild
-                    else 
-                        sibling.leftChild 
-                    end
-            closeNephew = if nodeToDelete.isLeftChild?
-                        sibling.leftChild 
-                    else 
-                        sibling.rightChild
-                    end
-        end
-        
-        if !sibling.nil? && sibling.isRed?
-            isParentRoot = parent.isRoot?
-            parent.rotate(sibling.isRightChild?)
-            @root = sibling if isParentRoot
-            parent.black = false
-            sibling.black = true
-
-            sibling = closeNephew
-
-            distantNephew = if nodeToDelete.isLeftChild?
-                    sibling.rightChild
-                  else 
-                    sibling.leftChild 
+      if firstIteration
+        sibling = if isNodeToDeleteRightChild
+                    parent.leftChild
+                  else
+                    parent.rightChild
                   end
-        end
+        firstIteration = false
+      else
+        sibling = if nodeToDelete.isLeftChild?
+                    parent.rightChild
+                  else
+                    parent.leftChild
+                  end
+      end
 
-        if !distantNephew.nil? && distantNephew.isRed?
-            isParentRoot = parent.isRoot?
-            parent.rotate(sibling.isRightChild?)
-            @root = sibling if isParentRoot
+      if sibling.nil?
+        distantNephew = nil
+        closeNephew = nil
+      else
+        distantNephew = if nodeToDelete.isLeftChild?
+                          sibling.rightChild
+                        else
+                          sibling.leftChild
+                        end
+        closeNephew = if nodeToDelete.isLeftChild?
+                        sibling.leftChild
+                      else
+                        sibling.rightChild
+                      end
+      end
 
-            sibling.black = parent.black
+      if !sibling.nil? && sibling.isRed?
+        isParentRoot = parent.isRoot?
+        parent.rotate(sibling.isRightChild?)
+        @root = sibling if isParentRoot
+        parent.black = false
+        sibling.black = true
 
-            parent.black = true
-            distantNephew.black = true
+        sibling = closeNephew
 
-            return nodeToDeleteOriginal
-        end
+        distantNephew = if nodeToDelete.isLeftChild?
+                          sibling.rightChild
+                        else
+                          sibling.leftChild
+                        end
+      end
 
-        if !closeNephew.nil? && closeNephew.isRed?
-            sibling.rotate(closeNephew.isRightChild?)
-            sibling.black = false
-            closeNephew.black = true
-            distantNephew = sibling
-            sibling = closeNephew
+      if !distantNephew.nil? && distantNephew.isRed?
+        isParentRoot = parent.isRoot?
+        parent.rotate(sibling.isRightChild?)
+        @root = sibling if isParentRoot
 
-            isParentRoot = parent.isRoot?
-            parent.rotate(sibling.isRightChild?)
-            @root = sibling if isParentRoot
+        sibling.black = parent.black
 
-            sibling.black = parent.black
+        parent.black = true
+        distantNephew.black = true
 
-            parent.black = true
-            distantNephew.black = true
+        return nodeToDeleteOriginal
+      end
 
-            return nodeToDeleteOriginal
-        end
+      if !closeNephew.nil? && closeNephew.isRed?
+        sibling.rotate(closeNephew.isRightChild?)
+        sibling.black = false
+        closeNephew.black = true
+        distantNephew = sibling
+        sibling = closeNephew
 
-        if parent.isRed?
-            sibling.black = false unless sibling.nil?
-            parent.black = true
-            return nodeToDeleteOriginal
-        end
+        isParentRoot = parent.isRoot?
+        parent.rotate(sibling.isRightChild?)
+        @root = sibling if isParentRoot
 
+        sibling.black = parent.black
+
+        parent.black = true
+        distantNephew.black = true
+
+        return nodeToDeleteOriginal
+      end
+
+      if parent.isRed?
         sibling.black = false unless sibling.nil?
-        nodeToDelete = nodeToDelete.parent
+        parent.black = true
+        return nodeToDeleteOriginal
+      end
+
+      sibling.black = false unless sibling.nil?
+      nodeToDelete = nodeToDelete.parent
     end until nodeToDelete.isRoot?
     nodeToDeleteOriginal
   end
 end
 
-class RedBlackNode<TreeNode
-    
-    attr_accessor :black
+class RedBlackNode < TreeNode
+  attr_accessor :black
 
-    def initialize(key, value, black)
-        super(key, value)
-        @black = black
-    end
-
-    def rotate(isNewNodeRight)
-        return self.rotateLeft if isNewNodeRight
-
-        self.rotateRight
-    end
-
-    def isBlack?
-        @black
-    end
-
-    def isRed? 
-        !@black
-    end
-
-    def isInnerGranchild?
-        (self.isLeftChild? && @parent.isRightChild?) || (self.isRightChild? && @parent.isLeftChild?)
-    end
-
-    def hasTwoChildren?
-        !@rightChild.nil? && !@leftChild.nil?
-    end
-
-  def to_s
-    "key: #{@key} - value: #{@value} - color: #{isBlack? ? "black" : "red"} - size: #{size}"
+  def initialize(key, value, black)
+    super(key, value)
+    @black = black
   end
 
-    :private
+  def rotate(isNewNodeRight)
+    return rotateLeft if isNewNodeRight
 
-    def rotateLeft
-        intermediateLeftChild = @rightChild.leftChild
-        updateParentDuringSwaping(@rightChild)
-        @rightChild.setLeftChildWithoutUpdatingSize self
-        self.rightChild = intermediateLeftChild
-    end
+    rotateRight
+  end
 
-    def rotateRight
-        intermediateRightChild = @leftChild.rightChild
-        updateParentDuringSwaping(@leftChild)
-        @leftChild.setRightChildWithoutUpdatingSize self
-        self.leftChild = intermediateRightChild
-    end
+  def isBlack?
+    @black
+  end
 
+  def isRed?
+    !@black
+  end
+
+  def isInnerGranchild?
+    (isLeftChild? && @parent.isRightChild?) || (isRightChild? && @parent.isLeftChild?)
+  end
+
+  def hasTwoChildren?
+    !@rightChild.nil? && !@leftChild.nil?
+  end
+
+  def to_s
+    "key: #{@key} - value: #{@value} - color: #{isBlack? ? 'black' : 'red'} - size: #{size}"
+  end
+
+  :private
+
+  def rotateLeft
+    intermediateLeftChild = @rightChild.leftChild
+    updateParentDuringSwaping(@rightChild)
+    @rightChild.setLeftChildWithoutUpdatingSize self
+    self.rightChild = intermediateLeftChild
+  end
+
+  def rotateRight
+    intermediateRightChild = @leftChild.rightChild
+    updateParentDuringSwaping(@leftChild)
+    @leftChild.setRightChildWithoutUpdatingSize self
+    self.leftChild = intermediateRightChild
+  end
 end
 
 def generateRedBlackTestTree
@@ -283,57 +276,56 @@ def generateRedBlackTestTree
 end
 
 def testInsert
-    tree = RedBlackTree.new(nil)
+  tree = RedBlackTree.new(nil)
 
-    testInsertHelper(tree, 10, "a");
-    testInsertHelper(tree, -1, "a");
-    testInsertHelper(tree, 1, "a");
-    testInsertHelper(tree, 0, "a");
-    testInsertHelper(tree, 100, "a");
-    testInsertHelper(tree, 1000, "a");
-    testInsertHelper(tree, 11, "a");
-    testInsertHelper(tree, 12, "a");
-    testInsertHelper(tree, -10, "a");
-    testInsertHelper(tree, -110, "a");
-    testInsertHelper(tree, 15, "a");
-    tree
+  testInsertHelper(tree, 10, 'a')
+  testInsertHelper(tree, -1, 'a')
+  testInsertHelper(tree, 1, 'a')
+  testInsertHelper(tree, 0, 'a')
+  testInsertHelper(tree, 100, 'a')
+  testInsertHelper(tree, 1000, 'a')
+  testInsertHelper(tree, 11, 'a')
+  testInsertHelper(tree, 12, 'a')
+  testInsertHelper(tree, -10, 'a')
+  testInsertHelper(tree, -110, 'a')
+  testInsertHelper(tree, 15, 'a')
+  tree
 end
 
 def testInsertHelper(tree, key, value)
-    tree.insert(key, value)
-    arr = tree.outputSorted.map(&:to_s)
-    if arr.size > 1
-        puts arr.to_s.gsub! ',', "\n"
-    else
-        puts arr.to_s
-    end
-    puts "--------------------------"
+  tree.insert(key, value)
+  arr = tree.outputSorted.map(&:to_s)
+  if arr.size > 1
+    puts arr.to_s.gsub! ',', "\n"
+  else
+    puts arr.to_s
+  end
+  puts '--------------------------'
 end
 
-#testTree = testInsert #generateRedBlackTestTree
+# testTree = testInsert #generateRedBlackTestTree
 
-#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+# puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
-#puts testTree.successor('a')
+# puts testTree.successor('a')
 
-#puts testTree.predecessor('d')
+# puts testTree.predecessor('d')
 
-#testTree.insert(-5, 'h')
+# testTree.insert(-5, 'h')
 
-#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+# puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
-#puts testTree.min
+# puts testTree.min
 
-#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
-#keyToDelete = 1 
-#puts "deletando #{keyToDelete}"
-#testTree.delete(keyToDelete)
+# puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+# keyToDelete = 1
+# puts "deletando #{keyToDelete}"
+# testTree.delete(keyToDelete)
 
-#puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
+# puts testTree.outputSorted.map(&:to_s).to_s.gsub! ',', "\n"
 
+# puts testTree.select(1)
 
-#puts testTree.select(1)
+# puts testTree.select(4)
 
-#puts testTree.select(4)
-
-#puts testTree.select(7)
+# puts testTree.select(7)
