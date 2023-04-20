@@ -27,3 +27,4 @@ Here are the projects made for the course and book and the book's problems.
    * [Median Maintenance problem](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/median_maintenance.rb)
 5. Unit 12
    * [2-SUM problem](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/two_sum.rb)
+   * [2-SUM problem variation](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/two_sum_fast.rb)
