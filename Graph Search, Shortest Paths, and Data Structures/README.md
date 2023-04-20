@@ -9,6 +9,7 @@ Here are the projects made for the course and book and the book's problems.
 3. [Unit 9](https://github.com/gpm22/ossu-projects/tree/main/Graph%20Search%2C%20Shortest%20Path%2C%20and%20Data%20Structures/problems-unit-9.md)
 4. [Unit 10](https://github.com/gpm22/ossu-projects/tree/main/Graph%20Search%2C%20Shortest%20Path%2C%20and%20Data%20Structures/problems-unit-10.md)
 5. [Unit 11](https://github.com/gpm22/ossu-projects/tree/main/Graph%20Search%2C%20Shortest%20Path%2C%20and%20Data%20Structures/problems-unit-11.md)
+6. [Unit 12](https://github.com/gpm22/ossu-projects/tree/main/Graph%20Search%2C%20Shortest%20Path%2C%20and%20Data%20Structures/problems-unit-12.md)
 
 ## Algorithms
 
@@ -24,3 +25,5 @@ Here are the projects made for the course and book and the book's problems.
    * [Unbalanced Search Tree](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/unbalanced_search_tree.rb)
    * [Red-Black Search Tree ](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/red_black_tree.rb)
    * [Median Maintenance problem](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/median_maintenance.rb)
+5. Unit 12
+   * [2-SUM problem](https://github.com/gpm22/ossu-projects/blob/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures/two_sum.rb)

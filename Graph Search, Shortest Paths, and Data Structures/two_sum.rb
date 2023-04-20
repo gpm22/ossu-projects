@@ -46,7 +46,7 @@ end
 
 def countTargetsWithSet(arr, set)
   count = 109 #109 at t -4860
-  a = 0.0
+  a = 5140.0#0.0
   #  (-100..-50).each do |i|
   (-4_860..10_000).each do |i|
     puts "current t: #{i} - counting step: #{a} - percentage #{(a * 100) / 20_001} % - current count: #{count}" if a % 20 < 1
@@ -107,4 +107,4 @@ def solveProblem
   puts "counting result: #{count}"
 end
 
-solveProblem
+solveProblem #result is 427

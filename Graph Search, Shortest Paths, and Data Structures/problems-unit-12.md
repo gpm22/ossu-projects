@@ -72,7 +72,7 @@ end
 def countTargetsWithSet(arr, set)
     count = 0
     a = 0.0
-    (-100..100).each do |i|
+    (-1000..1000).each do |i|
         puts "counting step: #{a} - percentage #{(a*100)/20_001} %" if (a % 200 < 1)
         a += 1
         count += (two_sum(arr, i, set) ? 1 : 0) 
@@ -88,5 +88,7 @@ def solveProblem
     count = countTargetsWithSet(arr, set)
     puts "counting result: #{count}"
 end
+
+solveProblem #result is 427
 ```
 
