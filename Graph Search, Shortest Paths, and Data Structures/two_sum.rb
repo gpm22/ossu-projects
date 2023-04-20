@@ -45,10 +45,10 @@ def countTargets(arr)
 end
 
 def countTargetsWithSet(arr, set)
-  count = 0
+  count = 109 #109 at t -4860
   a = 0.0
   #  (-100..-50).each do |i|
-  (-10_000..10_000).each do |i|
+  (-4_860..10_000).each do |i|
     puts "current t: #{i} - counting step: #{a} - percentage #{(a * 100) / 20_001} % - current count: #{count}" if a % 20 < 1
     a += 1
     count += (two_sum(arr, i, set) ? 1 : 0)
