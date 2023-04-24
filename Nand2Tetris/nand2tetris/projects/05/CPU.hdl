@@ -40,4 +40,55 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+
+    //setting writeM
+    And(a=instruction[3], b=instruction[15], out=writeM);
+    
+    //first mux
+    Mux16(a=instruction, b=aluoutput, sel=instruction[15], out=outMux1);
+
+    //A register
+    Not(in=instruction[15], out=isA);
+    Or(a=instruction[5], b=isA, out=loadA);
+    ARegister(in=outMux1, load=loadA, out=outA);
+
+    //D register
+    And(a=instruction[4], b=instruction[15], out=loadD);
+    DRegister(in=aluoutput, load=loadD, out=outD); 
+
+    // second mux
+    Mux16(a=outA, b=inM, sel=instruction[12], out=outMux2);
+
+    //setting addressM
+    And16(a=outA, b=outA, out[0..14]=addressM);
+
+    //ALU
+
+    ALU(y=outMux2, x=outD, out=aluoutput, zr=zr, ng=ng, no=instruction[6], f=instruction[7], ny=instruction[8], zy=instruction[9], nx=instruction[10], zx=instruction[11]);
+
+    //setting outM
+    And16(a=aluoutput, b=aluoutput, out=outM);
+
+    // jump 
+    Not(in=zr, out=notzr);
+    Not(in=ng, out=notng);
+
+    And(a=notzr, b=notng, out=andjump1);
+    And(a=zr, b=notng, out=andjump2);
+    And(a=notzr, b=ng, out=andjump3);
+
+    And(a=andjump1, b=instruction[0], out=andjump4);
+    And(a=andjump2, b=instruction[1], out=andjump5);
+    And(a=andjump3, b=instruction[2], out=andjump6);
+    And(a=instruction[0], b=instruction[1], out=andinstruction1);
+    And(a=instruction[2], b=andinstruction1, out=andinstruction2);
+
+    Or(a=andjump4, b=andjump5, out=orjump1);
+    Or(a=andjump6, b=andinstruction2, out=orjump2);
+
+    Or(a=orjump1, b=orjump2, out=jump3);
+
+    And(a=jump3, b=instruction[15], out=jump);
+
+    PC(reset=reset, in=outA, load=jump, inc=true, out[0..14]=pc);
 }
