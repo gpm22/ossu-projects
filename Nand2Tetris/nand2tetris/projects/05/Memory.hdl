@@ -28,4 +28,20 @@ CHIP Memory {
 
     PARTS:
     // Put your code here:
+    // Pseudocode:
+    // if address[15] == 0 then ram16k
+    // else if address[14] == 0 then screen
+    // else keyboard
+
+    Not(in=address[14], out=not14);
+    And(a=load, b=not14, out=loadram);
+    RAM16K(in=in, address=address[0..13], load=loadram, out=out1);
+    Not(in=address[13], out=not13);
+    And(a=load, b=not13, out=loadscreen1);
+    And(a=loadscreen1, b=address[14], out=loadscreen);
+    Screen(in=in, address=address[0..12], load=loadscreen, out=out2);
+    Keyboard(out=out3);
+
+    Mux16(a=out2, b=out3, sel=address[13], out=out4);
+    Mux16(a=out1, b=out4, sel=address[14], out=out);
 }
