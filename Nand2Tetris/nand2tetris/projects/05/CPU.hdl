@@ -80,15 +80,11 @@ CHIP CPU {
     And(a=andjump1, b=instruction[0], out=andjump4);
     And(a=andjump2, b=instruction[1], out=andjump5);
     And(a=andjump3, b=instruction[2], out=andjump6);
-    And(a=instruction[0], b=instruction[1], out=andinstruction1);
-    And(a=instruction[2], b=andinstruction1, out=andinstruction2);
 
     Or(a=andjump4, b=andjump5, out=orjump1);
-    Or(a=andjump6, b=andinstruction2, out=orjump2);
+    Or(a=andjump6, b=orjump1, out=orjump2);
 
-    Or(a=orjump1, b=orjump2, out=jump3);
-
-    And(a=jump3, b=instruction[15], out=jump);
+    And(a=orjump2, b=instruction[15], out=jump);
 
     PC(reset=reset, in=outA, load=jump, inc=true, out[0..14]=pc);
 }
