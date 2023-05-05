@@ -27,6 +27,7 @@ My OSSU progress can be seen in [OSSU progress](https://trello.com/b/DIZv8gOk/os
 
 * [Divide and Conquer, Sorting and Searching, and Randomized Algorithms](https://github.com/gpm22/ossu-projects/tree/main/Divide%20and%20Conquer%2C%20Sorting%20and%20Searching%2C%20and%20Randomized%20Algorithms)(**Done**)
 * [Graph Search, Shortest Path, and Data Structures](https://github.com/gpm22/ossu-projects/tree/main/Graph%20Search%2C%20Shortest%20Paths%2C%20and%20Data%20Structures)(**Done**)
+* [Greedy Algorithms, Minimum Spanning Trees, and Dynamic Programming](https://github.com/gpm22/ossu-projects/tree/main/Greedy%20Algorithms%2C%20Minimum%20Spanning%20Trees%2C%20and%20Dynamic%20Programming) (In progress)
 
 ### CS Tools
 
