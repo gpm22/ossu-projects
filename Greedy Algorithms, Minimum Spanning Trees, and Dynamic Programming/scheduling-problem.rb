@@ -9,6 +9,14 @@ class Job
     def to_s
         "Job[lenght = #{@lenght}, weight = #{@weight}]"
     end
+
+    def diff
+        @weight-@lenght
+    end
+
+    def ratio
+        @weight*1.0/@lenght
+    end
 end
 
 class Schedule
@@ -30,12 +38,12 @@ class Schedule
     end
 
     def greedyDiff
-        @jobs.sort!{ |job1, job2| (job2.weight-job2.lenght) <=> (job1.weight-job1.lenght) }
+        @jobs.sort!{ |job1, job2| job2.diff <=> job1.diff }
         self
     end
 
     def greedyRatio
-        @jobs.sort!{ |job1, job2| ((job2.weight*1.0)/job2.lenght) <=> ((job1.weight*1.0)/job1.lenght) }
+        @jobs.sort!{ |job1, job2| job2.ratio <=> job1.ratio }
         self
     end
 
