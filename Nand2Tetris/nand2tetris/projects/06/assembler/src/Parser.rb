@@ -87,7 +87,7 @@ class Parser
     end
 
     def isCInstruction?
-        cInstructionRegex = /^([A-Z]{0,3})=?([A-Z\-\+\!\|01]{1,3});?([A-Z]{0,3})$/ #dest=comp;jump
+        cInstructionRegex = /^([A-Z]{0,3})=?([A-Z\&\-\+\!\|01]{1,3});?([A-Z]{0,3})$/ #dest=comp;jump
         
         return false unless cInstructionRegex.match? @currentInstruction
 
