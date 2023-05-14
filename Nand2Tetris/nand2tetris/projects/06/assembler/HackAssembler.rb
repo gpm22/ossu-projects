@@ -26,7 +26,7 @@ class HackAssembler
       elsif parser.instructionType == :C_INSTRUCTION
         lineNumber += 1
       elsif parser.instructionType == :L_INSTRUCTION
-        @table.addEntry(parser.symbol, lineNumber) # verify
+        @table.addEntry(parser.symbol, lineNumber)
       end
     end
   end
