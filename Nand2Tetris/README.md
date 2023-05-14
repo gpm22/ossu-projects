@@ -1,5 +1,7 @@
 # Nand to Tetris
 
+More information about this course is available on https://www.nand2tetris.org/.
+
 Both projects from part I and II are here.
 
 ## Part I
