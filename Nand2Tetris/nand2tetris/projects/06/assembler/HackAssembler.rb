@@ -5,17 +5,34 @@ require_relative "./src/SymbolTable"
 class HackAssembler
 
     def initialize (file)
-        setOutputAndParser(file)
+        setFilesInfo(file)
+        setOutput
+        @table = SymbolTable.new
     end
 
     def execute
-        while (@parser.hasMoreLines)
-            @parser.advance
+        executeBasic
+    end
 
-            if @parser.instructionType ==  :A_INSTRUCTION
-                line = ("%016b" % @parser.symbol)
-            elsif @parser.instructionType == :C_INSTRUCTION
-                line = "111"+Code.comp(@parser.comp) + Code.dest(@parser.dest) + Code.jump(@parser.jump)
+    private
+
+    def firstPass
+        parser = Parser.new(@file)
+    end
+
+    def secondPass
+        parser = Parser.new(@file)
+    end
+
+    def executeBasic
+        parser = Parser.new(@file)
+        while (parser.hasMoreLines)
+            parser.advance
+
+            if parser.instructionType ==  :A_INSTRUCTION
+                line = ("%016b" % parser.symbol)
+            elsif parser.instructionType == :C_INSTRUCTION
+                line = "111"+Code.comp(parser.comp) + Code.dest(parser.dest) + Code.jump(parser.jump)
             else
                 next
             end
@@ -25,21 +42,23 @@ class HackAssembler
         closeOutputFile
     end
 
-    private
-
-    def setOutputAndParser(file)
+    def setFilesInfo(file)
         raise "File extension must be asm and not #{File.extname(file)}" unless File.extname(file) == ".asm"
 
         if file.include?("\\") || file.include?("/")
             file = file.gsub("\\", "/") if file.include?("\\")
-            folder = File.dirname(file)
-            @parser = Parser.new(file)
+            @file = file
+            puts "file: #{file}"
+            puts "@file: #{@file}"
+            @folder = File.dirname(@file)
         else
-            folder = Dir.pwd
-            @parser = Parser.new(folder.to_s + "/" + file.to_s)
+            @folder = Dir.pwd
+            @file = @folder.to_s + "/" + file.to_s
         end
+    end
 
-        @output = File.new(folder + "/" + File.basename(file, ".asm") + ".hack", "w")
+    def setOutput
+        @output = File.new(@folder + "/" + File.basename(@file, ".asm") + ".hack", "w")
         @output.truncate(0)
     end
 
