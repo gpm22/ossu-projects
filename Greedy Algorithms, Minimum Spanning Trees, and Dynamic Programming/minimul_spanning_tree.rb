@@ -35,11 +35,9 @@ class Graph
         neighbor[0].winner = [firstNode, neighbor[0]]
         heap.insert([neighbor[0].key, neighbor[0]])
     end
-    puts "heap: #{heap.to_s}"
     # Main loop
     until heap.empty?
         nextNode = heap.extractMin[1]
-        puts "nextNode: #{nextNode.to_s}"
         visited[nextNode.value.to_s] = nextNode
         mst.push(nextNode.winner)
         # Update keys to maintain invariant
