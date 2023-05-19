@@ -153,6 +153,44 @@ In other words, one way to justify an algorithm’s inclusion of an edge $e$ in 
 
 #### c) Repeat b) for Kruskal’s algorithm.
 
+**ANSWER**
+
+**a) Prove the Cut Property.**
+
+We proceed by contradiction.
+
+Let's assume that $T$ is a MST of $G = (V, E)$ and it has an edge $e = (v, w)$, which is not the cheapest edge cross of a cut.
+
+So, there is an edge $e'$ in a path $P$ of $v$-$w$ that is the cheapest edge.
+
+Adding $e'$ to $T$ will create a cycle that is solved by removing $e$, this results in the spanning tree $T'$, which is strictly smaller than $T$.
+
+We arrived at a contradiction and therefore the cut property is proved.
+
+**b) Use the Cut Property to prove that Prim’s algorithm is correct.**
+
+Prim's algorithm works with the cut $X$ and $V-X$, and at it iteration it selects the smaller edge that crosses this and does not create a cycle.
+
+A edge that creates a cycle in that case does not has the cut property, as a previous added edge is smaller than it.
+
+Thus at each iteration, Prim's algorithm selects an edge that has the cut property.
+
+Therefore, at the end of its execution, the Prim's algorithm creates a MST.
+
+**c) Repeat b) for Kruskal’s algorithm.**
+
+Kruskal's algorithm selects at each iteration the smaller edge that does not create a cycle in the current set of edges $T$.
+
+We can create a cut based on that, where $X$ is the set of nodes that are in $T$ and $V-X$.
+
+So after iteration a new node enters $X$ and leaves $V-X$.
+
+An edge that creates a cycle in $T$ cannot have the cut property, as a previous added edge is smaller than it.
+
+Thus at each iteration, Kruskal's algorithm selects an edge that has the cut property.
+
+Therefore, at the end of its execution, the Kruskal's algorithm creates a MST.
+
 ### Problem 15.8
 
 Consider a connected undirected graph with distinct real-valued edge costs. A minimum bottleneck spanning tree (MBST) is a spanning tree $T$ with the minimum-possible bottleneck.
@@ -161,8 +199,33 @@ Consider a connected undirected graph with distinct real-valued edge costs. A mi
 
 #### b) Does this imply a linear-time algorithm for computing the total cost of an MST?
 
-* Yes, you just have to sum the edges' cost. 
+**ANSWER**
+
+**a) Give a linear-time algorithm for computing the bottleneck of an MBST.**
+
+The bottleneck of an MBST is its highest weighted edge.
+
+Therefore, just traverse the tree and returns its highest weighted edge.
+
+**b) Does this imply a linear-time algorithm for computing the total cost of an MST?**
+
+Yes, you just have to traverse and sum the weights of the MST edges.
 
 ## Programming Problems
 
 ### Problem 15.9
+
+Implement in your favorite programming language the Prim and Kruskal algorithms. For bonus points, implement the heap-based version of Prim (Section 15.3) and the union-find-based version of Kruskal (Section 15.6). Does one of the algorithms seem reliably faster than the other?
+
+**ANSWER**
+
+**`Prim`**
+
+```ruby
+```
+
+**`Kruskal`**
+
+```ruby
+```
+
