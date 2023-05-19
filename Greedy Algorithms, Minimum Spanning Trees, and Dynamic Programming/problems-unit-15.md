@@ -61,13 +61,107 @@ Which of the following problems reduce, in a straightforward way, to the minimum
 
 ### Problem 15.4
 
+Prove the converse of Theorem 15.6: If $T$ is an MST of a graph with real-valued edge costs, every edge of $T$ satisfies the minimum bottleneck property.
+
+**ANSWER**
+
+Remembering that for a graph $G = (V,E)$ with real-valued edge costs, an edge $(v, w) \in E$ satisfies the minimum bottleneck property (MBP) if it is a minimum-bottleneck $v$-$w$ path.
+
+Let's prove it by contradiction, so we assume that there is a MST $T$ with an edge $(v, w)$ that does not satisfy the MBP, which means there is an path $P$ between $(v, w)$ with every edge having the cost less than $c_{vw}$.
+
+Removing $(v, w)$ from $T$, create two connected components, $C_1$, which contains $v$, and $C_2$, which contains $w$. We can than create a spanning tree $T'$ connecting $C_1$ and $C_2$, which and edge $(v', w')$ from the path $P$ that satisfies the MBP, where $v' \in C_1$ and $w' \in C_2$.
+
+$T'$ is a spanning tree and has a total cost smaller than $T$'s total cost, therefore $T$ cannot be a MST and we arrived at a contradiction.
+
 ### Problem 15.5
+
+Prove the correctness of Prim’s and Kruskal’s algorithms (Theorems 15.1 and 15.11) in full generality, for graphs in which edges’ costs need not be distinct.
+
+**ANSWER**
+
+In the case where all edges have the same cost, any spanning tree will be a MST, so we assume that not all edges have the same cost. Thus, we will have spanning trees with different values.
+
+So, let:
+
+* $G = (V, E)$ be a connected undirected graph with real-valued edge costs that need not be distinct;
+* $\sigma_1$ be the smallest strictly positive difference between two edges’ costs;
+* $M^*$ be the cost of an MST of $G$;
+* $M$ be the minimum cost of a suboptimal spanning tree of $G$;
+* $\sigma_2$ be $M-M^*$;
+* $\sigma$  be $\min(\sigma_1, \sigma_2) > 0$;
+* $e_i$ be the $i$th edge of $G$ in ascending order of cost, where ties are arbitrarily broken.
+
+So, let's create a new graph $G'$ from $G$, where each edge $e'_i$ has a cost $c'_{e'_i}=c_{e_i} + \sigma \cdot 2^{-(m-i+1)}$, where $m = |E|$.
+
+As $\sigma \leq \sigma_1$, all $G'$'s edges must have different values.
+
+The cost of the $G'$'s spanning trees in relation with $G$'s can only increase, and can only increase by at most $\sigma \cdot \sum_{i=1}^m 2^{-(m-i+1)} < \sigma$.
+
+As $ \sigma \leq \sigma_2$, an MST $T$ of $G'$ must also be one of $G$.
+
+In the case of Kruskal's algorithm, $G'$ and $G$ will result in the same spanning tree $T$, as their edges are examined in the same order.
+
+As $T$ is a MST, because $G'$ has edges with different values, $T$ must be a MST of $G$ as well.
+
+So the Kruskal's case is proven.
+
+In the case of Prim's algorithm, let start $G'$ and $G$ runs with $s$, which $s \in e'_1$ and $s \in e_1$, so both $e'_1$ and $e_1$ are added to their respective results.
+
+To the next iterations, lets break the ties in the way that the nodes are added in the same order for both cases.
+
+Thus both runs will result in the same spanning tree $T$​, as their edges are examined in the same order.
+
+As $T$ is a MST, because $G'$ has edges with different values, $T$ must be a MST of $G$ as well.
+
+So the Prim's case is also proven.
 
 ### Problem 15.6
 
+Prove that in a connected undirected graph with distinct edge costs, there is a unique MST.
+
+**ANSWER**
+
+We proceed by contradiction. Assume that the graph $G$ has two distinct MST's, $T_1$ and $T_2$.
+
+$T_1$ must has at least one edge $e_1 = (v, w)$ that is not in $T_2$.
+
+Adding $e_1$ to $T_2$ creates a cycle $C$ that contains $e_1$.
+
+As an edge of $T_1$, $e_1$ satisfies the MBP, so there is at least one edge $e_2 = (x, y)$ in the $v-w$ path $C-\{e_1\}$ with cost at least $c_{vw}$.
+
+As edges' cost are distinct, the cost of $e_2$ must be strictly larger: $c_{xy} > c_{vw}$.
+
+As result, $T_2$ has a cost greater than $T_1$ and it cannot be a MST.
+
+Therefore, $G$ has only one MST.
+
 ### Problem 15.7
 
+An alternative approach to proving the correctness of Prim’s and Kruskal’s algorithms is to use what’s called the **Cut Property** of MSTs. Assume throughout this problem that edges’ costs are distinct.
+
+A cut of an undirected graph $G = (V,E)$ is a partition of its vertex set $V$ into two non-empty sets, $A$ and $B$.
+
+An edge of $G$ crosses the cut $(A, B)$ if it has one endpoint in each of $A$ and $B$.
+
+Let $G = (V,E)$ be a connected undirected graph with distinct real-valued edge costs. If an edge $e \in E$ is the cheapest edge crossing a cut $(A, B)$, $e$ belongs to every MST of $G$.
+
+In other words, one way to justify an algorithm’s inclusion of an edge $e$ in its solution is to produce a cut of $G$ for which $e$ is the cheapest crossing edge.
+
+#### a) Prove the Cut Property.
+
+#### b) Use the Cut Property to prove that Prim’s algorithm is correct.
+
+#### c) Repeat b) for Kruskal’s algorithm.
+
 ### Problem 15.8
+
+Consider a connected undirected graph with distinct real-valued edge costs. A minimum bottleneck spanning tree (MBST) is a spanning tree $T$ with the minimum-possible bottleneck.
+
+#### a) Give a linear-time algorithm for computing the bottleneck of an MBST.
+
+#### b) Does this imply a linear-time algorithm for computing the total cost of an MST?
+
+* Yes, you just have to sum the edges' cost. 
 
 ## Programming Problems
 
