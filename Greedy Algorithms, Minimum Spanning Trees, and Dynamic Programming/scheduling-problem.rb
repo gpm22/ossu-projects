@@ -38,7 +38,7 @@ class Schedule
     end
 
     def greedyDiff
-        @jobs.sort!{ |job1, job2| job2.diff <=> job1.diff }
+        @jobs.sort!{ |job1, job2| [job2.diff, job2.weight] <=> [job1.diff, job1.weight] }
         self
     end
 
