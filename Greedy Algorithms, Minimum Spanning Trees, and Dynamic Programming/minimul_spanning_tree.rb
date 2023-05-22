@@ -60,6 +60,24 @@ class Graph
 
   def getMST_Kruskal
   end
+
+  private
+
+  def generateWeightedEdges
+    return unless @edges.nil?
+    @edges = []
+    edgesAdded = {}
+
+    @nodes.each do |node|
+      node.neighbors.each do |neighbor|
+        unless edgesAdded.include?("#{node.value.to_s}--#{neighbor[0].value.to_s}--#{neighbor[1].to_s}") || edgesAdded.include?("#{neighbor[0].value.to_s}--#{node.value.to_s}--#{neighbor[1].to_s}")
+
+          @edges.push([node, neighbor[0], neighbor[1]])
+          edgesAdded["#{neighbor[0].value.to_s}--#{node.value.to_s}--#{neighbor[1].to_s}"] = nil
+        end
+      end
+    end
+  end
 end
 
 class Node
