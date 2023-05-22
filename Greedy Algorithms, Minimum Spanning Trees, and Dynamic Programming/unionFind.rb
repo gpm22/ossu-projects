@@ -8,7 +8,6 @@ class UnionFind
     end
 
     def find(element)
-        puts "find - element: #{element}"
         node = @nodes[element]
         return node.value if node.isRoot?
         node.parent.value 
