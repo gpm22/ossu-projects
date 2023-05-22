@@ -219,13 +219,69 @@ Implement in your favorite programming language the Prim and Kruskal algorithms.
 
 **ANSWER**
 
+Complete code available on [minimum_spanning_tree.rb](https://github.com/gpm22/ossu-projects/blob/main/Greedy%20Algorithms%2C%20Minimum%20Spanning%20Trees%2C%20and%20Dynamic%20Programming/minimum_spanning_tree.rb).
+
 **`Prim`**
 
 ```ruby
+  def getMST_Prim
+    # Initialization
+    firstNode = @nodes[0]
+    visited = {firstNode.value.to_s => firstNode}
+    nodesHash = Hash[@nodes.collect { |n| [n.value.to_s, n] }]
+    mst = []
+    heap = Heap.new
+
+    firstNode.neighbors.each do |neighbor|
+        neighbor[0].key = neighbor[1]
+        neighbor[0].winner = [firstNode, neighbor[0], neighbor[1]]
+        heap.insert([neighbor[1], neighbor[0].value.to_s])
+    end
+    # Main loop
+      until heap.empty? || mst.size == (@nodes.size - 1)
+        nextNode = nodesHash[heap.extractMin[1]]
+        visited[nextNode.value.to_s] = nextNode
+        mst.push(nextNode.winner)
+        # Update keys to maintain invariant
+        nextNode.neighbors.filter{ |pair| !visited.include?(pair[0].value.to_s)}.each do |pair|
+            if pair[0].key.nil?
+                pair[0].key = pair[1]
+                pair[0].winner = [nextNode, pair[0], pair[1]]
+                heap.insert([pair[0].key, pair[0].value.to_s])
+            elsif pair[1] < pair[0].key
+                heap.delete(pair[0].value.to_s)
+                pair[0].key = pair[1]
+                pair[0].winner = [nextNode, pair[0], pair[1]]
+                heap.insert([pair[0].key, pair[0].value.to_s])
+            end
+        end
+    end
+
+    mst 
+  end
 ```
 
 **`Kruskal`**
 
 ```ruby
+  def getMST_Kruskal
+    self.generateWeightedEdges
+
+    # Initialization
+    mst = []
+    unionFind = UnionFind.new(@nodes.map{|node| node.value.to_s})
+    @edges.sort! {|a, b| a[2] <=> b[2]}
+
+    # Main loop
+
+    @edges.each do |edge|
+      return mst if mst.size == (@nodes.size - 1)
+      if unionFind.find(edge[0].value.to_s) != unionFind.find(edge[1].value.to_s)
+        mst.push edge
+        unionFind.union(edge[0].value.to_s, edge[1].value.to_s)
+      end
+    end
+    mst
+  end
 ```
 
