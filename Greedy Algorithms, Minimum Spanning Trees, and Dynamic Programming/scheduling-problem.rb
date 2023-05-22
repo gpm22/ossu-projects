@@ -69,5 +69,17 @@ def bookTest
     puts "ratio: #{schedule.greedyRatio.getSumOfWeightedCompletionTimes}"
 end
 
-testSchedule
-bookTest
+def getScheduleFromFile
+    puts "getting schedule from file"
+    jobs = []
+    File.open('jobs_for_scheduling.txt').each_line do |line|
+        values = line.split(' ')
+        next if values.size == 1
+        jobs.push(Job.new(values[1].to_i, values[0].to_i)) 
+    end
+    Schedule.new(jobs)
+end
+
+schedule = getScheduleFromFile
+puts "diff: #{schedule.greedyDiff.getSumOfWeightedCompletionTimes}"
+puts "ratio: #{schedule.greedyRatio.getSumOfWeightedCompletionTimes}"
