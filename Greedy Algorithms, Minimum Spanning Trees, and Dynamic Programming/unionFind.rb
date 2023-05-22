@@ -10,7 +10,7 @@ class UnionFind
     def find(element)
         node = @nodes[element]
         return node.value if node.isRoot?
-        node.parent.value 
+        self.find(node.parent.value)
     end
 
     def union(firstElement, secondElement)
@@ -27,6 +27,10 @@ class UnionFind
             firstRoot.size = firstRoot.size + secondRoot.size
         end
         self
+    end
+
+    def to_s
+        @nodes.map{ |k, v| "node: #{v.to_s} - root: #{self.find(v.value)}"}.join("\n")
     end
 
     private
@@ -47,6 +51,10 @@ class UnionFind
         def == other
            return false if other.nil? || other.is_a?(Node)
            @value == other.value
+        end
+
+        def to_s
+            "value: #{@value} - parent: #{(@parent.nil?) ? "self" : @parent.value} - size: #{size}"
         end
     end
 end
