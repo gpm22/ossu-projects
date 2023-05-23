@@ -17,7 +17,7 @@ class Graph
     nodes = (0..number_of_vertices).map { |i| Node.new(i.to_s, []) }
     nodes.each_index do |i|
       ((i+1)..(nodes.size-1)).each do |j|
-        weight = rand(0..100_000) 
+        weight = rand(-100_000..100_000) 
         nodes[i].neighbors.push([nodes[j], weight])
         nodes[j].neighbors.push([nodes[i], weight])
       end
@@ -63,7 +63,6 @@ class Graph
 
   def getMST_Kruskal
     self.generateWeightedEdges
-
     # Initialization
     mst = []
     unionFind = UnionFind.new(@nodes.map{|node| node.value.to_s})
@@ -138,13 +137,16 @@ end
 
 def test(g)
 
-  #puts "graph: #{g.to_s}"
   puts "testing prim's algorithm"
   mst = g.getMST_Prim.sort {|a, b| a[2] <=> b[2]}
+  sumP = mst.map{|n| n[2]}.sum
+  puts "result: #{sumP}"
   puts "result: #{mst.map{|triple| "[#{triple[0].value.to_s}, #{triple[1].value.to_s}] - weight: #{triple[2]}"}.to_s}"
 
   puts "testing kruskal's algorithm"
   mst = g.getMST_Kruskal
+  sumK = mst.map{|n| n[2]}.sum
+  puts "result: #{sumK}"
   puts "result: #{mst.map{|triple| "[#{triple[0].value.to_s}, #{triple[1].value.to_s}] - weight: #{triple[2]}"}.to_s}"
 end
 
@@ -190,9 +192,63 @@ def thirdTest
   test(g)
 end
 
+def fourthTest
+  puts "third test"
+  nodes = (0..7).map { |i| Node.new(i.to_s, []) }
+  g = Graph.new(nodes)
+
+  nodes[0].neighbors = [[nodes[1], 2], [nodes[2], 3], [nodes[3], -2], [nodes[4], -2], [nodes[5], -1], [nodes[6], 3], [nodes[7], 1]]
+  nodes[1].neighbors = [[nodes[0], 2], [nodes[2], -1], [nodes[3], -2], [nodes[4], -2], [nodes[5], 0], [nodes[6], 1], [nodes[7], 0]]
+  nodes[2].neighbors = [[nodes[0], 3], [nodes[1], -1], [nodes[3], -2], [nodes[4], 3], [nodes[5], -3], [nodes[6], -2], [nodes[7], 1]]
+  nodes[3].neighbors = [[nodes[0], -2], [nodes[1], -2], [nodes[2], -2], [nodes[4], -2], [nodes[5], 1], [nodes[6], 2], [nodes[7], -1]]
+  nodes[4].neighbors = [[nodes[0], -2], [nodes[1], -2], [nodes[2], 3], [nodes[3], -2], [nodes[5], 0], [nodes[6], 1], [nodes[7], 3]]
+  nodes[5].neighbors = [[nodes[0], -1], [nodes[1], 0], [nodes[2], -3], [nodes[3], 1], [nodes[4], 0], [nodes[6], -3], [nodes[7], 1]]
+  nodes[6].neighbors = [[nodes[0], 3], [nodes[1], 1], [nodes[2], -2], [nodes[3], 2], [nodes[4], 1], [nodes[5], -3], [nodes[7], -2]]
+  nodes[7].neighbors = [[nodes[0], 1], [nodes[1], 0], [nodes[2], 1], [nodes[3], -1], [nodes[4], 3], [nodes[5], 1], [nodes[6], -2]]
+  puts "graph: #{g.to_s}"
+  test(g)
+end
 def randomTest
   puts "random test"
-  test(Graph.newCompleteGraphWithRandomLenghts(50))
+  testSum(Graph.newCompleteGraphWithRandomLenghts(1000))
 end
 
+def getGraphFromFile
+  puts 'getting graph from file'
+  nodes = {}
+  File.open('prim_edges.txt').each_line do |line|
+    values = line.split(' ')
+    next if values.size < 3
+    firstNode = nodes[values[0]]
+    secondNode = nodes[values[1]]
+
+    if firstNode.nil?
+      firstNode = Node.new(values[0], [])
+      nodes[values[0]] = firstNode
+    end
+
+    if secondNode.nil?
+      secondNode = Node.new(values[1], [])
+      nodes[values[1]] = secondNode
+    end
+
+    firstNode.neighbors.push([secondNode, values[2].to_i])
+    secondNode.neighbors.push([firstNode, values[2].to_i])
+  end
+  Graph.new(nodes.values)
+end
+
+def testSum(g)
+
+  #puts "graph: #{g.to_s}"
+  puts "testing prim's algorithm"
+  mst = g.getMST_Prim.sort {|a, b| a[2] <=> b[2]}
+  puts "result: #{mst.map{|n| n[2]}.sum}"
+
+  puts "testing kruskal's algorithm"
+  mst = g.getMST_Kruskal
+  puts "result: #{mst.map{|n| n[2]}.sum}"
+end
+
+#testSum(getGraphFromFile)
 randomTest
