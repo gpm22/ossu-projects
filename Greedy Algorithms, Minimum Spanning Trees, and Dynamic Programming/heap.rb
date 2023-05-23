@@ -25,7 +25,7 @@ class Heap
     def insert(element)
         @elements.push(element)
         @positions[element[1]] = (@elements.size) - 1 
-        self.bubbleUp
+        self.bubbleUp(@elements.size)
         element
     end
 
@@ -34,7 +34,12 @@ class Heap
         @elements[position], @elements[-1], @positions[element], @positions[@elements[-1][1]] = @elements[-1], @elements[position] , @positions[@elements[-1][1]], @positions[element]
         deleted = @elements.pop
         @positions.delete(element)
-        self.bubbleDown(position+1)
+        parentPosition = getParentPosition(position)
+        if isRoot?(position) || @elements[parentPosition][0] <= @elements[(position == @elements.size ? position-1 : position)][0]
+            self.bubbleDown(position+1)
+        else
+            self.bubbleUp(position+1)
+        end
         deleted
     end
 
@@ -52,8 +57,8 @@ class Heap
 
     private
 
-    def bubbleUp
-        position = @elements.size
+    def bubbleUp(startPosition)
+        position = startPosition
         parentPosition = getParentPosition(position)
         while @elements[parentPosition][0] > @elements[position-1][0]
             @elements[parentPosition], @elements[position-1] , @positions[@elements[parentPosition][1]], @positions[@elements[position-1][1]] = @elements[position-1], @elements[parentPosition], @positions[@elements[position -1][1]], @positions[@elements[parentPosition][1]]
@@ -85,6 +90,10 @@ class Heap
 
     def getRightChildPosition(position)
         2*position
+    end
+
+    def isRoot?(position)
+       position == 0
     end
 
     def getSmallerChildPosition(position)
