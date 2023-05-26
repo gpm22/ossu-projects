@@ -50,11 +50,11 @@ class UnionFind
         end
 
         def isRoot?
-            @parent.nil? || @value == @parent.value
+            @parent.nil?
         end
 
         def == other
-           return false if other.nil? || other.is_a?(Node)
+           return false if other.nil? || !other.is_a?(Node)
            @value == other.value
         end
 
