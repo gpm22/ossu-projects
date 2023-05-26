@@ -62,25 +62,38 @@ class Graph
   end
 
   def getMST_Kruskal
+    generic_Kruskal(1)
+  end
+
+  def getClusters(numberOfClusters)
+    generic_Kruskal(numberOfClusters)
+    getConnectedComponents
+  end
+
+  def getMaximumSpacingFromClusters(numberOfClusters)
+    generic_Kruskal(numberOfClusters-1)[-1]
+  end
+
+  private
+
+  def generic_Kruskal(numberOfGroups)
     self.generateWeightedEdges
     # Initialization
     mst = []
-    unionFind = UnionFind.new(@nodes.map{|node| node.value.to_s})
+    @unionFind = UnionFind.new(@nodes.map{|node| node.value.to_s})
     @edges.sort! {|a, b| a[2] <=> b[2]}
 
     # Main loop
 
     @edges.each do |edge|
-      return mst if mst.size == (@nodes.size - 1)
-      if unionFind.find(edge[0].value.to_s) != unionFind.find(edge[1].value.to_s)
+      return mst if mst.size == (@nodes.size - numberOfGroups)
+      if @unionFind.find(edge[0].value.to_s) != @unionFind.find(edge[1].value.to_s)
         mst.push edge
-        unionFind.union(edge[0].value.to_s, edge[1].value.to_s)
+        @unionFind.union(edge[0].value.to_s, edge[1].value.to_s)
       end
     end
-    mst
+    return mst
   end
-
-  private
 
   def generateWeightedEdges
     return unless @edges.nil?
@@ -96,6 +109,19 @@ class Graph
         end
       end
     end
+  end
+
+  def getConnectedComponents
+    clusters = {} 
+    @nodes.each do |node|
+      root = @unionFind.find(node.value.to_s)
+      if clusters.include? root
+        clusters[root].push(node)
+      else
+        clusters[root] = [node]
+      end
+    end
+    clusters.values
   end
 end
 
@@ -213,10 +239,10 @@ def randomTest
   testSum(Graph.newCompleteGraphWithRandomLenghts(1000))
 end
 
-def getGraphFromFile
+def getGraphFromFile(filePath)
   puts 'getting graph from file'
   nodes = {}
-  File.open('prim_edges.txt').each_line do |line|
+  File.open(filePath).each_line do |line|
     values = line.split(' ')
     next if values.size < 3
     firstNode = nodes[values[0]]
@@ -242,13 +268,34 @@ def testSum(g)
 
   #puts "graph: #{g.to_s}"
   puts "testing prim's algorithm"
-  mst = g.getMST_Prim.sort {|a, b| a[2] <=> b[2]}
-  puts "result: #{mst.map{|n| n[2]}.sum}"
+  mstP = g.getMST_Prim
+  sumP = mstP.map{|n| n[2]}.sum
+  puts "result: #{sumP}"
 
   puts "testing kruskal's algorithm"
-  mst = g.getMST_Kruskal
-  puts "result: #{mst.map{|n| n[2]}.sum}"
+  mstK = g.getMST_Kruskal
+  sumK = mstK.map{|n| n[2]}.sum
+  puts "result: #{sumK}"
+
+   if sumP != sumK
+    puts "different!!"
+   end
 end
 
-#testSum(getGraphFromFile)
-randomTest
+def testGetClusters
+  solveClustering(Graph.newCompleteGraphWithRandomLenghts(20), 10)
+
+end
+
+def solveClustering(g, numberOfClusters)
+  clusters = g.getClusters(numberOfClusters)
+
+  puts clusters.map{ |e| e.size}.to_s
+  edge = g.getMaximumSpacingFromClusters(numberOfClusters)
+  puts "maximum space from clusters: #{edge[0].value.to_s} - #{edge[1].value.to_s}: #{edge[2]}"
+end
+
+#testSum(getGraphFromFile('prim_edges.txt'))
+#randomTest
+#testGetClusters
+solveClustering(getGraphFromFile('clustering_graph.txt'), 4)
