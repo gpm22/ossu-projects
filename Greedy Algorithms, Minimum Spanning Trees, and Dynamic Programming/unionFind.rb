@@ -1,10 +1,12 @@
 class UnionFind
+    attr_reader :numberOfRoots
 
     def initialize(elements)
         @nodes = {}
         elements.each do |element|
             @nodes[element] = Node.new(element, nil, 1)
         end
+        @numberOfRoots = @nodes.size
     end
 
     def find(element)
@@ -26,6 +28,7 @@ class UnionFind
             secondRoot.parent = firstRoot
             firstRoot.size = firstRoot.size + secondRoot.size
         end
+        @numberOfRoots = @numberOfRoots - 1
         self
     end
 
