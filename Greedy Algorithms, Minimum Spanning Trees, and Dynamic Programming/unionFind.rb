@@ -16,6 +16,8 @@ class UnionFind
     end
 
     def union(firstElement, secondElement)
+        return if firstElement == secondElement
+
         firstRoot = @nodes[self.find(firstElement)]
         secondRoot = @nodes[self.find(secondElement)]
         
@@ -48,7 +50,7 @@ class UnionFind
         end
 
         def isRoot?
-            @parent.nil?
+            @parent.nil? || @value == @parent.value
         end
 
         def == other
