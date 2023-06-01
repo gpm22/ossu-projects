@@ -1,6 +1,6 @@
 # Project 7: VM I: Stack Arithmetic
 
-The objective of this projected id to build a basic VM translator that implements the arithmetic-logical and push/pop commands of the VM language. For the purpose of this project, This version of the VM translator assumes that the source VM code is error-free. Error checking, reporting and handling can be added to later versions of the VM translator, but are not part of this project.
+The objective of this projected is to build a basic VM translator that implements the arithmetic-logical and push/pop commands of the VM language. For the purpose of this project, This version of the VM translator assumes that the source VM code is error-free. Error checking, reporting and handling can be added to later versions of the VM translator, but are not part of this project.
 
 More information about this project is available on https://www.nand2tetris.org/course
 
