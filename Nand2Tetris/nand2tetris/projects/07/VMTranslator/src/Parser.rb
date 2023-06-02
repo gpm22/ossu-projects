@@ -1,12 +1,11 @@
+require_relative './CommandsTable'
+
 class Parser
 
     def initialize(inputFile)
         @file = File.open(inputFile).each_line
         @currentCommand = ''
         @currentLine = 0
-        @arithmeticLogicalCommands = {"add" => nil, "sub" => nil, "neg" => nil,
-                                      "eq" => nil, "gt" => nil, "lt" => nil,
-                                      "and" => nil, "or" => nil, "not" => nil}
         @popRegex = /^pop ([\w]+) ([\d]+)$/
         @pushRegex = /^push ([\w]+) ([\d]+)$/                                      
     end
@@ -79,7 +78,7 @@ class Parser
     end
 
     def isCommandArithmeticLogical?
-        @arithmeticLogicalCommands.include?(@currentCommand)
+        CommandsTable.isArithmeticLogicalCommand?(@currentCommand) 
     end
 
     def isCommandPush?
