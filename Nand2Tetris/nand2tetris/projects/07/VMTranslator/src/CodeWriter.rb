@@ -3,26 +3,26 @@ require_relative './AddressesTable'
 
 class CodeWriter
   def initialize(outputFile)
-    @file = File.new(outputFile)
+    @file = File.new(outputFile, 'w')
     @file.truncate(0)
     @addresses = AddressesTable.new(File.basename(outputFile, '.vm'))
     @commands = CommandsTable.new
-    this.initStack
+    self.initStack
   end
 
   def writeArithmetic(command)
     if @commands.isBinaryCommand? command
-      this.addComment(command)
-      this.pop('translator', 0)
-      this.pop('translator', 1)
-      this.applyBinaryCommand(command)
-      this.push('translator', 2)
+      self.addComment(command)
+      self.pop('translator', 0)
+      self.pop('translator', 1)
+      self.applyBinaryCommand(command)
+      self.push('translator', 2)
 
     elsif @commands.isUnaryCommand? command
-      this.addComment(command)
-      this.pop('translator', 0)
-      this.applyUnaryCommand(command)
-      this.push('translator', 1)
+      self.addComment(command)
+      self.pop('translator', 0)
+      self.applyUnaryCommand(command)
+      self.push('translator', 1)
     end
     File.delete(@file)
     raise "Command #{command} is invalid"
@@ -30,11 +30,11 @@ class CodeWriter
 
   def writePushPop(command, segment, index)
     if command == :C_PUSH
-      this.addComment("push #{segment} #{index}")
-      this.push(segment, index)
+      self.addComment("push #{segment} #{index}")
+      self.push(segment, index)
     elsif command == :C_POP
-      this.addComment("pop #{segment} #{index}")
-      this.pop(segment, index)
+      self.addComment("pop #{segment} #{index}")
+      self.pop(segment, index)
     else
       File.delete(@file)
       raise "Command #{command} is not pop or push"
@@ -42,7 +42,7 @@ class CodeWriter
   end
 
   def close
-    this.putFinalInfinityLoop
+    self.putFinalInfinityLoop
     @file.close
   end
 
@@ -83,13 +83,13 @@ class CodeWriter
   end
 
   def initStack
-    this.addComment('Starting stack')
+    self.addComment('Starting stack')
     str = "@256\nD=A\n@SP\nM=D"
     @file.puts(str)
   end
 
   def putFinalInfinityLoop
-    this.addComment('Infinity loop')
+    self.addComment('Infinity loop')
     str = "(END)\n@END\n0;JMP"
     @file.puts(str)
   end
