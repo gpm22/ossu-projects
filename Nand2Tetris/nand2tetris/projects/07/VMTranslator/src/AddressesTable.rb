@@ -1,12 +1,12 @@
 class AddressesTable
 
     def initialize(fileName)
-        @segments = {"argument" => "ARG", "local" => "LCL", "static" => fileName.to_s,
-                     "constant" => "@", "this" => "THIS" , "that" => "THAT",
-                     "pointer" => nil , "temp" => "@", "translator" => "R"}
+        @segments = {"argument" => "@ARG", "local" => "@LCL", "static" => "@#{fileName.to_s}",
+                     "constant" => "@", "this" => "@THIS" , "that" => "@THAT",
+                     "pointer" => nil , "temp" => "@", "translator" => "@R"}
     end
 
-    def getAdress(segment, index)
+    def getAddress(segment, index)
         raise "segment #{segment} invalid " unless @segments.include?(segment)
 
         segmentSymbol = @segments[segment]
