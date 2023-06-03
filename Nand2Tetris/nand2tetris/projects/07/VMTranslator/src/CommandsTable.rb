@@ -1,20 +1,20 @@
 class CommandsTable
   def initialize
     @i = 0
-    @arithmeticLogicalBinaryCommandsNonComparison = { 'add' => 'D=D+M', 'sub' => 'D=D-M',
+    @arithmeticLogicalBinaryCommandsNonComparison = { 'add' => 'D=M+D', 'sub' => 'D=M-D',
                                                       'and' => 'D=D&M', 'or' => 'D=D|M' }
 
-    @arithmeticLogicalBinaryCommandsComparison = { 'eq' => 'JEQ', 'gt' => 'JGT', 'lt' => 'JLT' }
+    @arithmeticLogicalBinaryCommandsComparison = { 'eq' => 'JEQ', 'gt' => 'JLT', 'lt' => 'JGT' }
 
     @arithmeticLogicalUnaryCommands = { 'neg' => 'D=-M', 'not' => 'D=!M' }
   end
 
   def isArithmeticLogicalCommand?(command)
-    @arithmeticLogicalUnaryCommandsComparison.include?(command) || @arithmeticLogicalUnaryCommandsNonComparison.include?(command) || @arithmeticLogicalBinaryCommands.include?(command)
+    self.isBinaryCommand?(command) || self.isUnaryCommand?(command)
   end
 
   def isBinaryCommand?(command)
-    @arithmeticLogicalBinaryCommands.include?(command)
+    @arithmeticLogicalBinaryCommandsComparison.include?(command) || @arithmeticLogicalBinaryCommandsNonComparison.include?(command)
   end
 
   def isUnaryCommand?(command)
@@ -38,7 +38,7 @@ class CommandsTable
   def getBinaryComparisonSymbol(command, address)
     @i += 1
     commandStr = @arithmeticLogicalBinaryCommandsComparison[command]
-    "@TRUE.#{@i}\nD-M;#{commandStr}\n#{address}\nM=-1\n@AFTER.#{@i}\n0;JMP\n(TRUE.#{@i})\n#{address}\nM=0\n(AFTER.#{@i})"
+    "D=D-M\n@TRUE.#{@i}\nD;#{commandStr}\n#{address}\nM=0\n@AFTER.#{@i}\n0;JMP\n(TRUE.#{@i})\n#{address}\nM=-1\n(AFTER.#{@i})"
   end
 
   def getUnarySymbol(command, address)
