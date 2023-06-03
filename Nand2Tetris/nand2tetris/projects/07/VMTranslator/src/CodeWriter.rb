@@ -12,28 +12,26 @@ class CodeWriter
 
   def writeArithmetic(command)
     if @commands.isBinaryCommand? command
-      self.addComment(command)
       self.pop('translator', 0)
       self.pop('translator', 1)
+      self.addComment(command)
       self.applyBinaryCommand(command)
       self.push('translator', 2)
-
     elsif @commands.isUnaryCommand? command
-      self.addComment(command)
       self.pop('translator', 0)
+      self.addComment(command)
       self.applyUnaryCommand(command)
       self.push('translator', 1)
+    else
+      File.delete(@file)
+      raise "Command #{command} is invalid"
     end
-    File.delete(@file)
-    raise "Command #{command} is invalid"
   end
 
   def writePushPop(command, segment, index)
     if command == :C_PUSH
-      self.addComment("push #{segment} #{index}")
       self.push(segment, index)
     elsif command == :C_POP
-      self.addComment("pop #{segment} #{index}")
       self.pop(segment, index)
     else
       File.delete(@file)
@@ -71,14 +69,27 @@ class CodeWriter
   end
 
   def pop(segment, index)
-    address = @addresses.getAddress(segment, index)
-    str = "@SP\nM=M-1\n@SP\nA=M\nD=M\n#{address}\nM=D"
+    self.addComment("pop #{segment} #{index}")
+    address = @addresses.getAddress(segment, index.to_i)
+    if segment == "local" || segment == "this" || segment == "that" || segment == "argument"
+      str = "#{address}\nD=M\n@#{index}\nD=D+A\n@R13\nM=D\n@SP\nM=M-1\n@SP\nA=M\nD=M\n@R13\nA=M\nM=D"
+    else
+      str = "@SP\nM=M-1\n@SP\nA=M\nD=M\n#{address}\nM=D"
+    end
+      str = str + "\n@SP\nA=M\nM=0"
     @file.puts(str)
   end
 
   def push(segment, index)
-    address = @addresses.getAddress(segment, index)
-    str = "#{address}\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1"
+    self.addComment("push #{segment} #{index}")
+    address = @addresses.getAddress(segment, index.to_i)
+    register = segment == "constant"? "A" : "M"
+
+    if segment == "local" || segment == "this" || segment == "that" || segment == "argument"
+      str = "#{address}\nD=M\n@#{index}\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1"
+    else
+      str = "#{address}\nD=#{register}\n@SP\nA=M\nM=D\n@SP\nM=M+1"
+    end
     @file.puts(str)
   end
 
