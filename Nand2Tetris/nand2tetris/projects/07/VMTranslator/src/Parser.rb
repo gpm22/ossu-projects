@@ -8,6 +8,7 @@ class Parser
         @currentLine = 0
         @popRegex = /^pop ([\w]+) ([\d]+)$/
         @pushRegex = /^push ([\w]+) ([\d]+)$/                                      
+        @commands = CommandsTable.new
     end
 
     def hasMoreLines
@@ -78,7 +79,7 @@ class Parser
     end
 
     def isCommandArithmeticLogical?
-        CommandsTable.isArithmeticLogicalCommand?(@currentCommand) 
+        @commands.isArithmeticLogicalCommand?(@currentCommand) 
     end
 
     def isCommandPush?
