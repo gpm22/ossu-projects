@@ -1,46 +1,62 @@
 class AddressesTable
+  def initialize(fileName)
+    @segments = { 'argument' => '@ARG', 'local' => '@LCL', 'static' => "@#{fileName}",
+                  'constant' => '@', 'this' => '@THIS', 'that' => '@THAT',
+                  'pointer' => nil, 'temp' => '@', 'translator' => '@R' }
+  end
 
-    def initialize(fileName)
-        @segments = {"argument" => "@ARG", "local" => "@LCL", "static" => "@#{fileName.to_s}",
-                     "constant" => "@", "this" => "@THIS" , "that" => "@THAT",
-                     "pointer" => nil , "temp" => "@", "translator" => "@R"}
-    end
+  def getAddress(segment, index)
+    raise "segment #{segment} invalid " unless @segments.include?(segment)
 
-    def getAddress(segment, index)
-        raise "segment #{segment} invalid " unless @segments.include?(segment)
+    @segmentSymbol = @segments[segment]
+    @index = index
 
-        segmentSymbol = @segments[segment]
+    return getAddressForBaseAddresses if AddressesTable.isABaseAddress?(segment)
 
-        if segment == "local" || segment == "this" || segment == "that" || segment == "argument"
-            return segmentSymbol
-        end
+    return getTranslatorAddress if segment == 'translator'
 
-        if segment == "translator"  
-            raise "VM translator variable index must be 0, 1, or 2 and not #{index}" if index < 0 && index > 2 
+    return getTemporaryAddress if segment == 'temp'
 
-            return "#{segmentSymbol}#{(index+13).to_s}"
-        end
+    return getConstantAddress if segment == 'constant'
 
-        if segment == "temp"
-            raise "Temp variable index must be between 0 and 7 and cannot be #{index}" if index <0 && index > 7
+    return getStaticAddress if segment == 'static'
 
-            return "#{segmentSymbol}#{(index+5).to_s}"
-        end
+    getPointerAddress
+  end
 
-        if segment == "constant"
-            return "#{segmentSymbol}#{index.to_s}"
-        end
+  def self.isABaseAddress?(segment)
+    %w[local this that argument].include?(segment)
+  end
 
-        if segment == "static"
-            return "#{segmentSymbol}.#{index.to_s}"
-        end
+  private
 
-        if segment == "pointer"
-            raise "Pointer variables index must be 0 or 1 and not #{index}"  if index !=0 && index !=1
+  def getTranslatorAddress
+    raise "VM translator variable index must be 0, 1, or 2 and not #{@index}" if @index < 0 && @index > 2
 
-            return @segments["this"] if index == 0 
-            return @segments["that"] if index == 1 
-        end
-        nil
-    end
+    "#{@segmentSymbol}#{@index + 13}"
+  end
+
+  def getTemporaryAddress
+    raise "Temp variable index must be between 0 and 7 and cannot be #{@index}" if @index < 0 && @index > 7
+
+    "#{@segmentSymbol}#{@index + 5}"
+  end
+
+  def getConstantAddress
+    "#{@segmentSymbol}#{@index}"
+  end
+
+  def getStaticAddress
+    "#{@segmentSymbol}.#{@index}"
+  end
+
+  def getAddressForBaseAddresses
+    "#{@segmentSymbol}\nD=M\n@#{@index}"
+  end
+
+  def getPointerAddress
+    raise "Pointer variables index must be 0 or 1 and not #{@index}" if @index != 0 && @index != 1
+
+    @index == 0 ? @segments['this'] : @segments['that']
+  end
 end
