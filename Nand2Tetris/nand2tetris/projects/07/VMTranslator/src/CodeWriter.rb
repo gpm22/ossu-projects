@@ -7,21 +7,21 @@ class CodeWriter
     @file.truncate(0)
     @addresses = AddressesTable.new(File.basename(outputFile, '.vm'))
     @commands = CommandsTable.new
-    self.initStack
+    initStack
   end
 
   def writeArithmetic(command)
     if @commands.isBinaryCommand? command
-      self.pop('translator', 0)
-      self.pop('translator', 1)
-      self.addComment(command)
-      self.applyBinaryCommand(command)
-      self.push('translator', 2)
+      pop('translator', 0)
+      pop('translator', 1)
+      addComment(command)
+      applyBinaryCommand(command)
+      push('translator', 2)
     elsif @commands.isUnaryCommand? command
-      self.pop('translator', 0)
-      self.addComment(command)
-      self.applyUnaryCommand(command)
-      self.push('translator', 1)
+      pop('translator', 0)
+      addComment(command)
+      applyUnaryCommand(command)
+      push('translator', 1)
     else
       File.delete(@file)
       raise "Command #{command} is invalid"
@@ -30,9 +30,9 @@ class CodeWriter
 
   def writePushPop(command, segment, index)
     if command == :C_PUSH
-      self.push(segment, index)
+      push(segment, index)
     elsif command == :C_POP
-      self.pop(segment, index)
+      pop(segment, index)
     else
       File.delete(@file)
       raise "Command #{command} is not pop or push"
@@ -40,7 +40,7 @@ class CodeWriter
   end
 
   def close
-    self.putFinalInfinityLoop
+    putFinalInfinityLoop
     @file.close
   end
 
@@ -69,39 +69,40 @@ class CodeWriter
   end
 
   def pop(segment, index)
-    self.addComment("pop #{segment} #{index}")
+    addComment("pop #{segment} #{index}")
     address = @addresses.getAddress(segment, index.to_i)
-    if segment == "local" || segment == "this" || segment == "that" || segment == "argument"
-      str = "#{address}\nD=M\n@#{index}\nD=D+A\n@R13\nM=D\n@SP\nM=M-1\n@SP\nA=M\nD=M\n@R13\nA=M\nM=D"
-    else
-      str = "@SP\nM=M-1\n@SP\nA=M\nD=M\n#{address}\nM=D"
-    end
-      str = str + "\n@SP\nA=M\nM=0"
+    getSpLocaltion = "@SP\nM=M-1\n@SP\nA=M\nD=M\n"
+    str = if AddressesTable.isABaseAddress?(segment)
+            "#{address}\nD=D+A\n@R13\nM=D\n#{getSpLocaltion}@R13\nA=M" #the address needs to be put in the arbitrary temporary register R13
+          else
+            "#{getSpLocaltion}#{address}"
+          end
+    str += "\nM=D\n@SP\nA=M\nM=0" # updating the register at address and cleaning the register at SP position
     @file.puts(str)
   end
 
   def push(segment, index)
-    self.addComment("push #{segment} #{index}")
+    addComment("push #{segment} #{index}")
     address = @addresses.getAddress(segment, index.to_i)
-    register = segment == "constant"? "A" : "M"
+    str = if AddressesTable.isABaseAddress?(segment) # getting the value from the register located in the given address
+            "#{address}\nA=D+A\nD=M"
+          else
+            "#{address}\nD=#{segment == 'constant' ? 'A' : 'M'}" # constant values are the values of the register location
+          end
 
-    if segment == "local" || segment == "this" || segment == "that" || segment == "argument"
-      str = "#{address}\nD=M\n@#{index}\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1"
-    else
-      str = "#{address}\nD=#{register}\n@SP\nA=M\nM=D\n@SP\nM=M+1"
-    end
+    str += "\n@SP\nA=M\nM=D\n@SP\nM=M+1" # pushing the value to the stack and incrementing SP
     @file.puts(str)
   end
 
   def initStack
-    self.addComment('Starting stack')
-    str = "@256\nD=A\n@SP\nM=D"
-    @file.puts(str)
+    addComment('Starting stack')
+    setSPInitialPosition = "@256\nD=A\n@SP\nM=D"
+    @file.puts(setSPInitialPosition)
   end
 
   def putFinalInfinityLoop
-    self.addComment('Infinity loop')
-    str = "(END)\n@END\n0;JMP"
-    @file.puts(str)
+    addComment('Infinity loop')
+    infinityLoop = "(END)\n@END\n0;JMP"
+    @file.puts(infinityLoop)
   end
 end
