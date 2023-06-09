@@ -51,6 +51,10 @@ class Heap
         @elements.empty?
     end
 
+    def size
+        @elements.size
+    end
+
     def include?(element)
         @positions.has_key?(element)
     end

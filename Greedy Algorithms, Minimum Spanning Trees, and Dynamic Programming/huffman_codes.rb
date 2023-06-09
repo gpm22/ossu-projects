@@ -1,3 +1,5 @@
+require_relative './heap'
+
 class Alphabet
 
     def initialize(symbols)
@@ -29,6 +31,28 @@ class Alphabet
     end
 
     def getHuffmanCodeWithHeap
+        # Initialization
+        heap = Heap.new 
+        nodes = []
+
+        @symbols.each do |symbol|
+            newNode = Node.new
+            newNode.label = symbol.value
+            heap.insert([symbol.frequency, newNode])
+            nodes.push(newNode)
+        end
+
+
+        # Main Loop
+
+        while heap.size > 1 
+            tree1 = heap.extractMin
+            tree2 = heap.extractMin
+            tree3 = Node.merge(tree1[1], tree2[1])
+            heap.insert([(tree1[0] +tree2[0]), tree3])
+        end
+
+        Hash[nodes.collect {|n| [n.label, n.getCode]}]
     end
 
     def getHuffmanCodeWithSorting
@@ -45,16 +69,8 @@ class Alphabet
             newNode.rightChild = secondNode
             firstNode.parent = newNode
             secondNode.parent = newNode
+            newNode.label= firstNode.label + secondNode.label
             newNode
-        end
-
-        def isLeaf?
-            if @leftChild.nil? && @rightChild.nil? 
-                raise "if the node does not have children, it must be labeled." if @label.nil?
-                return true
-            end
-            raise "if the node have children, it cannot be labeled. Label: #{label.to_s}" unless @label.nil?
-            false
         end
 
         def isRoot?
@@ -87,6 +103,10 @@ class Alphabet
 
             raise "cannot be called on the root"
         end
+
+        def to_s
+            "Node label: #{@label}"
+        end
     end
 end
 
@@ -113,10 +133,12 @@ def tests
     alphabet1 = alphabet1()
     expectedHash1 = {"A" => "11", "B" => "10", "C" => "00", "D" => "011", "E" => "010"}
     testAux(alphabet1.getHuffmanCodeStraightfoward, expectedHash1)
+    testAux(alphabet1.getHuffmanCodeWithHeap, expectedHash1)
 
     alphabet2 = alphabet2()
     expectedHash2 = {"A" => "101", "B" => "1001", "C" => "0", "D" => "1000", "E" => "11"}
     testAux(alphabet2.getHuffmanCodeStraightfoward, expectedHash2)
+    testAux(alphabet2.getHuffmanCodeWithHeap, expectedHash2)
 end
 
 def testAux(actualHash, expectedHash)
