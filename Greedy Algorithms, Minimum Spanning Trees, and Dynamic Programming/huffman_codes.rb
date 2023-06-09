@@ -1,3 +1,4 @@
+require 'benchmark'
 require_relative './heap'
 
 class Alphabet
@@ -176,17 +177,19 @@ def tests
     expectedHash1 = {"A" => "11", "B" => "10", "C" => "00", "D" => "011", "E" => "010"}
     expectedHash12 = {"D"=>"1110", "B"=>"1111", "A"=>"110", "E"=>"10", "C"=>"0"}
     expectedsHash1 = [expectedHash1, expectedHash12]
-    testAux(alphabet1.getHuffmanCodeStraightfoward, expectedsHash1)
-    testAux(alphabet1.getHuffmanCodeWithHeap, expectedsHash1)
-    testAux(alphabet1.getHuffmanCodeWithSorting, expectedsHash1)
+    time1 = Benchmark.measure {testAux(alphabet1.getHuffmanCodeStraightfoward, expectedsHash1)}.real
+    time12 = Benchmark.measure {testAux(alphabet1.getHuffmanCodeWithHeap, expectedsHash1)}.real
+    time13 = Benchmark.measure {testAux(alphabet1.getHuffmanCodeWithSorting, expectedsHash1)}.real
+    puts "straightfoward: #{time1} - Heap: #{time12} - Sorting: #{time13}"
 
     alphabet2 = alphabet2()
     expectedHash2 = {"A" => "101", "B" => "1001", "C" => "0", "D" => "1000", "E" => "11"}
     expectedHash22 = {"D"=>"1110", "B"=>"1111", "A"=>"110", "E"=>"10", "C"=>"0"}
     expectedsHash2 = [expectedHash2, expectedHash22]
-    testAux(alphabet2.getHuffmanCodeStraightfoward, expectedsHash2)
-    testAux(alphabet2.getHuffmanCodeWithHeap, expectedsHash2)
-    testAux(alphabet2.getHuffmanCodeWithSorting, expectedsHash2)
+    time2 = Benchmark.measure {testAux(alphabet2.getHuffmanCodeStraightfoward, expectedsHash2)}.real
+    time22 = Benchmark.measure {testAux(alphabet2.getHuffmanCodeWithHeap, expectedsHash2)}.real
+    time23 = Benchmark.measure {testAux(alphabet2.getHuffmanCodeWithSorting, expectedsHash2)}.real
+    puts "straightfoward: #{time2} - Heap: #{time22} - Sorting: #{time23}"
 end
 
 def testAux(actualHash, expectedsHash)
@@ -201,4 +204,25 @@ def testAux(actualHash, expectedsHash)
     puts "hash: #{actualHash.to_s}"
 end 
 
-tests
+def getRandomAlphabet
+    symbols = []
+    used = {}
+    while symbols.size < 5000
+        o = [('a'..'z'), ('A'..'Z')].map(&:to_a).flatten
+        randomString = (0...50).map { o[rand(o.length)] }.join
+        next if used.include?(randomString)
+        symbols.push(MySymbol.new(randomString, rand(1..1000)))
+    end
+    Alphabet.new(symbols)
+end
+
+def effiencyTest
+    alphabet = getRandomAlphabet
+    time1 = Benchmark.measure {alphabet.getHuffmanCodeStraightfoward}.real
+    time12 = Benchmark.measure {alphabet.getHuffmanCodeWithHeap}.real
+    time13 = Benchmark.measure {alphabet.getHuffmanCodeWithSorting}.real
+    puts "straightfoward: #{time1} - Heap: #{time12} - Sorting: #{time13}"
+    puts "straightfoward/Heap: #{time1/time12} - Heap/Sorting: #{time12/time13}"
+end
+
+effiencyTest
