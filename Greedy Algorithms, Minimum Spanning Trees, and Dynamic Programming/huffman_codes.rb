@@ -56,6 +56,44 @@ class Alphabet
     end
 
     def getHuffmanCodeWithSorting
+        @symbols.sort! {|a, b| a.frequency <=> b.frequency}
+
+        # Initialization
+        firstQueue = []
+        secondQueue = []
+        nodes = []
+
+        @symbols.each do |symbol|
+            newNode = Node.new
+            newNode.label = symbol.value
+            firstQueue.push([newNode, symbol.frequency])
+            nodes.push(newNode)
+        end
+
+        #main loop
+        until firstQueue.empty? && secondQueue.size == 1
+
+            q1_0 = firstQueue[0]
+            q1_1 = firstQueue[1]
+
+            q2_0 = secondQueue[0]
+            q2_1 = secondQueue[1]
+
+            if  q1_0.nil? || (!q2_1.nil? && q2_1[1] < q1_0[1])
+                q0 = secondQueue.shift
+                q1 = secondQueue.shift
+            elsif q1_1.nil? || (!q2_0.nil? && q2_0[1] < q1_1[1])
+                q0 = firstQueue.shift
+                q1 = secondQueue.shift
+            else
+                q0 = firstQueue.shift
+                q1 = firstQueue.shift
+            end
+            q2 = Node.merge(q0[0], q1[0])
+            secondQueue.push([q2, q1[1] + q0[1]])
+        end
+        
+        Hash[nodes.collect {|n| [n.label, n.getCode]}]
     end
 
     private
@@ -117,6 +155,10 @@ class MySymbol
         @value = value
         @frequency = frequency
     end
+
+    def to_s
+        "MySymbol[value: #{value.to_s}, frequency: #{@frequency}]"
+    end
 end
 
 def alphabet2
@@ -132,25 +174,31 @@ end
 def tests
     alphabet1 = alphabet1()
     expectedHash1 = {"A" => "11", "B" => "10", "C" => "00", "D" => "011", "E" => "010"}
-    testAux(alphabet1.getHuffmanCodeStraightfoward, expectedHash1)
-    testAux(alphabet1.getHuffmanCodeWithHeap, expectedHash1)
+    expectedHash12 = {"D"=>"1110", "B"=>"1111", "A"=>"110", "E"=>"10", "C"=>"0"}
+    expectedsHash1 = [expectedHash1, expectedHash12]
+    testAux(alphabet1.getHuffmanCodeStraightfoward, expectedsHash1)
+    testAux(alphabet1.getHuffmanCodeWithHeap, expectedsHash1)
+    testAux(alphabet1.getHuffmanCodeWithSorting, expectedsHash1)
 
     alphabet2 = alphabet2()
     expectedHash2 = {"A" => "101", "B" => "1001", "C" => "0", "D" => "1000", "E" => "11"}
-    testAux(alphabet2.getHuffmanCodeStraightfoward, expectedHash2)
-    testAux(alphabet2.getHuffmanCodeWithHeap, expectedHash2)
+    expectedHash22 = {"D"=>"1110", "B"=>"1111", "A"=>"110", "E"=>"10", "C"=>"0"}
+    expectedsHash2 = [expectedHash2, expectedHash22]
+    testAux(alphabet2.getHuffmanCodeStraightfoward, expectedsHash2)
+    testAux(alphabet2.getHuffmanCodeWithHeap, expectedsHash2)
+    testAux(alphabet2.getHuffmanCodeWithSorting, expectedsHash2)
 end
 
-def testAux(actualHash, expectedHash)
-    hasheseq = actualHash == expectedHash
+def testAux(actualHash, expectedsHash)
+    hasheseq = expectedsHash.include?(actualHash)
     puts "hashes are equal? #{hasheseq}"
     unless hasheseq
         
-        puts "expected hash: #{expectedHash.to_s}"
+        puts "expecteds hashes: #{expectedsHash.map(&:to_s).to_s}"
         puts "actual hash: #{actualHash.to_s}"
         raise "noooooooooooooo"
     end
-    puts "hash: #{expectedHash.to_s}"
+    puts "hash: #{actualHash.to_s}"
 end 
 
 tests
