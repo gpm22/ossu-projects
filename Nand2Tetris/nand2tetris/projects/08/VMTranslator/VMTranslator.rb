@@ -3,24 +3,30 @@ require_relative './src/CodeWriter'
 
 class VMTranslator
   def initialize(path)
-    @isFile? = !File.directory?(path)
-    if @isFile?
+    @isFile = !File.directory?(path)
+    if @isFile
       self.setFilesInfo(path)
+      self.initWriter(@file)
     else
       self.setFoldersInfo(path)
+      self.initWriter(@folder)
     end
   end
 
   def execute
-    if @isFile?
-      @writer = CodeWriter.new(@parentFolder + '/' + File.basename(@file, '.vm') + '.asm')
+    if @isFile
       self.executeFile(@file)
     else
       self.executeFolder
     end
+    @writer.close
   end
 
   private
+
+  def initWriter(path)
+      @writer = CodeWriter.new(@parentFolder + '/' + File.basename(path, '.vm') + '.asm')
+  end
 
   def executeFolder
     raise "folders support are not implement yet"
@@ -28,6 +34,7 @@ class VMTranslator
 
   def executeFile(fileName)
     parser = Parser.new(fileName)
+    @writer.setFileName(File.basename(fileName, '.vm'))
     while parser.hasMoreLines
         parser.advance
         commandType =  parser.commandType
@@ -51,7 +58,6 @@ class VMTranslator
           raise "command type #{commandType} not supported"
         end
     end
-    @writer.close
   end
 
   def setFoldersInfo(folder)
@@ -72,7 +78,7 @@ class VMTranslator
     if path.include?('\\') || path.include?('/')
       path = path.gsub('\\', '/') if path.include?('\\')
       newPath = path
-      parentFolder = path.dirname(newPath)
+      parentFolder = File.dirname(newPath)
     else
       parentFolder = Dir.pwd
       newPath = @parentFolder.to_s + '/' + path.to_s
