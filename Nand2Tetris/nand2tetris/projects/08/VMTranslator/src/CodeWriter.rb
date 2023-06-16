@@ -44,12 +44,23 @@ class CodeWriter
   end
 
   def writeLabel(label)
+    addComment("label #{label}")
+    str = "(#{label})"
+    @file.puts(str)
   end
 
   def writeGoto(label)
+    addComment("goto #{label}")
+    str="@#{label}\n0;JMP"
+    @file.puts(str)
   end
 
   def writeIf(label)
+    addComment("if-goto #{label}")
+    pop('translator', 0)
+    address = @addresses.getAddress('translator', 0)
+    str="#{address}\nD=M\n@#{label}\nD;JNE"
+    @file.puts(str)
   end
 
   def writeFunction(functionName, nVars)
