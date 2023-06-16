@@ -63,6 +63,16 @@ class Parser
 
     return @pushRegex.match(@currentCommand)[1] if isCommandPush?
 
+    return @labelRegex.match(@currentCommand)[1] if isCommandLabel?
+
+    return @gotoRegex.match(@currentCommand)[1] if isCommandGoto?
+
+    return @ifRegex.match(@currentCommand)[1] if isCommandIf?
+
+    return @functionRegex.match(@currentCommand)[1] if isCommandFunction?
+
+    return @callRegex.match(@currentCommand)[1] if isCommandCall?
+
     raise 'arg1 has nothing to return'
   end
 
@@ -74,6 +84,10 @@ class Parser
     return @popRegex.match(@currentCommand)[2] if isCommandPop?
 
     return @pushRegex.match(@currentCommand)[2] if isCommandPush?
+
+    return @functionRegex.match(@currentCommand)[2] if isCommandFunction?
+
+    return @callRegex.match(@currentCommand)[2] if isCommandCall?
 
     raise 'arg2 has nothing to return'
   end
