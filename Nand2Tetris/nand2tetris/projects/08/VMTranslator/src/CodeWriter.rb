@@ -11,7 +11,7 @@ class CodeWriter
   end
 
   def setFileName(fileName)
-    raise "file #{@file.path} is still opened, close it first before open a new file" unless @file.nil?
+    @fileName = fileName
   end
 
   def writeArithmetic(command)
