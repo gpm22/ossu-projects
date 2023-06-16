@@ -7,6 +7,11 @@ class Parser
     @currentLine = 0
     @popRegex = /^pop (\w+) (\d+)$/
     @pushRegex = /^push (\w+) (\d+)$/
+    @labelRegex = /^label (\w+)$/
+    @gotoRegex = /^goto (\w+)$/
+    @ifRegex = /^if\-goto (\w+)$/
+    @functionRegex = /^function (\w+) (\d+)$/
+    @callRegex = /^call (\w+) (\d+)$/
     @commands = CommandsTable.new
   end
 
@@ -93,26 +98,26 @@ class Parser
   end
 
   def isCommandLabel?
-    false
+    @labelRegex.match? @currentCommand
   end
 
   def isCommandGoto?
-    false
+    @gotoRegex.match? @currentCommand
   end
 
   def isCommandIf?
-    false
+    @ifRegex.match? @currentCommand
   end
 
   def isCommandFunction?
-    false
+    @functionRegex.match? @currentCommand
   end
 
   def isCommandReturn?
-    false
+    @currentCommand == 'return'
   end
 
   def isCommandCall?
-    false
+    @callRegex.match? @currentCommand
   end
 end
