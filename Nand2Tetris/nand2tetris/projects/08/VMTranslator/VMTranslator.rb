@@ -35,8 +35,20 @@ class VMTranslator
             @writer.writeArithmetic(parser.arg1)
         elsif commandType == :C_POP || commandType == :C_PUSH
             @writer.writePushPop(commandType, parser.arg1, parser.arg2)
+        elsif commandType == :C_LABEL
+            @writer.writeLabel(parser.arg1)
+        elsif commandType == :C_GOTO
+            @writer.writeGoto(parser.arg1)
+        elsif commandType == :C_IF
+            @writer.writeIf(parser.arg1)
+        elsif commandType == :C_FUNCTION
+            @writer.writeFunction(parser.arg1, parser.arg2)
+        elsif commandType == :C_CALL
+            @writer.writeCall(parser.arg1, parser.arg2)
+        elsif commandType == :C_RETURN
+            @writer.writeReturn
         else
-            next
+          raise "command type #{commandType} not supported"
         end
     end
     @writer.close
