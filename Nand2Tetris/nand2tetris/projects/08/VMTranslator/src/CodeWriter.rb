@@ -69,6 +69,9 @@ class CodeWriter
   def writeCall(functionName, nArgs)
   end
 
+  def writeReturn
+  end
+
   def close
     putFinalInfinityLoop
     @file.close
