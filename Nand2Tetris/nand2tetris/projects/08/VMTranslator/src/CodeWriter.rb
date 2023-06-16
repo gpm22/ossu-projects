@@ -7,7 +7,11 @@ class CodeWriter
     @file.truncate(0)
     @addresses = AddressesTable.new(File.basename(outputFile, '.vm'))
     @commands = CommandsTable.new
-    initStack
+    #bootstrap
+  end
+
+  def setFileName(fileName)
+    raise "file #{@file.path} is still opened, close it first before open a new file" unless @file.nil?
   end
 
   def writeArithmetic(command)
@@ -39,9 +43,25 @@ class CodeWriter
     end
   end
 
+  def writeLabel(label)
+  end
+
+  def writeGoto(label)
+  end
+
+  def writeIf(label)
+  end
+
+  def writeFunction(functionName, nVars)
+  end
+
+  def writeCall(functionName, nArgs)
+  end
+
   def close
     putFinalInfinityLoop
     @file.close
+    @file = nil
   end
 
   private
@@ -94,10 +114,11 @@ class CodeWriter
     @file.puts(str)
   end
 
-  def initStack
+  def bootstrap
     addComment('Starting stack')
     setSPInitialPosition = "@256\nD=A\n@SP\nM=D"
     @file.puts(setSPInitialPosition)
+    # TODO sys.init stuff
   end
 
   def putFinalInfinityLoop
