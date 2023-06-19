@@ -5,13 +5,18 @@ class CodeWriter
   def initialize(outputFile)
     @file = File.new(outputFile, 'w')
     @file.truncate(0)
-    @addresses = AddressesTable.new(File.basename(outputFile, '.vm'))
+    @fileName = File.basename(outputFile, '.vm')
+    @addresses = AddressesTable.new(@fileName)
     @commands = CommandsTable.new
+    @insideFunction = false
+    @functionName = ''
+    @functionsIndexes = {} 
     #bootstrap
   end
 
   def setFileName(fileName)
     @fileName = fileName
+    @addresses = AddressesTable.new(@fileName)
   end
 
   def writeArithmetic(command)
@@ -45,13 +50,12 @@ class CodeWriter
 
   def writeLabel(label)
     addComment("label #{label}")
-    str = "(#{label})"
-    @file.puts(str)
+    @file.puts("(#{getRealLabel(label)})")
   end
 
   def writeGoto(label)
     addComment("goto #{label}")
-    str="@#{label}\n0;JMP"
+    str="@#{getRealLabel(label)}\n0;JMP"
     @file.puts(str)
   end
 
@@ -59,17 +63,49 @@ class CodeWriter
     addComment("if-goto #{label}")
     pop('translator', 0)
     address = @addresses.getAddress('translator', 0)
-    str="#{address}\nD=M\n@#{label}\nD;JNE"
+    str="#{address}\nD=M\n@#{getRealLabel(label)}\nD;JNE"
     @file.puts(str)
   end
 
   def writeFunction(functionName, nVars)
+    addComment("function #{functionName} #{nVars}")
+    @insideFunction = true
+    @functionName = functionName
+    @file.puts("(#{@fileName}.#{@functionName})")
+    (nVars.to_i).times {self.push("constant", 0)}
   end
 
+
   def writeCall(functionName, nArgs)
+    addComment("call #{functionName} #{nArgs}")
+    index = self.getFunctionIndex
+    returnAddress="#{@fileName}.#{@functionName}$ret.#{index}"
+    self.updateFunctionIndex
+    push("constant", returnAddress) # pushes the return label to the stack
+    push("local", 0)
+    push("argument", 0)
+    push("this", 0)
+    push("that", 0)
+    @file.puts("@SP\nD=M\n@5\nD=D-A\n@#{nArgs}\nD=D-A\n@ARG\nM=D") #repositions ARG
+    @file.puts("@SP\nD=M\n@LCL\nM=D") #repositions LCL
+    @file.puts("@#{functionName}\n0;JMP") #transfer control to the callee
+    @file.puts("(#{returnAddress})") #injects the return address label into the code
   end
 
   def writeReturn
+    addComment('return')
+    @insideFunction = false
+    @functionName = ''
+    @file.puts("@LCL\nD=M\n@R13\nM=D")
+    @file.puts("@R13\nD=M\n@5\nA=D-A\nD=M\n@R14\nM=D") # puts the return address in a temporary variable
+    self.pop("argument", 0) # repositions the return value for the caller
+    @file.puts("@ARG\nD=M+1\n@SP\nM=D") # repositions SP for the caller
+    @file.puts("@R13\nD=M\n@1\nA=D-A\nD=M\n@THAT\nM=D") # restores THAT for the caller
+    @file.puts("@R13\nD=M\n@2\nA=D-A\nD=M\n@THIS\nM=D") # restores THIS for the caller
+    @file.puts("@R13\nD=M\n@3\nA=D-A\nD=M\n@ARG\nM=D") # restores ARG for the caller
+    @file.puts("@R13\nD=M\n@4\nA=D-A\nD=M\n@LCL\nM=D") # restores LCL for the caller
+
+    @file.puts("@R14\nD=M\nA=D\n0;JMP") # go to the return address
   end
 
   def close
@@ -128,11 +164,28 @@ class CodeWriter
     @file.puts(str)
   end
 
+  def getRealLabel(label)
+    if @insideFunction
+      "#{fileName}.#{@functionName}$#{label}"
+    else
+      label
+    end
+  end
+
+  def getFunctionIndex
+    return @functionsIndexes[@functionName] if @functionsIndexes.include?(@functionName)
+    @functionsIndexes[functionName] = 0 
+  end
+
+  def updateFunctionIndex
+    @functionsIndexes[@functionName] = @functionsIndexes[@functionName] + 1
+  end
+
   def bootstrap
     addComment('Starting stack')
     setSPInitialPosition = "@256\nD=A\n@SP\nM=D"
     @file.puts(setSPInitialPosition)
-    # TODO sys.init stuff
+    self.writeCall("Sys.init", 0)
   end
 
   def putFinalInfinityLoop
