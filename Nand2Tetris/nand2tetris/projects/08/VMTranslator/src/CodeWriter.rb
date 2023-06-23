@@ -5,13 +5,12 @@ class CodeWriter
   def initialize(outputFile)
     @file = File.new(outputFile, 'w')
     @file.truncate(0)
-    @fileName = File.basename(outputFile, '.vm')
     @addresses = AddressesTable.new(@fileName)
     @commands = CommandsTable.new
     @insideFunction = false
     @functionName = ''
     @functionsIndexes = {} 
-    #bootstrap
+    bootstrap
   end
 
   def setFileName(fileName)
@@ -71,7 +70,7 @@ class CodeWriter
     addComment("function #{functionName} #{nVars}")
     @insideFunction = true
     @functionName = functionName
-    @file.puts("(#{@fileName}.#{@functionName})")
+    @file.puts("(#{@functionName})")
     (nVars.to_i).times {self.push("constant", 0)}
   end
 
@@ -79,13 +78,17 @@ class CodeWriter
   def writeCall(functionName, nArgs)
     addComment("call #{functionName} #{nArgs}")
     index = self.getFunctionIndex
-    returnAddress="#{@fileName}.#{@functionName}$ret.#{index}"
+    returnAddress="#{@functionName}$ret.#{index}"
     self.updateFunctionIndex
     push("constant", returnAddress) # pushes the return label to the stack
-    push("local", 0)
-    push("argument", 0)
-    push("this", 0)
-    push("that", 0)
+    addComment("push current LCL to stack") 
+    @file.puts("@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1")
+    addComment("push current ARG to stack") 
+    @file.puts("@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1")
+    addComment("push current THIS to stack") 
+    @file.puts("@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1")
+    addComment("push current THAT to stack") 
+    @file.puts("@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1")
     @file.puts("@SP\nD=M\n@5\nD=D-A\n@#{nArgs}\nD=D-A\n@ARG\nM=D") #repositions ARG
     @file.puts("@SP\nD=M\n@LCL\nM=D") #repositions LCL
     @file.puts("@#{functionName}\n0;JMP") #transfer control to the callee
@@ -153,7 +156,7 @@ class CodeWriter
 
   def push(segment, index)
     addComment("push #{segment} #{index}")
-    address = @addresses.getAddress(segment, index.to_i)
+    address = @addresses.getAddress(segment, index)
     str = if AddressesTable.isABaseAddress?(segment) # getting the value from the register located in the given address
             "#{address}\nA=D+A\nD=M"
           else
@@ -164,9 +167,10 @@ class CodeWriter
     @file.puts(str)
   end
 
+
   def getRealLabel(label)
     if @insideFunction
-      "#{fileName}.#{@functionName}$#{label}"
+      "#{@fileName}.#{@functionName}$#{label}"
     else
       label
     end
@@ -174,7 +178,7 @@ class CodeWriter
 
   def getFunctionIndex
     return @functionsIndexes[@functionName] if @functionsIndexes.include?(@functionName)
-    @functionsIndexes[functionName] = 0 
+    @functionsIndexes[@functionName] = 0 
   end
 
   def updateFunctionIndex
@@ -182,9 +186,9 @@ class CodeWriter
   end
 
   def bootstrap
+    addComment("bootstrapping")
     addComment('Starting stack')
-    setSPInitialPosition = "@256\nD=A\n@SP\nM=D"
-    @file.puts(setSPInitialPosition)
+    @file.puts("@256\nD=A\n@SP\nM=D")
     self.writeCall("Sys.init", 0)
   end
 
