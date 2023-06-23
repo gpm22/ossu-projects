@@ -94,18 +94,18 @@ class CodeWriter
 
   def writeReturn
     addComment('return')
-    @insideFunction = false
-    @functionName = ''
-    @file.puts("@LCL\nD=M\n@R13\nM=D")
-    @file.puts("@R13\nD=M\n@5\nA=D-A\nD=M\n@R14\nM=D") # puts the return address in a temporary variable
+    #@insideFunction = false
+    #@functionName = ''
+    @file.puts("@LCL\nD=M\n@R15\nM=D")
+    @file.puts("\n@R15\nD=M\n@5\nA=D-A\nD=M\n@R14\nM=D") # puts the return address in a temporary variable
     self.pop("argument", 0) # repositions the return value for the caller
-    @file.puts("@ARG\nD=M+1\n@SP\nM=D") # repositions SP for the caller
-    @file.puts("@R13\nD=M\n@1\nA=D-A\nD=M\n@THAT\nM=D") # restores THAT for the caller
-    @file.puts("@R13\nD=M\n@2\nA=D-A\nD=M\n@THIS\nM=D") # restores THIS for the caller
-    @file.puts("@R13\nD=M\n@3\nA=D-A\nD=M\n@ARG\nM=D") # restores ARG for the caller
-    @file.puts("@R13\nD=M\n@4\nA=D-A\nD=M\n@LCL\nM=D") # restores LCL for the caller
+    @file.puts("\n@ARG\nD=M+1\n@SP\nM=D") # repositions SP for the caller
+    @file.puts("\n@R15\nD=M\n@1\nA=D-A\nD=M\n@THAT\nM=D") # restores THAT for the caller
+    @file.puts("\n@R15\nD=M\n@2\nA=D-A\nD=M\n@THIS\nM=D") # restores THIS for the caller
+    @file.puts("\n@R15\nD=M\n@3\nA=D-A\nD=M\n@ARG\nM=D") # restores ARG for the caller
+    @file.puts("\n@R15\nD=M\n@4\nA=D-A\nD=M\n@LCL\nM=D") # restores LCL for the caller
 
-    @file.puts("@R14\nD=M\nA=D\n0;JMP") # go to the return address
+    @file.puts("\n@R14\nD=M\nA=D\n0;JMP") # go to the return address
   end
 
   def close
