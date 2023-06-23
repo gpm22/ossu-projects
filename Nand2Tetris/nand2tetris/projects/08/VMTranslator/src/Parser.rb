@@ -5,13 +5,15 @@ class Parser
     @file = File.open(inputFile).each_line
     @currentCommand = ''
     @currentLine = 0
-    @popRegex = /^pop (\w+) (\d+)$/
-    @pushRegex = /^push (\w+) (\d+)$/
-    @labelRegex = /^label (\w+)$/
-    @gotoRegex = /^goto (\w+)$/
-    @ifRegex = /^if\-goto (\w+)$/
-    @functionRegex = /^function (\w+) (\d+)$/
-    @callRegex = /^call (\w+) (\d+)$/
+    labelRegex = '([a-zA-Z\_\.\:]+[\w\_\.\:]*)'
+    numberRegex = '(\d+)'
+    @popRegex = Regexp.new("^pop #{labelRegex} #{numberRegex}$")
+    @pushRegex = Regexp.new("^push #{labelRegex} #{numberRegex}$")
+    @labelRegex = Regexp.new("^label #{labelRegex}$")
+    @gotoRegex = Regexp.new("^goto #{labelRegex}$")
+    @ifRegex = Regexp.new("^if\-goto #{labelRegex}$")
+    @functionRegex = Regexp.new("^function #{labelRegex} #{numberRegex}$")
+    @callRegex = Regexp.new("^call #{labelRegex} #{numberRegex}$")
     @commands = CommandsTable.new
   end
 
