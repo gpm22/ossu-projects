@@ -31,12 +31,14 @@ class AddressesTable
   private
 
   def getTranslatorAddress
+    @index = @index.to_i
     raise "VM translator variable index must be 0, 1, or 2 and not #{@index}" if @index < 0 && @index > 2
 
     "#{@segmentSymbol}#{@index + 13}"
   end
 
   def getTemporaryAddress
+    @index = @index.to_i
     raise "Temp variable index must be between 0 and 7 and cannot be #{@index}" if @index < 0 && @index > 7
 
     "#{@segmentSymbol}#{@index + 5}"
@@ -55,6 +57,7 @@ class AddressesTable
   end
 
   def getPointerAddress
+    @index = @index.to_i
     raise "Pointer variables index must be 0 or 1 and not #{@index}" if @index != 0 && @index != 1
 
     @index == 0 ? @segments['this'] : @segments['that']
