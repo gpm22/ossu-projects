@@ -6,10 +6,10 @@ class VMTranslator
     @isFile = !File.directory?(path)
     if @isFile
       self.setFilesInfo(path)
-      self.initWriter(@file)
+      self.initWriter(File.basename(@file, '.vm'))
     else
       self.setFoldersInfo(path)
-      self.initWriter(@folder)
+      self.initWriter(@folder + '/' + @folder)
     end
   end
 
@@ -25,11 +25,13 @@ class VMTranslator
   private
 
   def initWriter(path)
-      @writer = CodeWriter.new(@parentFolder + '/' + File.basename(path, '.vm') + '.asm')
+      @writer = CodeWriter.new(@parentFolder + '/' + path + '.asm')
   end
 
   def executeFolder
-    raise "folders support are not implement yet"
+    @files.each do |file|
+      executeFile(@folder + '/' + file)
+    end
   end
 
   def executeFile(fileName)
@@ -61,9 +63,9 @@ class VMTranslator
   end
 
   def setFoldersInfo(folder)
-    raise "folders support are not implement yet"
-
-    @folder, @parentFolder = self.getInfoFromPath(file)
+    @folder, @parentFolder = self.getInfoFromPath(folder)
+    @files = Dir.entries(@folder).select {|f| File.extname(f) == '.vm'}
+    raise "folder #{@folder} does not contain any vm file" if @files.size == 0
   end
 
   def setFilesInfo(file)
