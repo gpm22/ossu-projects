@@ -120,6 +120,81 @@ Which of these generalizations can be solved by dynamic programming in time poly
 
 Implement in your favorite programming language the `WIS` and `WIS Reconstruction` algorithms.
 
+**ANSWER**
+
+```ruby
+class Graph
+    attr_reader :nodes
+    def initialize(nodes)
+        @nodes = nodes
+    end
+
+    def getMaximumWeightedIndependentSet
+        self.getMaximumWeightedIndependentSetValue
+        self.reconstructIndependentSet
+    end
+
+    def getMaximumWeightedIndependentSetValue
+        @subproblemsSolutions = Array.new(@nodes.size + 1)
+        @subproblemsSolutions[0] = 0 #base case 1
+        @subproblemsSolutions[1] = @nodes[0].weight #base case 2
+        (2..@nodes.size).each do |i|
+            @subproblemsSolutions[i] = [@subproblemsSolutions[i-1], (@subproblemsSolutions[i-2] + @nodes[i-1].weight)].max
+        end
+        @subproblemsSolutions[-1]
+    end
+
+    def to_s
+        "Graph[nodes: #{nodes.map(&:to_s).to_s}]"
+    end
+
+    private
+
+    def reconstructIndependentSet
+        independentSet = []
+        i = @nodes.size
+
+        while i >= 2
+            if @subproblemsSolutions[i-1] >= @subproblemsSolutions[i-2] + @nodes[i-1].weight # case 1 wins
+                i = i -1 #exclude node[i-1]
+            else #case 2 wins
+                independentSet.push(@nodes[i-1]) #include node[i-1]
+                i = i - 2 #exclude node[i-2]
+            end
+        end
+
+        if i == 1 #base case 2
+            independentSet.push(nodes[0])
+        end
+
+        independentSet
+    end
+
+end
+
+class Node
+    
+    attr_accessor :neighbors, :key, :weight
+
+    def initialize(key, weight)
+        @key = key
+        @weight = weight
+    end
+
+    def to_s
+        "Node:[key: #{@key.to_s}, weight: #{@weight.to_s}, neighbors: #{@neighbors.map(&:key).to_s}]"
+    end
+
+    def ==(other)
+        return false unless other.is_a? Node
+
+        other.key == @key
+    end
+end
+```
+
+
+
 ### Problem 16.7
 
 Implement in your favorite programming language the `Knapsack` and `Knapsack Reconstruction` algorithms.
