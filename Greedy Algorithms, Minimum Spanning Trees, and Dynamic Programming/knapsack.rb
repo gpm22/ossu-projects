@@ -30,7 +30,7 @@ class Knapsack
     end
 
     # systematically solve all problems
-    puts 'solving all problems systemativally'
+    puts 'solving all problems systematically'
     (1..@subproblemsSolutions.size - 1).each do |i|
       (0..size).each do |c|
         if items[i - 1].size > c
@@ -49,7 +49,7 @@ class Knapsack
   def getRecursiveSolutionValue
     @recursiveSubproblemsSolutions = {}
     result = getIterativeSolutionValueHelper(@items.size, size)
-    puts "recursive subproblems size: #{@recursiveSubproblemsSolutions.size}" 
+    puts "recursive subproblems size: #{@recursiveSubproblemsSolutions.size}"
     result
   end
 
@@ -64,11 +64,11 @@ class Knapsack
   private
 
   def reconstructKnapsacIterative
-    reconstructKnapsac {|i, c| @subproblemsSolutions[i][c]}
+    reconstructKnapsac { |i, c| @subproblemsSolutions[i][c] }
   end
 
   def reconstructKnapsacRecursive
-    reconstructKnapsac {|i, c| @recursiveSubproblemsSolutions["#{i}-#{c}"]}
+    reconstructKnapsac { |i, c| @recursiveSubproblemsSolutions["#{i}-#{c}"] }
   end
 
   def reconstructKnapsac
@@ -76,7 +76,7 @@ class Knapsack
     c = size
 
     @items.size.downto(1).each do |i|
-      if @items[i - 1].size <= c && (yield((i - 1), (c - @items[i - 1].size)) + @items[i - 1].value) >= yield((i - 1),c)
+      if @items[i - 1].size <= c && (yield((i - 1), (c - @items[i - 1].size)) + @items[i - 1].value) >= yield((i - 1), c)
         solutionItems.push(items[i - 1])
         c -= @items[i - 1].size
       end
@@ -140,8 +140,8 @@ def test1
   puts "testing file 1 - #{knapsack.getInfo}"
   puts "iterative value: #{knapsack.getIterativeSolutionValue}"
   puts "recursive value: #{knapsack.getRecursiveSolutionValue}"
-  puts "iterative soltuion: #{knapsack.getIterativeSolution.map(&:key).sort.to_s}"
-  puts "recursive soltuion: #{knapsack.getRecursiveSolution.map(&:key).sort.to_s}"
+  puts "iterative soltuion: #{knapsack.getIterativeSolution.map(&:key).sort}"
+  puts "recursive soltuion: #{knapsack.getRecursiveSolution.map(&:key).sort}"
 end
 
 def test2
