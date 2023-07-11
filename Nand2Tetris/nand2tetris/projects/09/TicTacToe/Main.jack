@@ -4,6 +4,7 @@ class Main {
         let game = TicTacToeGame.new();
         do game.run();
         do game.dispose();
+        do Output.printString("Game Finished!");
         return;
     }
 }
