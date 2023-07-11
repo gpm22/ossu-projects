@@ -1,0 +1,234 @@
+class TicTacToeGame{
+   field Board board; 
+   field int size, turn, radius, squareSize;
+   field int centerY, centerX;
+   field Array state, squaresCenters;
+   /** Constructs a new Square Game. */
+   constructor TicTacToeGame new() {
+      let size = 128;//256;
+      let squareSize = size/3;
+      let radius = squareSize/2;
+      let turn = 1;
+      let centerX = 255;
+      let centerY = 127;
+      let board = Board.new(centerX, centerY, size);
+      do initState();
+      do initCenters();
+      return this;
+   }
+
+   /** Disposes this game. */
+   method void dispose() {
+      do board.dispose();
+      do state.dispose();
+      do squaresCenters.dispose();
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   method void run() {
+      var char key;  // the key currently pressed by the user
+      var boolean exit, verify, gameState;
+      let exit = false;
+      let verify = false;
+      let gameState = false; 
+      while (~exit) {
+         // waits for a key to be pressed
+         while (key = 0) {
+            let key = Keyboard.keyPressed();
+         }
+         if (key = 81)  {  // q key
+            do draw(0);
+            let verify = true;
+         }
+         if (key = 87)  { // w key
+            do draw(1);
+            let verify = true;
+         }
+         if (key = 69)  { // e key
+            do draw(2);
+            let verify = true;
+         }
+         if (key = 65)  { // a key
+            do draw(3);
+            let verify = true;
+         }
+         if (key = 83)  { // s key
+            do draw(4);
+            let verify = true;
+         }
+         if (key = 68)  {// d key
+            do draw(5);
+            let verify = true;
+         } 
+         if (key = 90)  {// z key
+            do draw(6);
+            let verify = true;
+         } 
+         if (key = 88)  { // x key
+            do draw(7);
+            let verify = true;
+         }
+         if (key = 67)  { // c key
+            do draw(8);
+            let verify = true;
+         }
+         // waits for the key to be released
+         while (~(key = 0)) {
+            let key = Keyboard.keyPressed();
+         }
+         if (verify){
+            if (isGameFinished()){
+              let exit = true;
+            } 
+            let verify = false;
+         }
+
+     } // while
+     return;
+   }
+
+   method boolean isGameFinished(){
+      var boolean winner;
+      let winner = false;
+      if (turn > 5){
+         let winner = hasWinner();
+      }
+      return winner | (turn > 8);
+   }
+
+   method boolean hasWinner(){
+      do Screen.setColor(false);
+      if(~(state[0] = 0) & (state[0] = state[1]) & (state[0] = state[2])){
+         do Screen.drawLine(getSquareCenter(0, 0), getSquareCenter(0, 1), getSquareCenter(2, 0), getSquareCenter(2, 1));
+         return true;
+      }
+
+      if(~(state[3] = 0) & (state[3] = state[4]) & (state[3] = state[5])){
+         do Screen.drawLine(getSquareCenter(3, 0), getSquareCenter(3, 1), getSquareCenter(5, 0), getSquareCenter(5, 1));
+         return true;
+      }
+
+      if(~(state[6] = 0) & (state[6] = state[7]) & (state[6] = state[8])){
+         do Screen.drawLine(getSquareCenter(6, 0), getSquareCenter(6, 1), getSquareCenter(8, 0), getSquareCenter(8, 1));
+         return true;
+      }
+
+      if(~(state[0] = 0) & (state[0] = state[3]) & (state[0] = state[5])){
+         do Screen.drawLine(getSquareCenter(0, 0), getSquareCenter(0, 1), getSquareCenter(5, 0), getSquareCenter(5, 1));
+         return true;
+      }
+
+      if(~(state[1] = 0) & (state[1] = state[4]) & (state[1] = state[7])){
+         do Screen.drawLine(getSquareCenter(1, 0), getSquareCenter(1, 1), getSquareCenter(7, 0), getSquareCenter(7, 1));
+         return true;
+      }
+
+      if(~(state[2] = 0) & (state[2] = state[5]) & (state[2] = state[8])){
+         do Screen.drawLine(getSquareCenter(2, 0), getSquareCenter(2, 1), getSquareCenter(8, 0), getSquareCenter(8, 1));
+         return true;
+      }
+
+      if(~(state[0] = 0) & (state[0] = state[4]) & (state[0] = state[8])){
+         do Screen.drawLine(getSquareCenter(0, 0), getSquareCenter(0, 1), getSquareCenter(8, 0), getSquareCenter(8, 1));
+         return true;
+      }
+
+      if(~(state[2] = 0) & (state[2] = state[4]) & (state[2] = state[6])){
+         do Screen.drawLine(getSquareCenter(2, 0), getSquareCenter(2, 1), getSquareCenter(6, 0), getSquareCenter(6, 1));
+         return true;
+      }
+
+      return false;
+   }
+
+   method void draw(int squarePlace){
+      var int _x, _y;
+      var Circle c;
+      var Cross cr;
+      if (~(state[squarePlace] = 0)){
+         return;
+      }
+      let _x = getSquareCenter(squarePlace,0);
+      let _y = getSquareCenter(squarePlace,1);
+      if (rest(turn, 2) = 0) {
+         let c = Circle.new(_x, _y, radius);
+         let state[squarePlace] = 1;
+         do c.dispose();
+      } else {
+         let cr = Cross.new(_x, _y, squareSize);
+         let state[squarePlace] = 2;
+         do cr.dispose();
+      }
+      let turn = turn + 1;
+      return;
+   }
+
+   method int getSquareCenter(int x, int y){
+      var Array arr;
+      let arr = squaresCenters[x];
+      return arr[y];
+   }
+
+   method void setSquareCenter(int x, int y, int value){
+      var Array arr;
+      let arr = squaresCenters[x];
+      let arr[y] = value;
+      return;
+   }
+
+   method int rest(int x, int y){
+      var int div;
+      let div = x/y;
+      return (x - (div*y));
+   }
+
+   method void initState(){
+      var int i;
+      let state = Array.new(9);
+      let i = 0;
+      while (i < 9) {
+         let state[i] = 0;
+         let i = i + 1;
+      }
+      return;
+   }
+
+   method void initCenters(){
+      var int i;
+      let squaresCenters = Array.new(9);
+      let i = 0;
+      while (i < 9) {
+         let squaresCenters[i] = Array.new(2);
+         let i = i + 1;
+      }
+
+      do setSquareCenter(6, 0, (centerX - squareSize));
+      do setSquareCenter(6, 1, (centerY + squareSize));
+
+      do setSquareCenter(7, 0, centerX);
+      do setSquareCenter(7, 1, (centerY + squareSize));
+
+      do setSquareCenter(8, 0, (centerX + squareSize));
+      do setSquareCenter(8, 1, (centerY + squareSize));
+
+      do setSquareCenter(3, 0, (centerX - squareSize));
+      do setSquareCenter(3, 1, centerY);
+
+      do setSquareCenter(4, 0, centerX);
+      do setSquareCenter(4, 1, centerY);
+
+      do setSquareCenter(5, 0, (centerX + squareSize));
+      do setSquareCenter(5, 1, centerY);
+
+      do setSquareCenter(0, 0, (centerX - squareSize));
+      do setSquareCenter(0, 1, (centerY - squareSize));
+
+      do setSquareCenter(1, 0, centerX);
+      do setSquareCenter(1, 1, (centerY - squareSize));
+
+      do setSquareCenter(2, 0, (centerX + squareSize));
+      do setSquareCenter(2, 1, (centerY - squareSize));
+      return;
+   }
+}
