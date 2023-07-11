@@ -1,0 +1,37 @@
+class Cross {
+    field int upperX, upperY;
+    field int lowerX, lowerY;
+
+    constructor Cross new (int x, int y, int size){
+        var half_size = size/2;
+        let lowerX = x - half_size;
+        let upperX = x + half_size;
+        let lowerY = y - half_size;
+        let upperY = y + half_size; 
+        do draw();
+        return this;
+    }
+
+   method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   method void draw() {
+      do Screen.setColor(true);
+      do this.drawCross();
+      return;
+   }
+
+   method void erase() {
+      do Screen.setColor(false);
+      do this.drawCross();
+      return;
+   }
+
+   method void drawCross(){
+      do Screen.drawLine(lowerX, upperY, upperX, lowerY);
+      do Screen.drawLine(lowerX, lowerY, upperX, upperY);
+      return;
+   }
+}
