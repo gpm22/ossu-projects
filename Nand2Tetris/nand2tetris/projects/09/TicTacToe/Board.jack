@@ -1,0 +1,49 @@
+class Board{
+
+    field int x1, x2, x3, x4;
+    field int y1, y2, y3, y4;
+
+   /** Constructs a new square with a given location and size. */
+   constructor Board new(int x, int y, int size) {
+      var halfSize = size/2;
+      var sixthOfSize = size/6;
+      let x1 = x - halfSize;
+      let x2 = x + halfSize;
+      let x3 = x - sixthOfSize;
+      let x4 = x + sixthOfSize;
+      let y1 = y + sixthOfSize;
+      let y2 = y - sixthOfSize;
+      let y3 = y + halfSize;
+      let y4 = y - halfSize;
+      do draw();
+      return this;
+   }
+
+   /** Disposes this square. */
+   method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   /** Draws the square on the screen. */
+   method void draw() {
+      do Screen.setColor(true);
+      do this.drawBoard();
+      return;
+   }
+
+   /** Erases the square from the screen. */
+   method void erase() {
+      do Screen.setColor(false);
+      do this.drawBoard();
+      return;
+   }
+
+   method void drawBoard(){
+      do Screen.drawLine(x1, y1, x2, y1);
+      do Screen.drawLine(x1, y2, x2, y2);
+      do Screen.drawLine(x3, y3, x3, y4);
+      do Screen.drawLine(x4, y3, x4, y4);
+      return;
+   }
+}
