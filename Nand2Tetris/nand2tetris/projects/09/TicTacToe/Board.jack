@@ -5,9 +5,8 @@ class Board{
 
    /** Constructs a new square with a given location and size. */
    constructor Board new(int x, int y, int size) {
-      var halfSize;
+      var int halfSize, sixthOfSize;
       let halfSize = size/2;
-      var sixthOfSize;
       let sixthOfSize = size/6;
       let x1 = x - halfSize;
       let x2 = x + halfSize;

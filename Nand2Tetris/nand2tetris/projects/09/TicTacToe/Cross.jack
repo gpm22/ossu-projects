@@ -3,7 +3,7 @@ class Cross {
     field int lowerX, lowerY;
 
     constructor Cross new (int x, int y, int size){
-        var half_size;
+        var int half_size;
         let half_size = size/2;
         let lowerX = x - half_size;
         let upperX = x + half_size;
