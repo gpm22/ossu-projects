@@ -1,0 +1,29 @@
+class Circle {
+    field int radius, x, y;
+
+    constructor Circle new (int _x, int _y, int _radius){
+        let x = _x;
+        let y = _y;
+        let radius = _radius;
+        do draw();
+        return this;
+    }
+
+   method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   method void draw() {
+      do Screen.setColor(true);
+      do Screen.drawCircle(x, y, radius);
+      return;
+   }
+
+   /** Erases the square from the screen. */
+   method void erase() {
+      do Screen.setColor(false);
+      do Screen.drawCircle(x, y, radius);
+      return;
+   }
+}
