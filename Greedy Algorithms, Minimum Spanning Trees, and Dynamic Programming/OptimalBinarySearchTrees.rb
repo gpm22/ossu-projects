@@ -17,24 +17,39 @@ class OptimaBinarySearchTree
         sumOfFrequencies = @arr[i..(i + s)].sum
 
         cases = []
-        (i..(i + s)).each { |r| cases.push([@subproblems[i][r] + @subproblems[r + 1][i + s + 1], [r, i, s]]) } if i != (i + s)
-        minCases = cases.size > 0 ? cases.min { |a, b| a[0] <=> b[0] } : [0, [i, i, s]]
+        (i..(i + s)).each { |r| cases.push([@subproblems[i][r] + @subproblems[r + 1][i + s + 1], [r, i, i + s + 1]]) } if i != (i + s)
+        minCases = cases.size > 0 ? cases.min { |a, b| [a[0], a[1][0]] <=> [b[0], b[1][0]] } : [0, [i, i, s]]
         @roots.push(minCases[1])
         @subproblems[i][i + s + 1] = sumOfFrequencies + minCases[0]
       end
     end
-    puts @roots.size
-    puts @roots.to_s
     @subproblems[0][@arr.size]
   end
 
   def getBinaryTree
     self.calculateMinimumWeightedSearchTime if @roots.nil?
-  end
 
-  private
+    puts "roots:\n#{@roots.reverse.to_s}"
+    rootValue = @roots[-1][0]
+    root = Node.new(rootValue, @arr[rootValue])
+    alreadyAdded = { rootValue.to_s => nil }
+    filteredRoots = @roots.filter { |n| n[2] != 0 && ((n[1] <= rootValue && n[2] <= rootValue) || n[1] >= rootValue) && n[0] != rootValue }.sort { |a, b| (b[2] - b[1]).abs <=> (a[2] - a[1]).abs }
+    baseCases = Array.new(@arr.size) { |i| [i, i, 0] }.reverse
 
-  def reconstruct
+    puts "filteredRoots: #{filteredRoots.concat(baseCases).to_s}"
+    filteredRoots.each do |n|
+      next if alreadyAdded.include?(n[0].to_s)
+
+      root.addChild(Node.new(n[0], @arr[n[0]]))
+      alreadyAdded[n[0].to_s] = nil
+    end
+    baseCases.each do |n|
+      next if alreadyAdded.include?(n[0].to_s)
+
+      root.addChild(Node.new(n[0], @arr[n[0]]))
+      alreadyAdded[n[0].to_s] = nil
+    end
+    root
   end
 end
 
@@ -48,6 +63,34 @@ class Node
 
   def isRoot?
     @parent.nil?
+  end
+
+  def addChild(node)
+    if node.value < @value
+      self.addLeftChild(node)
+    else
+      self.addRightChild(node)
+    end
+  end
+
+  def addLeftChild(node)
+    if @leftChild.nil?
+      @leftChild = node
+      node.parent = self
+      return
+    end
+
+    @leftChild.addChild(node)
+  end
+
+  def addRightChild(node)
+    if @rightChild.nil?
+      @rightChild = node
+      node.parent = self
+      return
+    end
+
+    @rightChild.addChild(node)
   end
 
   def weightedSearchTime
@@ -72,6 +115,26 @@ class Node
     weightedSearchTime
   end
 
+  def treeFormat
+    currentNode = self
+    until currentNode.isRoot?
+      currentNode = currentNode.parent
+    end
+
+    tree = currentNode.to_s
+
+    childrenArr = currentNode.children
+
+    until childrenArr.size == 0
+      tree += "\n" + childrenArr.map(&:to_s).to_s
+      newChildren = []
+      childrenArr.each { |n| newChildren.concat(n.children) }
+      childrenArr = newChildren
+    end
+
+    tree
+  end
+
   def children
     return [] unless self.hasChildren?
 
@@ -87,7 +150,7 @@ class Node
   end
 
   def to_s
-    "value: #{value} - frequency: #{frequency}"
+    "value: #{value} - frequency: #{frequency} - parent: #{self.isRoot? ? "" : @parent.value.to_s}"
   end
 end
 
@@ -97,12 +160,20 @@ def test(arr, expected, testName = nil)
   result = classResult.calculateMinimumWeightedSearchTime
 
   raise "test failed!: #{testName}\nactual result: #{result} different from the expected one: #{expected}" unless result == expected
+
+  tree = classResult.getBinaryTree
+  puts tree.treeFormat
+  treeResult = tree.weightedSearchTime
+  raise "test failed!: #{testName}\nactual tree result: #{treeResult} different from the expected one: #{expected}" unless treeResult == expected
   puts "test passed!: #{testName}"
 end
 
 def tests
   test([20, 5, 17, 10, 20, 3, 25], 223, "test book")
-  test([2, 8, 2, 5, 5, 2, 8, 3, 6, 1, 1, 6, 3, 2, 6, 7, 4, 63, 2, 9, 10, 1, 60, 5, 2, 7, 34, 11, 31, 76, 21, 6, 8, 1, 81, 37, 15, 6, 8, 24, 12, 18, 42, 8, 51, 21, 8, 6, 5, 7], 2780, "web site problem")
+  test([25, 10, 20], 95, "ninja test")
+  test([5, 4, 5, 9, 5, 5, 2, 10], 110, "personal 2")
+  test([20, 5, 7, 4, 17, 10, 9, 20, 3, 25, 5, 4, 2, 10], 393, "personal 1")
+  #test([2, 8, 2, 5, 5, 2, 8, 3, 6, 1, 1, 6, 3, 2, 6, 7, 4, 63, 2, 9, 10, 1, 60, 5, 2, 7, 34, 11, 31, 76, 21, 6, 8, 1, 81, 37, 15, 6, 8, 24, 12, 18, 42, 8, 51, 21, 8, 6, 5, 7], 2780, "web site problem")
 end
 
 def testNode
@@ -129,4 +200,8 @@ def testNode
 
   puts root.weightedSearchTime
   puts rootGGCLLL.weightedSearchTime
+  puts root.treeFormat
 end
+
+testNode
+tests
