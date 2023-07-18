@@ -7,7 +7,7 @@ class OptimaBinarySearchTree
 
   def calculateMinimumWeightedSearchTime
     @subproblems = Array.new(@arr.size + 1) { Array.new(@arr.size + 1) }
-    @roots = []
+    @roots = {}
     #base cases
     (0..(@arr.size)).each { |i| @subproblems[i][i] = 0 }
 
@@ -18,8 +18,8 @@ class OptimaBinarySearchTree
 
         cases = []
         (i..(i + s)).each { |r| cases.push([@subproblems[i][r] + @subproblems[r + 1][i + s + 1], [r, i, i + s + 1]]) } if i != (i + s)
-        minCases = cases.size > 0 ? cases.min { |a, b| [a[0], a[1][0]] <=> [b[0], b[1][0]] } : [0, [i, i, s]]
-        @roots.push(minCases[1])
+        minCases = cases.size > 0 ? cases.min { |a, b| [a[0], a[1][0]] <=> [b[0], b[1][0]] } : [0, [i, i, i + s + 1]]
+        @roots["#{minCases[1][1]}-#{minCases[1][2]}"] = minCases[1][0]
         @subproblems[i][i + s + 1] = sumOfFrequencies + minCases[0]
       end
     end
@@ -29,25 +29,31 @@ class OptimaBinarySearchTree
   def getBinaryTree
     self.calculateMinimumWeightedSearchTime if @roots.nil?
 
-    puts "roots:\n#{@roots.reverse.to_s}"
-    rootValue = @roots[-1][0]
+    i = 0
+    j = @arr.size
+    rootValue = @roots["#{i}-#{j}"]
     root = Node.new(rootValue, @arr[rootValue])
-    alreadyAdded = { rootValue.to_s => nil }
-    filteredRoots = @roots.filter { |n| n[2] != 0 && ((n[1] <= rootValue && n[2] <= rootValue) || n[1] >= rootValue) && n[0] != rootValue }.sort { |a, b| (b[2] - b[1]).abs <=> (a[2] - a[1]).abs }
-    baseCases = Array.new(@arr.size) { |i| [i, i, 0] }.reverse
+    level = 1
+    childrenByLevel = { 1 => [[i, rootValue], [rootValue + 1, j]] }
 
-    puts "filteredRoots: #{filteredRoots.concat(baseCases).to_s}"
-    filteredRoots.each do |n|
-      next if alreadyAdded.include?(n[0].to_s)
+    until childrenByLevel[level].nil?
+      newChildren = []
+      childrenByLevel[level].each do |n|
+        currentNode = @roots["#{n[0]}-#{n[1]}"]
+        next if currentNode.nil?
+        newNode = Node.new(currentNode, @arr[currentNode])
+        root.addChild(newNode)
 
-      root.addChild(Node.new(n[0], @arr[n[0]]))
-      alreadyAdded[n[0].to_s] = nil
-    end
-    baseCases.each do |n|
-      next if alreadyAdded.include?(n[0].to_s)
+        newi = newNode.getNextLeftIndex
+        newj = newNode.getNextRightIndex
+        newi = i if newi < 0
+        newj = j if newj < 0
 
-      root.addChild(Node.new(n[0], @arr[n[0]]))
-      alreadyAdded[n[0].to_s] = nil
+        newChildren.push([currentNode + 1, newj])
+        newChildren.push([newi, currentNode])
+      end
+      level += 1
+      childrenByLevel[level] = newChildren if newChildren.size > 0
     end
     root
   end
@@ -63,6 +69,41 @@ class Node
 
   def isRoot?
     @parent.nil?
+  end
+
+  def getNextLeftIndex
+    return -1 if self.isRoot?
+    return @parent.value + 1 if self.isRightChild?
+    return @parent.parent.value + 1 if self.isLeftChild? && @parent.isRightChild?
+    @parent.getNextLeftIndex
+  end
+
+  def getNextRightIndex
+    return -1 if self.isRoot?
+    return @parent.value if self.isLeftChild?
+    return @parent.parent.value if self.isLeftChild? && @parent.isRightChild?
+    @parent.getNextRightIndex
+  end
+
+  def isLeftChild?
+    return false if self.isRoot?
+
+    return false if @parent.leftChild.nil?
+
+    @parent.leftChild == self
+  end
+
+  def isRightChild?
+    return false if self.isRoot?
+
+    return false if @parent.rightChild.nil?
+
+    @parent.rightChild == self
+  end
+
+  def ==(other)
+    return false unless other.is_a?(Node)
+    other.value == @value
   end
 
   def addChild(node)
@@ -173,7 +214,7 @@ def tests
   test([25, 10, 20], 95, "ninja test")
   test([5, 4, 5, 9, 5, 5, 2, 10], 110, "personal 2")
   test([20, 5, 7, 4, 17, 10, 9, 20, 3, 25, 5, 4, 2, 10], 393, "personal 1")
-  #test([2, 8, 2, 5, 5, 2, 8, 3, 6, 1, 1, 6, 3, 2, 6, 7, 4, 63, 2, 9, 10, 1, 60, 5, 2, 7, 34, 11, 31, 76, 21, 6, 8, 1, 81, 37, 15, 6, 8, 24, 12, 18, 42, 8, 51, 21, 8, 6, 5, 7], 2780, "web site problem")
+  test([2, 8, 2, 5, 5, 2, 8, 3, 6, 1, 1, 6, 3, 2, 6, 7, 4, 63, 2, 9, 10, 1, 60, 5, 2, 7, 34, 11, 31, 76, 21, 6, 8, 1, 81, 37, 15, 6, 8, 24, 12, 18, 42, 8, 51, 21, 8, 6, 5, 7], 2780, "web site problem")
 end
 
 def testNode
