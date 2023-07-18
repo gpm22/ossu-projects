@@ -1,4 +1,4 @@
-class OptimaBinarySearchTree
+class OptimalBinarySearchTree
   attr_reader :arr
 
   def initialize(arr)
@@ -197,7 +197,7 @@ end
 
 def test(arr, expected, testName = nil)
   testName = "arr:#{arr.to_s}\nexpected:#{expected}" if testName.nil?
-  classResult = OptimaBinarySearchTree.new(arr)
+  classResult = OptimalBinarySearchTree.new(arr)
   result = classResult.calculateMinimumWeightedSearchTime
 
   raise "test failed!: #{testName}\nactual result: #{result} different from the expected one: #{expected}" unless result == expected
