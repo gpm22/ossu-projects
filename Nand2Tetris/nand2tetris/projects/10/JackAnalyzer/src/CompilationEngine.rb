@@ -9,6 +9,10 @@ class CompilationEngine
                           :WHILE => -> { self.compileWhile },
                           :DO => -> { self.compileDo },
                           :RETURN => -> { self.compileReturn } }
+    @operators = { "+" => nil, "-" => nil, "*" => nil,
+                   "/" => nil, "&" => nil, "|" => nil, "<" => nil,
+                   ">" => nil }
+    @keywordConstants = { :TRUE => "true", :FALSE => "false", :NULL => "null", :THIS => "this" }
   end
 
   def compileClass
@@ -197,20 +201,80 @@ class CompilationEngine
     name = "expression"
     putsTagStart(name)
     self.compileTerm
-    if 
+    tokenType = @tokenizer.tokenType
+    while tokenType == :SYMBOL && @operators.include?(@tokenizer.symbol)
+      process(@tokenizer.symbol)
+      self.compileTerm
+      tokenType = @tokenizer.tokenType
+    end
     putsTagEnd(name)
   end
 
   def compileTerm
     name = "term"
     putsTagStart(name)
-
+    tokenType = @tokenizer.tokenType
+    if tokenType == :INT_CONST
+      process(@tokenizer.intVal)
+    elsif tokenType == :STRING_CONST
+      process(@tokenizer.stringVal)
+    elsif tokenType == :KEYWORD && @keywordConstants.include?(@tokenizer.keyWord)
+      process(@keywordConstants[@tokenizer.keyWord])
+    elsif tokenType == :SYMBOL
+      if @tokenizer.symbol == "("
+        process("(")
+        self.compileExpression
+        process(")")
+      elsif @tokenizer.symbol == "-" || @tokenizer.symbol == "~"
+        process(@tokenizer.symbol)
+        self.compileTerm
+      else
+        raise "in a term, the first symbol must be '(', '-', or '~', and not #{@tokenizer.symbol}"
+      end
+    else # tokenType is :IDENTIFIER
+      process(@tokenizer.indentifier)
+      tokenType = @tokenizer.tokenType
+      if tokenType == :SYMBOL
+        if @tokenizer.symbol == "["
+          process("[")
+          self.compileExpression
+          process("]")
+        elsif @tokenizer.symbol == "("
+          process("(")
+          self.compileExpressionList
+          process(")")
+        elsif @tokenizer.symbol == "."
+          process(".")
+          process(@tokenizer.identifier) #subroutine name
+          process("(")
+          self.compileExpressionList
+          process(")")
+        end
+      end
+    end
     putsTagEnd(name)
   end
 
   def compileExpressionList
     name = "expressionList"
     putsTagStart(name)
+    tokenType = @tokenizer.tokenType
+    if self.isCurrentTokenATerm?(tokenType)
+      self.compileExpression
+      tokenType = @tokenizer.tokenType
+      if tokenType == :SYMBOL
+        currentToken = @tokenizer.symbol
+        while currentToken == ","
+          process(",")
+          self.compileExpression
+          if @tokenizer.tokenType == :SYMBOL
+            currentToken == @tokenizer.symbol
+          else
+            currentToken == nil
+          end
+        end
+      end
+    end
 
     putsTagEnd(name)
   end
@@ -309,5 +373,15 @@ class CompilationEngine
     end
 
     @currentToken = tokenizer.advance
+  end
+
+  def isCurrentTokenATerm?(tokenType)
+    tokenType == :INT_CONST ||
+    tokenType == :STRING_CONST ||
+    tokenType == :IDENTIFIER ||
+    (tokenType == :KEYWORD && @keywordConstants.include?(@tokenizer.keyWord)) ||
+    (tokenType == :SYMBOL && (@tokenizer.symbol == "(" ||
+                              @tokenizer.symbol == "-" ||
+                              @tokenizer.symbol == "~"))
   end
 end
