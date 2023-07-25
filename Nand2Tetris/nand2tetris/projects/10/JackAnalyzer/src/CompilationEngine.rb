@@ -240,12 +240,32 @@ class CompilationEngine
   end
 
   def compileVarDecs
+    predicate = lambda { |currentToken| currentToken == :VAR }
+    self.compileVarDecsHelper(predicate) { self.compileVarDec }
   end
 
   def compileClassVarDecs
+    predicate = lambda { |currentToken| currentToken == :FIELD || currentToken == :STATIC }
+    self.compileVarDecsHelper(predicate) { self.compileClassVarDec }
+  end
+
+  def compileVarDecsHelper(predicate)
+    return if @tokenizer.tokenType != :KEYWORD
+    currentToken = @tokenizer.keyWord
+
+    while predicate.call(currentToken)
+      yield
+      return if @tokenizer.tokenType != :KEYWORD
+      currentToken = @tokenizer.keyWord
+    end
   end
 
   def compileSubroutines
+    return if @tokenizer.tokenType == :SYMBOL && @tokenizer.symbol == "}"
+
+    self.compileSubroutine
+
+    self.compileSubroutines
   end
 
   def putsTagStart(tag)
