@@ -105,7 +105,19 @@ class CompilationEngine
   def compileStatements
     name = "statements"
     putsTagStart(name)
-
+    @statementKeyWords = { :LET => -> { self.compileLet },
+                          :IF => -> { self.compileIf },
+                          :WHILE => -> { self.compileWhile },
+                          :DO => -> { self.compileDo },
+                          :RETURN => -> { self.compileReturn } }
+    predicate = lambda { |currentToken| @statementKeyWords.include? currentToken }
+    self.compileVarDecsHelper(predicate) do |currentToken|
+      if @statementKeyWords.include? currentToken
+        @statementKeyWords[currentToken].call
+      else
+        raise "Statement is #{@statementKeyWords.keys.to_s} and not #{currentToken}"
+      end
+    end
     putsTagEnd(name)
   end
 
@@ -152,21 +164,31 @@ class CompilationEngine
   def compileWhile
     name = "whileStatement"
     putsTagStart(name)
-
+    process("while")
+    process("(")
+    self.compileExpression
+    process(")")
+    process("{")
+    self.compileStatements
+    process("}")
     putsTagEnd(name)
   end
 
   def compileDo
     name = "doStatement"
     putsTagStart(name)
-
+    process("do")
+    self.compileTerm
+    process(";")
     putsTagEnd(name)
   end
 
   def compileReturn
     name = "returnStatement"
     putsTagStart(name)
-
+    process("return")
+    self.compileExpression unless @tokenizer.tokenType == :SYMBOL && @tokenizer.symbol == ";"
+    process(";")
     putsTagEnd(name)
   end
 
@@ -241,12 +263,12 @@ class CompilationEngine
 
   def compileVarDecs
     predicate = lambda { |currentToken| currentToken == :VAR }
-    self.compileVarDecsHelper(predicate) { self.compileVarDec }
+    self.compileVarDecsHelper(predicate) { |a| self.compileVarDec }
   end
 
   def compileClassVarDecs
     predicate = lambda { |currentToken| currentToken == :FIELD || currentToken == :STATIC }
-    self.compileVarDecsHelper(predicate) { self.compileClassVarDec }
+    self.compileVarDecsHelper(predicate) { |a| self.compileClassVarDec }
   end
 
   def compileVarDecsHelper(predicate)
@@ -254,7 +276,7 @@ class CompilationEngine
     currentToken = @tokenizer.keyWord
 
     while predicate.call(currentToken)
-      yield
+      yield(currentToken)
       return if @tokenizer.tokenType != :KEYWORD
       currentToken = @tokenizer.keyWord
     end
