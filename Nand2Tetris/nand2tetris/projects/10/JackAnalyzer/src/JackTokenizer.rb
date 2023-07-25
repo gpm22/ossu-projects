@@ -1,13 +1,14 @@
 class JackTokenizer
   def initialize(inputFile)
-    @file = File.open(inputFile).each_line
+    @file = File.open(inputFile)
+    @fileEnum = @file.each_line
     @currentTokens = nil
     @currentLineNumber = 1
-    @symbolTable = { "{" => nil, "}" => nil, "(" => nil, ")" => nil,
-                     "[" => nil, "]" => nil, "." => nil, "," => nil,
-                     ";" => nil, "+" => nil, "-" => nil, "*" => nil,
-                     "/" => nil, "&" => nil, "|" => nil, "<" => nil,
-                     ">" => nil, "=" => nil, "~" => nil }
+    @symbolTable = { "{" => "{", "}" => "}", "(" => "(", ")" => ")",
+                     "[" => "[", "]" => "]", "." => ".", "," => ",",
+                     ";" => ";", "+" => "+", "-" => "-", "*" => "*",
+                     "/" => "/", "&" => "&amp;", "|" => "|", "<" => "&lt;",
+                     ">" => "&gt;", "=" => "=", "~" => "~" }
 
     @keywordTable = { "class" => :CLASS, "constructor" => :CONSTRUCTOR, "function" => :FUNCTION,
                       "while" => :WHILE, "field" => :FIELD, "static" => :STATIC,
@@ -33,6 +34,7 @@ class JackTokenizer
 
   def advance
     @currentToken = @currentTokens.next
+    @symbolTable.include?(@currentToken) ? @symbolTable[@currentToken] : @currentToken
   end
 
   def tokenType
@@ -51,7 +53,7 @@ class JackTokenizer
 
   def symbol
     raiseException("symbol method must only be called if tokenType is SYMBOL, and not #{self.tokenType}") unless self.tokenType == :SYMBOL
-    @currentToken
+    @symbolTable[@currentToken]
   end
 
   def identifier
@@ -67,6 +69,10 @@ class JackTokenizer
   def stringVal
     raiseException("stringVal method must only be called if tokenType is STRING_CONST, and not #{self.tokenType}") unless self.tokenType == :STRING_CONST
     @currentToken[1..-2]
+  end
+
+  def close
+    @file.close
   end
 
   private
@@ -104,7 +110,7 @@ class JackTokenizer
   end
 
   def hasMoreLines
-    @file.peek
+    @fileEnum.peek
     true
   rescue StopIteration
     false
@@ -115,7 +121,7 @@ class JackTokenizer
 
     while true
       begin
-        nextLine = @file.next
+        nextLine = @fileEnum.next
       rescue StopIteration
         return
       end
@@ -127,7 +133,7 @@ class JackTokenizer
       if nextLineWithoutSpaces[0] == "/" && nextLineWithoutSpaces[1] == "*" && nextLineWithoutSpaces[-1] != "/"
         until nextLineWithoutSpaces[-2] == "*" && nextLineWithoutSpaces[-1] == "/"
           @currentLineNumber += 1
-          nextLineWithoutSpaces = @file.next.gsub(/\s+/, "")
+          nextLineWithoutSpaces = @fileEnum.next.gsub(/\s+/, "")
         end
 
         next
