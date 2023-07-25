@@ -4,6 +4,11 @@ class CompilationEngine
     @outputFile.truncate(0)
     @tokenizer = tokenizer
     @currentToken = tokenizer.advance
+    @statementKeyWords = { :LET => -> { self.compileLet },
+                          :IF => -> { self.compileIf },
+                          :WHILE => -> { self.compileWhile },
+                          :DO => -> { self.compileDo },
+                          :RETURN => -> { self.compileReturn } }
   end
 
   def compileClass
@@ -105,11 +110,7 @@ class CompilationEngine
   def compileStatements
     name = "statements"
     putsTagStart(name)
-    @statementKeyWords = { :LET => -> { self.compileLet },
-                          :IF => -> { self.compileIf },
-                          :WHILE => -> { self.compileWhile },
-                          :DO => -> { self.compileDo },
-                          :RETURN => -> { self.compileReturn } }
+
     predicate = lambda { |currentToken| @statementKeyWords.include? currentToken }
     self.compileVarDecsHelper(predicate) do |currentToken|
       if @statementKeyWords.include? currentToken
@@ -195,7 +196,8 @@ class CompilationEngine
   def compileExpression
     name = "expression"
     putsTagStart(name)
-
+    self.compileTerm
+    if 
     putsTagEnd(name)
   end
 
