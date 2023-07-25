@@ -14,7 +14,7 @@ This VM Translator accepts a single command-line argument, as follows,
   prompt> ruby VMTranslator.rb source
   ```
 
-* Where **`source`** is either a **file name** of the form `Xxx.vm` (the extension is mandatory and the first character in the file name must be an uppercase lette) or the **name of a folder** (in which case there is no extension) containing one or more .vm files.
+* Where **`source`** is either a **file name** of the form `Xxx.vm` (the extension is mandatory and the first character in the file name must be an uppercase letter) or the **name of a folder** (in which case there is no extension) containing one or more .vm files.
 
   * The file/folder name may contain a file path.
   * If no path is specified, the translator operates on the current folder.
