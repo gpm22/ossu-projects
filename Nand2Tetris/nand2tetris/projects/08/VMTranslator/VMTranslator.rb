@@ -83,7 +83,7 @@ class VMTranslator
       parentFolder = File.dirname(newPath)
     else
       parentFolder = Dir.pwd
-      newPath = @parentFolder.to_s + '/' + path.to_s
+      newPath = parentFolder.to_s + '/' + path.to_s
     end
     [newPath, parentFolder]
   end
