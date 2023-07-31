@@ -6,14 +6,21 @@ def testBellmanFord(graph, expected, name)
   result = graph.bellmanFord(graph.nodes[0])
   assert_equal(expected, result, name)
 
-  puts "test passed! #{name}"
+  puts "BellmanFord - test passed! #{name}"
 end
 
 def testAllPairsBellmanFord(graph, expected, name)
   result = graph.allPairsWithBellmanFord
   assert_equal(expected, result, name)
 
-  puts "test passed! #{name}"
+  puts " AllPairsBellmanFord - test passed! #{name}"
+end
+
+def testFloydWarshall(graph, expected, name)
+  result = graph.floydWarshall
+  assert_equal(expected, result, name)
+
+  puts "FloydWarshall - test passed! #{name}"
 end
 
 def getBookGraph1
@@ -92,11 +99,13 @@ def getBookGraph4
 end
 
 testBellmanFord(getBookGraph1, [0, 1, 2, 5, 4], "Book test 1")
-testBellmanFord(getBookGraph2, "negative cycle", "Book test 2")
+testBellmanFord(getBookGraph2, :NEGATIVE_CYCLE, "Book test 2")
 
 result3 = [[0, 2, 3, 6],
            [8, 0, 1, 4],
            [7, 9, 0, 3],
            [4, 6, 7, 0]]
 testAllPairsBellmanFord(getBookGraph3, result3, "Book test 3")
-testAllPairsBellmanFord(getBookGraph4, "negative cycle", "Book test 4")
+testAllPairsBellmanFord(getBookGraph4, :NEGATIVE_CYCLE, "Book test 4")
+testFloydWarshall(getBookGraph3, result3, "Book test 3")
+testFloydWarshall(getBookGraph4, :NEGATIVE_CYCLE, "Book test 4")

@@ -42,7 +42,7 @@ class Graph
       @bellmanFordSubproblems[1] = Array.new(@nodes.size) { Float::INFINITY }
     end
     @bellmanFordLastNode = nil
-    "negative cycle"
+    :NEGATIVE_CYCLE
   end
 
   def reconstructLastBellmanFord
@@ -61,6 +61,36 @@ class Graph
   end
 
   def floydWarshall
+    # initialize subproblems
+
+    @floydWarshallSubproblems = Array.new(2) { Array.new(@nodes.size) { Array.new(@nodes.size) { Float::INFINITY } } }
+
+    #base cases
+
+    @nodes.each do |n|
+      @floydWarshallSubproblems[0][n.value][n.value] = 0
+
+      n.neighbors.each { |neighbor| @floydWarshallSubproblems[0][n.value][neighbor[0].value] = neighbor[1] }
+    end
+
+    #systematically solve all subproblems
+
+    @nodes.each do |halfNode|
+      @nodes.each do |n1|
+        @nodes.each do |n2|
+          case1 = @floydWarshallSubproblems[0][n1.value][n2.value]
+          case2 = @floydWarshallSubproblems[0][n1.value][halfNode.value] + @floydWarshallSubproblems[0][halfNode.value][n2.value]
+
+          @floydWarshallSubproblems[1][n1.value][n2.value] = [case1, case2].min
+        end
+      end
+      @floydWarshallSubproblems[0] = @floydWarshallSubproblems[1]
+      @floydWarshallSubproblems[1] = Array.new(@nodes.size) { Array.new(@nodes.size) { Float::INFINITY } }
+    end
+
+    @nodes.each { |n| return :NEGATIVE_CYCLE if @floydWarshallSubproblems[0][n.value][n.value] < 0 }
+
+    @floydWarshallSubproblems[0]
   end
 
   def allPairsWithBellmanFord
@@ -68,7 +98,7 @@ class Graph
 
     @nodes.each do |node|
       result = self.bellmanFord(node)
-      return result if result == "negative cycle"
+      return result if result == :NEGATIVE_CYCLE
       allPairs[node.value] = result
     end
 
