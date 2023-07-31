@@ -19,7 +19,10 @@ end
 def testFloydWarshall(graph, expected, name)
   result = graph.floydWarshall
   assert_equal(expected, result, name)
-
+  if result != :NEGATIVE_CYCLE
+    result2 = graph.resconstructFloydWarshall
+    puts result2.map { |v1| v1.map { |v2| v2.map(&:value) } }.to_s
+  end
   puts "FloydWarshall - test passed! #{name}"
 end
 

@@ -6,6 +6,7 @@ class Graph
     @bellmanFordSubproblems = nil
     @bellmanFordLastNode = nil
     @floydWarshallSubproblems = nil
+    @floydWarshallLastNode = nil
     self.createReceivingEdges
   end
 
@@ -64,13 +65,16 @@ class Graph
     # initialize subproblems
 
     @floydWarshallSubproblems = Array.new(2) { Array.new(@nodes.size) { Array.new(@nodes.size) { Float::INFINITY } } }
-
+    @floydWarshallLastNode = Array.new(@nodes.size) { Array.new(@nodes.size) }
     #base cases
 
     @nodes.each do |n|
       @floydWarshallSubproblems[0][n.value][n.value] = 0
 
-      n.neighbors.each { |neighbor| @floydWarshallSubproblems[0][n.value][neighbor[0].value] = neighbor[1] }
+      n.neighbors.each do |neighbor|
+        @floydWarshallSubproblems[0][n.value][neighbor[0].value] = neighbor[1]
+        @floydWarshallLastNode[n.value][neighbor[0].value] = n
+      end
     end
 
     #systematically solve all subproblems
@@ -81,16 +85,42 @@ class Graph
           case1 = @floydWarshallSubproblems[0][n1.value][n2.value]
           case2 = @floydWarshallSubproblems[0][n1.value][halfNode.value] + @floydWarshallSubproblems[0][halfNode.value][n2.value]
 
-          @floydWarshallSubproblems[1][n1.value][n2.value] = [case1, case2].min
+          if case2 < case1
+            @floydWarshallLastNode[n1.value][n2.value] = halfNode
+            @floydWarshallSubproblems[1][n1.value][n2.value] = case2
+          else
+            @floydWarshallSubproblems[1][n1.value][n2.value] = case1
+          end
         end
       end
       @floydWarshallSubproblems[0] = @floydWarshallSubproblems[1]
       @floydWarshallSubproblems[1] = Array.new(@nodes.size) { Array.new(@nodes.size) { Float::INFINITY } }
     end
 
-    @nodes.each { |n| return :NEGATIVE_CYCLE if @floydWarshallSubproblems[0][n.value][n.value] < 0 }
+    @nodes.each do |n|
+      if @floydWarshallSubproblems[0][n.value][n.value] < 0
+        @floydWarshallLastNode = nil
+        return :NEGATIVE_CYCLE
+      end
+    end
 
     @floydWarshallSubproblems[0]
+  end
+
+  def resconstructFloydWarshall
+    raise "resconstructFloydWarshall must be runned after non-negative cycle resconstructFloydWarshall" if @floydWarshallLastNode.nil?
+
+    paths = Array.new(@nodes.size) { Array.new(@nodes.size) { [] } }
+    @nodes.each do |node1|
+      @nodes.each do |node|
+        currentNode = node
+        until currentNode == node1
+          currentNode = @floydWarshallLastNode[node1.value][currentNode.value]
+          paths[node1.value][node.value].push(currentNode)
+        end
+      end
+    end
+    paths
   end
 
   def allPairsWithBellmanFord
