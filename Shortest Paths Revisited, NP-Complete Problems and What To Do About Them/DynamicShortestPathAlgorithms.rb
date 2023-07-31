@@ -64,6 +64,15 @@ class Graph
   end
 
   def allPairsWithBellmanFord
+    allPairs = Array.new(@nodes.size)
+
+    @nodes.each do |node|
+      result = self.bellmanFord(node)
+      return result if result == "negative cycle"
+      allPairs[node.value] = result
+    end
+
+    allPairs
   end
 
   private
