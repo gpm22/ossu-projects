@@ -4,13 +4,16 @@ class Graph
   def initialize(nodes)
     @nodes = nodes
     @bellmanFordSubproblems = nil
+    @bellmanFordLastNode = nil
     @floydWarshallSubproblems = nil
     self.createReceivingEdges
   end
 
   def bellmanFord(source)
+    @bellmanFordSource = source
     # initialize subproblems
     @bellmanFordSubproblems = Array.new(2) { Array.new(@nodes.size) { Float::INFINITY } }
+    @bellmanFordLastNode = Array.new(@nodes.size)
 
     # base cases
     @bellmanFordSubproblems[0][source.value] = 0
@@ -21,20 +24,40 @@ class Graph
       stable = true
       @nodes.each do |n|
         case1 = @bellmanFordSubproblems[0][n.value]
-        case2 = @receivingEdges[n.value].map { |n| @bellmanFordSubproblems[0][n[0].value] + n[1] }.min
-        case2 = Float::INFINITY if case2.nil?
+        cases = @receivingEdges[n.value].map { |n| [@bellmanFordSubproblems[0][n[0].value] + n[1], n[0]] }.min { |v1, v2| v1[0] <=> v2[0] }
+        case2 = if cases.nil?
+            Float::INFINITY
+          else
+            cases[0]
+          end
         @bellmanFordSubproblems[1][n.value] = [case1, case2].min
 
         if @bellmanFordSubproblems[1][n.value] != case1
           stable = false
+          @bellmanFordLastNode[n.value] = cases[1]
         end
       end
       return @bellmanFordSubproblems[0] if stable
       @bellmanFordSubproblems[0] = @bellmanFordSubproblems[1]
       @bellmanFordSubproblems[1] = Array.new(@nodes.size) { Float::INFINITY }
     end
+    @bellmanFordLastNode = nil
+    "negative cycle"
+  end
 
-    return "negative cycle"
+  def reconstructLastBellmanFord
+    raise "resconstructLastBellmanFord must be runned after non-negative cycle bellmanFord" if @bellmanFordLastNode.nil?
+
+    paths = Array.new(@nodes.size) { [] }
+
+    @nodes.each do |node|
+      currentNode = node
+      until currentNode == @bellmanFordSource
+        currentNode = @bellmanFordLastNode[currentNode.value]
+        paths[node.value].push(currentNode)
+      end
+    end
+    paths
   end
 
   def floydWarshall
