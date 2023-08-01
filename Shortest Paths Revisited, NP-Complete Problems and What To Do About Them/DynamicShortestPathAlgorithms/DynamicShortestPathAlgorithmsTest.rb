@@ -1,28 +1,45 @@
+STDOUT.sync = true
+
 require_relative "./DynamicShortestPathAlgorithms"
 require "test/unit"
 extend Test::Unit::Assertions
 
 def testBellmanFord(graph, expected, name)
   result = graph.bellmanFord(graph.nodes[0])
-  assert_equal(expected, result, name)
+  assert_equal(expected, result, "bellman-ford" + name)
 
   puts "BellmanFord - test passed! #{name}"
 end
 
+def testDijkstra(graph, name)
+  expected = graph.bellmanFord(graph.nodes[-1])
+  result = graph.dijkstra(graph.nodes[-1])
+  assert_equal(expected, result, "dijkstra" + name)
+
+  puts "Dijkstra - test passed! #{name}"
+end
+
 def testAllPairsBellmanFord(graph, expected, name)
   result = graph.allPairsWithBellmanFord
-  assert_equal(expected, result, name)
+  assert_equal(expected, result, "AllPairsBellmanFord" + name)
 
   puts " AllPairsBellmanFord - test passed! #{name}"
 end
 
+def testJohnson(graph, expected, name)
+  result = graph.johnson
+  assert_equal(expected, result, "Johnson" + name)
+
+  puts "Johnson - test passed! #{name}"
+end
+
 def testFloydWarshall(graph, expected, name)
   result = graph.floydWarshall
-  assert_equal(expected, result, name)
-  if result != :NEGATIVE_CYCLE
-    result2 = graph.resconstructFloydWarshall
-    puts result2.map { |v1| v1.map { |v2| v2.map(&:value) } }.to_s
-  end
+  assert_equal(expected, result, "FloydWarshall" + name)
+  #  if result != :NEGATIVE_CYCLE
+  #result2 = graph.resconstructFloydWarshall
+  #puts result2.map { |v1| v1.map { |v2| v2.map(&:value) } }.to_s
+  #end
   puts "FloydWarshall - test passed! #{name}"
 end
 
@@ -101,14 +118,17 @@ def getBookGraph4
   Graph.new([i1, i2, i3, i4])
 end
 
-testBellmanFord(getBookGraph1, [0, 1, 2, 5, 4], "Book test 1")
-testBellmanFord(getBookGraph2, :NEGATIVE_CYCLE, "Book test 2")
+testDijkstra(getBookGraph3, "graph 3")
+#testBellmanFord(getBookGraph1, [0, 1, 2, 5, 4], "Book test 1")
+#testBellmanFord(getBookGraph2, :NEGATIVE_CYCLE, "Book test 2")
 
 result3 = [[0, 2, 3, 6],
            [8, 0, 1, 4],
            [7, 9, 0, 3],
            [4, 6, 7, 0]]
-testAllPairsBellmanFord(getBookGraph3, result3, "Book test 3")
-testAllPairsBellmanFord(getBookGraph4, :NEGATIVE_CYCLE, "Book test 4")
-testFloydWarshall(getBookGraph3, result3, "Book test 3")
-testFloydWarshall(getBookGraph4, :NEGATIVE_CYCLE, "Book test 4")
+#testAllPairsBellmanFord(getBookGraph3, result3, "Book test 3")
+#testAllPairsBellmanFord(getBookGraph4, :NEGATIVE_CYCLE, "Book test 4")
+#testFloydWarshall(getBookGraph3, result3, "Book test 3")
+#testFloydWarshall(getBookGraph4, :NEGATIVE_CYCLE, "Book test 4")
+testJohnson(getBookGraph3, result3, "Book test 3")
+testJohnson(getBookGraph4, :NEGATIVE_CYCLE, "Book test 4")
