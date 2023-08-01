@@ -20,6 +20,9 @@ class Heap
     (1..arr.size).each do |i|
       self.bubbleDown(i)
     end
+    (1..arr.size).each do |i|
+      self.bubbleUp(i)
+    end
   end
 
   def insert(element)
@@ -34,12 +37,7 @@ class Heap
     @elements[position], @elements[-1], @positions[element], @positions[@elements[-1][1]] = @elements[-1], @elements[position], @positions[@elements[-1][1]], @positions[element]
     deleted = @elements.pop
     @positions.delete(element)
-    parentPosition = getParentPosition(position)
-    if isRoot?(position) || @elements[parentPosition][0] < @elements[(position == @elements.size ? position - 1 : position)][0]
-      self.bubbleDown(position + 1)
-    else
-      self.bubbleUp((position == @elements.size ? position - 1 : position) + 1)
-    end
+    self.bubbleDown(position + 1)
     deleted
   end
 
