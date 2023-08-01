@@ -1,11 +1,15 @@
+require "date"
+
 class Graph
   attr_reader :nodes
 
   def initialize(nodes)
     @nodes = nodes
-    @bellmanFordSubproblems = nil
+    @bellmanFordSubproblemsFirst = nil
+    @bellmanFordSubproblemsSecond = nil
     @bellmanFordLastNode = nil
-    @floydWarshallSubproblems = nil
+    @floydWarshallSubproblemsFirst = nil
+    @floydWarshallSubproblemsSecond = nil
     @floydWarshallLastNode = nil
     self.createReceivingEdges
   end
@@ -13,36 +17,37 @@ class Graph
   def bellmanFord(source)
     @bellmanFordSource = source
     # initialize subproblems
-    @bellmanFordSubproblems = Array.new(2) { Array.new(@nodes.size) { Float::INFINITY } }
-    @bellmanFordLastNode = Array.new(@nodes.size)
+    @bellmanFordSubproblemsFirst = Array.new(@nodes.size) { Float::INFINITY }
+    @bellmanFordSubproblemsSecond = Array.new(@nodes.size) { Float::INFINITY }
+    #@bellmanFordLastNode = Array.new(@nodes.size)
 
     # base cases
-    @bellmanFordSubproblems[0][source.value] = 0
+    @bellmanFordSubproblemsFirst[source.value] = 0
 
     # systematically solve all subproblems
 
     (@nodes.size).times do
       stable = true
       @nodes.each do |n|
-        case1 = @bellmanFordSubproblems[0][n.value]
-        cases = @receivingEdges[n.value].map { |n| [@bellmanFordSubproblems[0][n[0].value] + n[1], n[0]] }.min { |v1, v2| v1[0] <=> v2[0] }
+        case1 = @bellmanFordSubproblemsFirst[n.value]
+        cases = @receivingEdges[n.value].map { |n| [@bellmanFordSubproblemsFirst[n[0].value] + n[1], n[0]] }.min { |v1, v2| v1[0] <=> v2[0] }
         case2 = if cases.nil?
             Float::INFINITY
           else
             cases[0]
           end
-        @bellmanFordSubproblems[1][n.value] = [case1, case2].min
+        @bellmanFordSubproblemsSecond[n.value] = [case1, case2].min
 
-        if @bellmanFordSubproblems[1][n.value] != case1
+        if @bellmanFordSubproblemsSecond[n.value] != case1
           stable = false
-          @bellmanFordLastNode[n.value] = cases[1]
+          #@bellmanFordLastNode[n.value] = cases[1]
         end
       end
-      return @bellmanFordSubproblems[0] if stable
-      @bellmanFordSubproblems[0] = @bellmanFordSubproblems[1]
-      @bellmanFordSubproblems[1] = Array.new(@nodes.size) { Float::INFINITY }
+      return @bellmanFordSubproblemsFirst if stable
+      @bellmanFordSubproblemsFirst = @bellmanFordSubproblemsSecond
+      @bellmanFordSubproblemsSecond = Array.new(@nodes.size) { Float::INFINITY }
     end
-    @bellmanFordLastNode = nil
+    #@bellmanFordLastNode = nil
     :NEGATIVE_CYCLE
   end
 
@@ -61,50 +66,37 @@ class Graph
     paths
   end
 
+  def floydWarshallOptimized
+    puts "verifying if the graph has a negative cycle"
+    return :NEGATIVE_CYCLE if self.graphHasNegativeCycle?
+    puts "starting floyd-warshall"
+    self.floydWarshallBase
+
+    @floydWarshallSubproblemsFirst
+  end
+
+  def graphHasNegativeCycle?
+    sourceTestNode = Node.new(@nodes.size)
+    testNeighbors = @nodes.map { |n| [n, 0] }
+    sourceTestNode.neighbors = testNeighbors
+    testGraph = Graph.new(@nodes + [sourceTestNode])
+
+    testResult = testGraph.bellmanFord(sourceTestNode)
+
+    testResult == :NEGATIVE_CYCLE
+  end
+
   def floydWarshall
-    # initialize subproblems
-
-    @floydWarshallSubproblems = Array.new(2) { Array.new(@nodes.size) { Array.new(@nodes.size) { Float::INFINITY } } }
-    @floydWarshallLastNode = Array.new(@nodes.size) { Array.new(@nodes.size) }
-    #base cases
-
+    self.floydWarshallBase
+    puts "floyd-warshall - veryfing if it has a negative cycle"
     @nodes.each do |n|
-      @floydWarshallSubproblems[0][n.value][n.value] = 0
-
-      n.neighbors.each do |neighbor|
-        @floydWarshallSubproblems[0][n.value][neighbor[0].value] = neighbor[1]
-        @floydWarshallLastNode[n.value][neighbor[0].value] = n
-      end
-    end
-
-    #systematically solve all subproblems
-
-    @nodes.each do |halfNode|
-      @nodes.each do |n1|
-        @nodes.each do |n2|
-          case1 = @floydWarshallSubproblems[0][n1.value][n2.value]
-          case2 = @floydWarshallSubproblems[0][n1.value][halfNode.value] + @floydWarshallSubproblems[0][halfNode.value][n2.value]
-
-          if case2 < case1
-            @floydWarshallLastNode[n1.value][n2.value] = halfNode
-            @floydWarshallSubproblems[1][n1.value][n2.value] = case2
-          else
-            @floydWarshallSubproblems[1][n1.value][n2.value] = case1
-          end
-        end
-      end
-      @floydWarshallSubproblems[0] = @floydWarshallSubproblems[1]
-      @floydWarshallSubproblems[1] = Array.new(@nodes.size) { Array.new(@nodes.size) { Float::INFINITY } }
-    end
-
-    @nodes.each do |n|
-      if @floydWarshallSubproblems[0][n.value][n.value] < 0
-        @floydWarshallLastNode = nil
+      if @floydWarshallSubproblemsFirst[n.value][n.value] < 0
+        #@floydWarshallLastNode = nil
         return :NEGATIVE_CYCLE
       end
     end
 
-    @floydWarshallSubproblems[0]
+    @floydWarshallSubproblemsFirst
   end
 
   def resconstructFloydWarshall
@@ -124,12 +116,18 @@ class Graph
   end
 
   def allPairsWithBellmanFord
+    puts "allPairsWithBellmanFord - initialize subproblems"
     allPairs = Array.new(@nodes.size)
 
+    puts "allPairsWithBellmanFord - calling bellman-ford for each node"
+    i = 1
+    total = @nodes.size
     @nodes.each do |node|
+      puts "Node #{i}/#{total}"
       result = self.bellmanFord(node)
       return result if result == :NEGATIVE_CYCLE
       allPairs[node.value] = result
+      i += 1
     end
 
     allPairs
@@ -144,6 +142,54 @@ class Graph
       n.neighbors.each do |neighbor|
         @receivingEdges[neighbor[0].value].push([n, neighbor[1]])
       end
+    end
+  end
+
+  def floydWarshallBase
+    # initialize subproblems
+    puts "floyd-warshall - initialize subproblems"
+    @floydWarshallSubproblemsFirst = Array.new(@nodes.size) { Array.new(@nodes.size) { Float::INFINITY } }
+    @floydWarshallSubproblemsSecond = Array.new(@nodes.size) { Array.new(@nodes.size) { Float::INFINITY } }
+    #@floydWarshallLastNode = Array.new(@nodes.size) { Array.new(@nodes.size) }
+    #base cases
+
+    puts "floyd-warshall - base cases"
+    @nodes.each do |n|
+      @floydWarshallSubproblemsFirst[n.value][n.value] = 0
+
+      n.neighbors.each do |neighbor|
+        @floydWarshallSubproblemsFirst[n.value][neighbor[0].value] = neighbor[1]
+        #@floydWarshallLastNode[n.value][neighbor[0].value] = n
+      end
+    end
+
+    #systematically solve all subproblems
+    final = @nodes.size - 1
+    total = @nodes.size ** 3
+    i = 1
+    puts "floyd-warshall - solving subproblems"
+    (0..final).each do |halfNode|
+      (0..final).each do |n1|
+        (0..final).each do |n2|
+          if i % 500_000_000 == 0
+            currentDate = DateTime.now.strftime "%d/%m/%Y %H:%M:%s"
+            puts "#{currentDate} -  case #{i}/#{total} -- #{(i * 1.0) / total * 100}"
+          end
+          case1 = @floydWarshallSubproblemsFirst[n1][n2]
+          case2 = @floydWarshallSubproblemsFirst[n1][halfNode] + @floydWarshallSubproblemsFirst[halfNode][n2]
+
+          if case2 < case1
+            #@floydWarshallLastNode[n1.value][n2.value] = halfNode
+            @floydWarshallSubproblemsSecond[n1][n2] = case2
+          else
+            @floydWarshallSubproblemsSecond[n1][n2] = case1
+          end
+
+          i += 1
+        end
+      end
+      @floydWarshallSubproblemsFirst = @floydWarshallSubproblemsSecond
+      @floydWarshallSubproblemsSecond = Array.new(@nodes.size) { Array.new(@nodes.size) { Float::INFINITY } }
     end
   end
 end
