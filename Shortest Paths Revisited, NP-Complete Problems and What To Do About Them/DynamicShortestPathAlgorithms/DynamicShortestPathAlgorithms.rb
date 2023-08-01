@@ -77,12 +77,8 @@ class Graph
   end
 
   def graphHasNegativeCycle?
-    sourceTestNode = Node.new(@nodes.size)
-    testNeighbors = @nodes.map { |n| [n, 0] }
-    sourceTestNode.neighbors = testNeighbors
-    testGraph = Graph.new(@nodes + [sourceTestNode])
-
-    testResult = testGraph.bellmanFord(sourceTestNode)
+    testGraph = self.getTestGraph
+    testResult = testGraph.bellmanFord(testGraph.nodes[-1])
 
     testResult == :NEGATIVE_CYCLE
   end
@@ -124,7 +120,10 @@ class Graph
     i = 1
     total = @nodes.size
     @nodes.each do |node|
-      puts "Node #{i}/#{total}"
+      if i % 100 == 0
+        currentDate = DateTime.now.strftime "%d/%m/%Y %H:%M:%S"
+        puts "#{currentDate} -  Node #{i}/#{total}"
+      end
       result = self.bellmanFord(node)
       return result if result == :NEGATIVE_CYCLE
       allPairs[node.value] = result
@@ -135,10 +134,7 @@ class Graph
   end
 
   def dijkstra(source)
-    puts "starting dijkstra"
-
-    nodesMap = Hash[@nodes.collect { |n| [n.value, n] }]
-    shortest_distance = Hash[@nodes.collect { |n| [n.value, nil] }]
+    shortest_distance = Array.new(@nodes.size)
     shortest_distance[source.value] = 0
 
     vertices_to_visit = Heap.new
@@ -154,7 +150,7 @@ class Graph
 
     until vertices_to_visit.empty?
       new_vertice = vertices_to_visit.extractMin
-      new_vertice_node = nodesMap[new_vertice[1]]
+      new_vertice_node = @nodes[new_vertice[1]]
       visited_vertices[new_vertice[1]] = new_vertice_node
       shortest_distance[new_vertice[1]] = new_vertice[0]
 
@@ -170,6 +166,86 @@ class Graph
     shortest_distance
   end
 
+  def johnson
+    puts "Johson - creating the test graph"
+    testGraph = self.getTestGraph
+
+    puts "Johson - running Bellman-Ford on the test graph"
+    testResult = testGraph.bellmanFord(testGraph.nodes[-1])
+
+    return :NEGATIVE_CYCLE if testResult == :NEGATIVE_CYCLE
+
+    puts "Johson - changing the edges using the test result"
+
+    @nodes.each do |node|
+      node.neighbors = node.neighbors.map { |n| [n[0], n[1] + testResult[node.value] - testResult[n[0].value]] }
+    end
+
+    puts "Johnson - initialize subproblems"
+    allPairs = Array.new(@nodes.size)
+
+    puts "Johnson - calling dijkstra for each node"
+    i = 1
+    total = @nodes.size
+    @nodes.each do |node|
+      if i % 10 == 0
+        currentDate = DateTime.now.strftime "%d/%m/%Y %H:%M:%S"
+        puts "#{currentDate} -  Node #{i}/#{total}"
+      end
+      result = self.dijkstra(node)
+      allPairs[node.value] = result
+      i += 1
+    end
+
+    puts "Johson - changing the edges to their original value"
+    @nodes.each do |node|
+      node.neighbors = node.neighbors.map { |n| [n[0], n[1] - testResult[node.value] + testResult[n[0].value]] }
+    end
+
+    allPairs.map.with_index do |n1, i|
+      n1.map.with_index do |n2, j|
+        n2 - testResult[i] + testResult[j]
+      end
+    end
+  end
+
+  def getShortestShortestPathValue
+    puts "getShortestShortestPathValue - creating the test graph"
+    testGraph = self.getTestGraph
+
+    puts "getShortestShortestPathValue - running Bellman-Ford on the test graph"
+    testResult = testGraph.bellmanFord(testGraph.nodes[-1])
+
+    return :NEGATIVE_CYCLE if testResult == :NEGATIVE_CYCLE
+
+    puts "getShortestShortestPathValue - changing the edges using the test result"
+
+    @nodes.each do |node|
+      node.neighbors = node.neighbors.map { |n| [n[0], n[1] + testResult[node.value] - testResult[n[0].value]] }
+    end
+
+    shortestShortestPath = Float::INFINITY
+    puts "Johnson - calling dijkstra for each node"
+    i = 1
+    total = @nodes.size
+    @nodes.each do |node|
+      if i % 10 == 0
+        currentDate = DateTime.now.strftime "%d/%m/%Y %H:%M:%S"
+        puts "#{currentDate} -  Node #{i}/#{total}"
+      end
+      result = self.dijkstra(node).map.with_index { |v, j| v - testResult[i] + testResult[j] }.min
+      shortestShortestPath = [shortestShortestPath, result].min
+      i += 1
+    end
+
+    puts "getShortestShortestPathValue - changing the edges to their original value"
+    @nodes.each do |node|
+      node.neighbors = node.neighbors.map { |n| [n[0], n[1] - testResult[node.value] + testResult[n[0].value]] }
+    end
+
+    shortestShortestPath
+  end
+
   private
 
   def createReceivingEdges
@@ -180,6 +256,13 @@ class Graph
         @receivingEdges[neighbor[0].value].push([n, neighbor[1]])
       end
     end
+  end
+
+  def getTestGraph
+    sourceTestNode = Node.new(@nodes.size)
+    testNeighbors = @nodes.map { |n| [n, 0] }
+    sourceTestNode.neighbors = testNeighbors
+    Graph.new(@nodes + [sourceTestNode])
   end
 
   def floydWarshallBase
