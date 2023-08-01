@@ -1,4 +1,5 @@
 require "date"
+require_relative "./Heap"
 
 class Graph
   attr_reader :nodes
@@ -131,6 +132,42 @@ class Graph
     end
 
     allPairs
+  end
+
+  def dijkstra(source)
+    puts "starting dijkstra"
+
+    nodesMap = Hash[@nodes.collect { |n| [n.value, n] }]
+    shortest_distance = Hash[@nodes.collect { |n| [n.value, nil] }]
+    shortest_distance[source.value] = 0
+
+    vertices_to_visit = Heap.new
+    vertices_to_visit.heapify(@nodes.map do |n|
+      if n == source
+        [0, n.value]
+      else
+        [Float::INFINITY, n.value]
+      end
+    end)
+
+    visited_vertices = {}
+
+    until vertices_to_visit.empty?
+      new_vertice = vertices_to_visit.extractMin
+      new_vertice_node = nodesMap[new_vertice[1]]
+      visited_vertices[new_vertice[1]] = new_vertice_node
+      shortest_distance[new_vertice[1]] = new_vertice[0]
+
+      new_vertice_node.neighbors.each do |neighbor|
+        next unless vertices_to_visit.include?(neighbor[0].value)
+
+        deleted = vertices_to_visit.delete(neighbor[0].value)
+        new_key = [deleted[0], shortest_distance[new_vertice[1]] + neighbor[1]].min
+        vertices_to_visit.insert([new_key, neighbor[0].value])
+      end
+    end
+
+    shortest_distance
   end
 
   private
