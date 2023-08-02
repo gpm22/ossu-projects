@@ -225,15 +225,15 @@ class Graph
     end
 
     shortestShortestPath = Float::INFINITY
-    puts "Johnson - calling dijkstra for each node"
+    puts "getShortestShortestPathValue - calling dijkstra for each node"
     i = 1
     total = @nodes.size
     @nodes.each do |node|
-      if i % 10 == 0
+      if i % 100 == 0
         currentDate = DateTime.now.strftime "%d/%m/%Y %H:%M:%S"
-        puts "#{currentDate} -  Node #{i}/#{total}"
+        puts "#{currentDate} -  Node #{i}/#{total} - current result: #{shortestShortestPath}"
       end
-      result = self.dijkstra(node).map.with_index { |v, j| v - testResult[i] + testResult[j] }.min
+      result = self.dijkstra(node).map.with_index { |v, j| v - testResult[node.value] + testResult[j] }.min
       shortestShortestPath = [shortestShortestPath, result].min
       i += 1
     end
