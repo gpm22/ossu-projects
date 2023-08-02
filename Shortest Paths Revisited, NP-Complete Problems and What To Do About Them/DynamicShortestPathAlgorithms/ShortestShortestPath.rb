@@ -149,9 +149,10 @@ end
 #puts getTheShortestShortestPath(getGraphFromFile("graph3.txt"))
 #puts getTheShortestShortestPathFloydWarshallAndJohson(getGraphFromFile("graph3.txt"))
 #puts getTheShortestShortestPathJohson(getGraphFromFile("graph4.txt"))
-#puts getTheShortestShortestPathMethod(getGraphFromFile("test1.txt"))
-#puts getTheShortestShortestPathMethod(getGraphFromFile("test2.txt"))
-#puts getTheShortestShortestPathMethod(getGraphFromFile("graph1.txt"))
-#puts getTheShortestShortestPathMethod(getGraphFromFile("graph2.txt"))
-#puts getTheShortestShortestPathMethod(getGraphFromFile("graph3.txt"))
-puts getTheShortestShortestPathMethod(getGraphFromFile("graph4.txt"))
+puts getTheShortestShortestPathMethod(getGraphFromFile("test1.txt")) #result: -2 time: 0.000302100001135841s
+puts getTheShortestShortestPathMethod(getGraphFromFile("test2.txt")) #result: negative cycle time: 15 s
+puts getTheShortestShortestPathMethod(getGraphFromFile("graph1.txt")) #result: negative cycle time: 19 s
+puts getTheShortestShortestPathMethod(getGraphFromFile("graph2.txt")) #result: negative cycle time:
+puts getTheShortestShortestPathMethod(getGraphFromFile("graph3.txt")) #result: -19 time: 126s
+#puts getTheShortestShortestPathMethod(getGraphFromFile("graph4.txt") #result:-6 time: 27047s
+#puts getTheShortestShortestPathMethod(getGraphFromFile("graph_44_2048.txt")) #result: -3127 time: 127 s
