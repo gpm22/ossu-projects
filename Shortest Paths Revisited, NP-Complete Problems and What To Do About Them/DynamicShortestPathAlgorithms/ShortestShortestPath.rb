@@ -5,24 +5,17 @@ require "benchmark"
 
 def getGraphFromFile(filePath)
   puts "getting graph from file: #{filePath}"
-  nodes = {}
+  nodes = nil
   File.open(filePath).each_line do |line|
     values = line.split(" ").map(&:to_i)
-    next if values.size < 3
+    if values.size < 3
+      nodes = Hash[(values[0]).times.map { |n| [n, Node.new(n)] }]
+      next
+    end
     firstValue = values[0] - 1
     secondValue = values[1] - 1
     firstNode = nodes[firstValue]
     secondNode = nodes[secondValue]
-
-    if firstNode.nil?
-      firstNode = Node.new(firstValue)
-      nodes[firstValue] = firstNode
-    end
-
-    if secondNode.nil?
-      secondNode = Node.new(secondValue)
-      nodes[secondValue] = secondNode
-    end
 
     firstNode.addNeighbor([secondNode, values[2]])
   end
@@ -142,17 +135,21 @@ def getTheShortestShortestPathMethod(graph)
   paths
 end
 
-#puts getTheShortestShortestPath(getGraphFromFile("test1.txt"))
-#puts getTheShortestShortestPath(getGraphFromFile("test2.txt"))
-#puts getTheShortestShortestPath(getGraphFromFile("graph1.txt"))
-#puts getTheShortestShortestPath(getGraphFromFile("graph2.txt"))
-#puts getTheShortestShortestPath(getGraphFromFile("graph3.txt"))
-#puts getTheShortestShortestPathFloydWarshallAndJohson(getGraphFromFile("graph3.txt"))
-#puts getTheShortestShortestPathJohson(getGraphFromFile("graph4.txt"))
-puts getTheShortestShortestPathMethod(getGraphFromFile("test1.txt")) #result: -2 time: 0.000302100001135841s
-puts getTheShortestShortestPathMethod(getGraphFromFile("test2.txt")) #result: negative cycle time: 15 s
-puts getTheShortestShortestPathMethod(getGraphFromFile("graph1.txt")) #result: negative cycle time: 19 s
-puts getTheShortestShortestPathMethod(getGraphFromFile("graph2.txt")) #result: negative cycle time:
-puts getTheShortestShortestPathMethod(getGraphFromFile("graph3.txt")) #result: -19 time: 126s
-#puts getTheShortestShortestPathMethod(getGraphFromFile("graph4.txt") #result:-6 time: 27047s
-#puts getTheShortestShortestPathMethod(getGraphFromFile("graph_44_2048.txt")) #result: -3127 time: 127 s
+def runAllTestFilesForPathMethod
+  currentFolder = File.absolute_path(File.dirname(__FILE__))
+  inputPath = currentFolder + "/test_files/input/"
+  outputPath = currentFolder + "/test_files/output/"
+  files = Dir.entries(inputPath).select { |f| f != "." && f != ".." }
+
+  files.each do |file|
+    graph = getGraphFromFile(inputPath + file)
+    result = getTheShortestShortestPathMethod(graph)
+    expectedResult = File.read(outputPath + file).gsub(/\s+/, "")
+    expectedResult = expectedResult == "NULL" ? :NEGATIVE_CYCLE : expectedResult.to_i
+
+    raise "#{file} failed!\n Current result: #{result} different from the expected one: #{expectedResult}" unless result == expectedResult
+    puts "\n\n\t#{file} passed!"
+  end
+end
+
+runAllTestFilesForPathMethod
