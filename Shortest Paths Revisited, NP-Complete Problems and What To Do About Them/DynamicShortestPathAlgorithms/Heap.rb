@@ -74,7 +74,7 @@ class Heap
 
   def solveConflicts(position)
     parentPosition = getParentPosition(position)
-    if isRoot?(position) || @elements[parentPosition][0] < element[0]
+    if isRoot?(position) || @elements[parentPosition][0] < @elements[position][0]
       self.bubbleDown(position)
     else
       self.bubbleUp(position)
