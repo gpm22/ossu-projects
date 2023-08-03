@@ -153,13 +153,13 @@ class Graph
       new_vertice_node = @nodes[new_vertice[1]]
       visited_vertices[new_vertice[1]] = new_vertice_node
       shortest_distance[new_vertice[1]] = new_vertice[0]
-
       new_vertice_node.neighbors.each do |neighbor|
         next unless vertices_to_visit.include?(neighbor[0].value)
 
-        deleted = vertices_to_visit.delete(neighbor[0].value)
-        new_key = [deleted[0], shortest_distance[new_vertice[1]] + neighbor[1]].min
-        vertices_to_visit.insert([new_key, neighbor[0].value])
+        currentKey = vertices_to_visit.getElement(neighbor[0].value)[0]
+        new_key = shortest_distance[new_vertice[1]] + neighbor[1]
+
+        vertices_to_visit.update([new_key, neighbor[0].value]) if new_key < currentKey
       end
     end
 
@@ -188,10 +188,10 @@ class Graph
     i = 1
     total = @nodes.size
     @nodes.each do |node|
-      if i % 10 == 0
-        currentDate = DateTime.now.strftime "%d/%m/%Y %H:%M:%S"
-        puts "#{currentDate} -  Node #{i}/#{total}"
-      end
+      #if i % 10 == 0
+      currentDate = DateTime.now.strftime "%d/%m/%Y %H:%M:%S"
+      puts "#{currentDate} -  Node :#{node.value} - #{i}/#{total}"
+      #end
       result = self.dijkstra(node)
       allPairs[node.value] = result
       i += 1
