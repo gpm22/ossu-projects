@@ -37,7 +37,12 @@ class Heap
     @elements[position], @elements[-1], @positions[element], @positions[@elements[-1][1]] = @elements[-1], @elements[position], @positions[@elements[-1][1]], @positions[element]
     deleted = @elements.pop
     @positions.delete(element)
-    self.bubbleDown(position + 1)
+    parentPosition = getParentPosition(position)
+    if isRoot?(position) || @elements[parentPosition][0] < @elements[(position == @elements.size ? position - 1 : position)][0]
+      self.bubbleDown(position + 1)
+    else
+      self.bubbleUp((position == @elements.size ? position - 1 : position) + 1)
+    end
     deleted
   end
 
