@@ -10,6 +10,11 @@ class Heap
     @elements[0]
   end
 
+  def getElement(element)
+    position = @positions[element]
+    @elements[position]
+  end
+
   def extractMin
     self.delete(@elements[0][1])
   end
@@ -17,18 +22,19 @@ class Heap
   def heapify(arr)
     @elements = arr
     @positions = Hash[@elements.collect.with_index { |e, i| [e[1], i] }]
-    (1..arr.size).each do |i|
+    arr.size.times.each do |i|
       self.bubbleDown(i)
     end
-    (1..arr.size).each do |i|
+    arr.size.times.each do |i|
       self.bubbleUp(i)
     end
   end
 
   def insert(element)
     @elements.push(element)
-    @positions[element[1]] = (@elements.size) - 1
-    self.bubbleUp(@elements.size)
+    position = (@elements.size) - 1
+    @positions[element[1]] = position
+    self.bubbleUp(position)
     element
   end
 
@@ -38,12 +44,24 @@ class Heap
     deleted = @elements.pop
     @positions.delete(element)
     parentPosition = getParentPosition(position)
-    if isRoot?(position) || @elements[parentPosition][0] < @elements[(position == @elements.size ? position - 1 : position)][0]
-      self.bubbleDown(position + 1)
+    if isRoot?(position) || @elements[parentPosition][0] < @elements[position][0]
+      self.bubbleDown(position)
     else
-      self.bubbleUp((position == @elements.size ? position - 1 : position) + 1)
+      self.bubbleUp(position)
     end
     deleted
+  end
+
+  def update(element)
+    position = @positions[element[1]]
+    return if element[0] == @elements[position][0]
+    @elements[position] = element
+    parentPosition = getParentPosition(position)
+    if isRoot?(position) || @elements[parentPosition][0] < element[0]
+      self.bubbleDown(position)
+    else
+      self.bubbleUp(position)
+    end
   end
 
   def to_s
@@ -67,10 +85,9 @@ class Heap
   def bubbleUp(startPosition)
     position = startPosition
     parentPosition = getParentPosition(position)
-    while @elements[parentPosition][0] > @elements[position - 1][0]
-      @elements[parentPosition], @elements[position - 1], @positions[@elements[parentPosition][1]], @positions[@elements[position - 1][1]] = @elements[position - 1], @elements[parentPosition], @positions[@elements[position - 1][1]], @positions[@elements[parentPosition][1]]
-      position = parentPosition + 1
-      return if parentPosition == 0
+    while !self.isRoot?(position) && @elements[parentPosition][0] > @elements[position][0]
+      @elements[parentPosition], @elements[position], @positions[@elements[parentPosition][1]], @positions[@elements[position][1]] = @elements[position], @elements[parentPosition], @positions[@elements[position][1]], @positions[@elements[parentPosition][1]]
+      position = parentPosition
       parentPosition = getParentPosition(position)
     end
   end
@@ -78,25 +95,23 @@ class Heap
   def bubbleDown(startPosition)
     position = startPosition
     smallerChildPosition = getSmallerChildPosition(position)
-    return if smallerChildPosition > @elements.size - 1
-    while @elements[smallerChildPosition][0] < @elements[position - 1][0]
-      @elements[smallerChildPosition], @elements[position - 1], @positions[@elements[smallerChildPosition][1]], @positions[@elements[position - 1][1]] = @elements[position - 1], @elements[smallerChildPosition], @positions[@elements[position - 1][1]], @positions[@elements[smallerChildPosition][1]]
-      position = smallerChildPosition + 1
+    while smallerChildPosition < @elements.size && @elements[smallerChildPosition][0] < @elements[position][0]
+      @elements[smallerChildPosition], @elements[position], @positions[@elements[smallerChildPosition][1]], @positions[@elements[position][1]] = @elements[position], @elements[smallerChildPosition], @positions[@elements[position][1]], @positions[@elements[smallerChildPosition][1]]
+      position = smallerChildPosition
       smallerChildPosition = getSmallerChildPosition(position)
-      return if smallerChildPosition > @elements.size - 1
     end
   end
 
   def getParentPosition(position)
-    (position / 2).floor - 1
+    (position / 2.0).ceil - 1
   end
 
   def getLeftChildPosition(position)
-    2 * position - 1
+    2 * position + 1
   end
 
   def getRightChildPosition(position)
-    2 * position
+    2 * position + 2
   end
 
   def isRoot?(position)
