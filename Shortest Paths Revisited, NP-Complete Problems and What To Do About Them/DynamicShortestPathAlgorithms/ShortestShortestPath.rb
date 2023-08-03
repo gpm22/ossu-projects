@@ -152,4 +152,7 @@ def runAllTestFilesForPathMethod
   end
 end
 
-runAllTestFilesForPathMethod
+puts getTheShortestShortestPathMethod(getGraphFromFile("graph1.txt")) #result: NEGATIVE CYCLE, time spent: 8s
+puts getTheShortestShortestPathMethod(getGraphFromFile("graph2.txt")) #result: NEGATIVE CYCLE, time spent: 9s
+puts getTheShortestShortestPathMethod(getGraphFromFile("graph3.txt")) #result: -19, time spent: 20s
+puts getTheShortestShortestPathMethod(getGraphFromFile("graph4.txt")) #result: -6, time spent: 10788s ~3h
