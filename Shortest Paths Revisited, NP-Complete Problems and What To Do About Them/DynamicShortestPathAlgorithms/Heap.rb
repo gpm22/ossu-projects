@@ -43,12 +43,7 @@ class Heap
     @elements[position], @elements[-1], @positions[element], @positions[@elements[-1][1]] = @elements[-1], @elements[position], @positions[@elements[-1][1]], @positions[element]
     deleted = @elements.pop
     @positions.delete(element)
-    parentPosition = getParentPosition(position)
-    if isRoot?(position) || @elements[parentPosition][0] < @elements[position][0]
-      self.bubbleDown(position)
-    else
-      self.bubbleUp(position)
-    end
+    solveConflicts(position)
     deleted
   end
 
@@ -56,12 +51,7 @@ class Heap
     position = @positions[element[1]]
     return if element[0] == @elements[position][0]
     @elements[position] = element
-    parentPosition = getParentPosition(position)
-    if isRoot?(position) || @elements[parentPosition][0] < element[0]
-      self.bubbleDown(position)
-    else
-      self.bubbleUp(position)
-    end
+    solveConflicts(position)
   end
 
   def to_s
@@ -81,6 +71,15 @@ class Heap
   end
 
   private
+
+  def solveConflicts(position)
+    parentPosition = getParentPosition(position)
+    if isRoot?(position) || @elements[parentPosition][0] < element[0]
+      self.bubbleDown(position)
+    else
+      self.bubbleUp(position)
+    end
+  end
 
   def bubbleUp(startPosition)
     position = startPosition
