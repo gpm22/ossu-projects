@@ -1,224 +1,181 @@
+require_relative './SymbolTable'
+
 class CompilationEngine
-  def initialize(tokenizer, outputFilePath)
-    @outputFile = File.new(outputFilePath, "w")
-    @outputFile.truncate(0)
+  def initialize(tokenizer, writer)
+    @writer = writer
     @tokenizer = tokenizer
+    @classTable = SymbolTable.new
+    @subroutineTable = SymbolTable.new
     @currentToken = @tokenizer.advance if @tokenizer.hasMoreTokens
-    @statementKeyWords = { :LET => -> { self.compileLet },
-                          :IF => -> { self.compileIf },
-                          :WHILE => -> { self.compileWhile },
-                          :DO => -> { self.compileDo },
-                          :RETURN => -> { self.compileReturn } }
-    @operators = { "+" => nil, "-" => nil, "*" => nil,
-                   "/" => nil, "&amp;" => nil, "|" => nil, "&lt;" => nil,
-                   "&gt;" => nil, "=" => nil }
-    @keywordConstants = { :TRUE => "true", :FALSE => "false", :NULL => "null", :THIS => "this" }
-    @tokenTypesNames = { :INT_CONST => "integerConstant", :STRING_CONST => "stringConstant",
-                        :SYMBOL => "symbol", :IDENTIFIER => "identifier",
-                        :KEYWORD => "keyword" }
+    @statementKeyWords = { LET: -> { compileLet },
+                           IF: -> { compileIf },
+                           WHILE: -> { compileWhile },
+                           DO: -> { compileDo },
+                           RETURN: -> { compileReturn } }
+    @operators = { '+' => nil, '-' => nil, '*' => nil,
+                   '/' => nil, '&amp;' => nil, '|' => nil, '&lt;' => nil,
+                   '&gt;' => nil, '=' => nil }
+    @keywordConstants = { TRUE: 'true', FALSE: 'false', NULL: 'null', THIS: 'this' }
   end
 
   def compileClass
-    name = "class"
-    putsTagStart(name)
-    process("class")
-    process(@tokenizer.identifier) #className
-    process("{")
-    self.compileClassVarDecs
-    self.compileSubroutines
-    process("}")
-    putsTagEnd(name)
+    process('class')
+    process(@tokenizer.identifier) # className
+    process('{')
+    compileClassVarDecs
+    compileSubroutines
+    process('}')
   end
 
   def compileClassVarDec
-    name = "classVarDec"
-    putsTagStart(name)
-    if @tokenizer.tokenType == :KEYWORD
-      classVarTypeSym = @tokenizer.keyWord
+    raise "class var modifier is not static or field, but #{classVarTypeSym}" unless @tokenizer.tokenType == :KEYWORD
 
-      classVarType = if classVarTypeSym == :STATIC
-          "static"
-        elsif classVarTypeSym == :FIELD
-          "field"
-        end
-    else
-      raise "class var modifier is not static or field, but #{classVarTypeSym.to_s}"
-    end
+    classVarTypeSym = @tokenizer.keyWord
+
+    classVarType = if classVarTypeSym == :STATIC
+                     'static'
+                   elsif classVarTypeSym == :FIELD
+                     'field'
+                   end
+
     process(classVarType)
-    self.compileVar
-    putsTagEnd(name)
+    compileVar(@classTable, classVarTypeSym)
   end
 
   def compileSubroutine
-    name = "subroutineDec"
-    putsTagStart(name)
-
+    @subroutineTable.reset
     tokenType = @tokenizer.tokenType
 
     raise "subroutine modifier must be keyword and not #{tokenType}" unless tokenType == :KEYWORD
 
     modifier = @tokenizer.keyWord
-    raise "subroutine modifier must be constructor, function, or method and not #{modifier}" unless [:CONSTRUCTOR, :FUNCTION, :METHOD].include?(modifier)
+    raise "subroutine modifier must be constructor, function, or method and not #{modifier}" unless %i[CONSTRUCTOR
+                                                                                                       FUNCTION METHOD].include?(modifier)
 
     process(modifier.to_s.downcase)
     process(getVarType(true))
-    process(@tokenizer.identifier) #subroutineName
-    process("(")
-    self.compileParameterList
-    process(")")
-    self.compileSubroutineBody
-    putsTagEnd(name)
+    process(@tokenizer.identifier) # subroutineName
+    process('(')
+    compileParameterList
+    process(')')
+    compileSubroutineBody
   end
 
   def compileParameterList
-    name = "parameterList"
     tokenType = @tokenizer.tokenType
-    putsTagStart(name)
-    if tokenType == :SYMBOL && @tokenizer.symbol == ")"
-      putsTagEnd(name)
-      return
-    end
-    process(getVarType)
-    process(@tokenizer.identifier) #varName
+    return if tokenType == :SYMBOL && @tokenizer.symbol == ')'
+
+    currentVarType = getVarType
+    process(varType)
+    process(@tokenizer.identifier) # varName
 
     tokenType = @tokenizer.tokenType
-    if tokenType == :SYMBOL and @tokenizer.symbol == ","
-      tokenValue = ","
-      until tokenValue == ")"
-        process(tokenValue)
-        tokenType = @tokenizer.tokenType
-        if tokenType == :SYMBOL and @tokenizer.symbol == "," || @tokenizer.symbol == ")"
-          tokenValue = @tokenizer.symbol
-        elsif tokenType == :IDENTIFIER
-          tokenValue = @tokenizer.identifier
-        else
-          tokenValue = getVarType
-        end
-      end
+    return unless tokenType == :SYMBOL and @tokenizer.symbol == ','
+
+    tokenValue = ','
+    until tokenValue == ')'
+      process(tokenValue)
+      tokenType = @tokenizer.tokenType
+      tokenValue = if tokenType == :SYMBOL and @tokenizer.symbol == ',' || @tokenizer.symbol == ')'
+                     @tokenizer.symbol
+                   elsif tokenType == :IDENTIFIER
+                     @subroutineTable.define(@tokenizer.identifier, currentVarType, :ARG)
+                     @tokenizer.identifier
+                   else
+                     currentVarType = getVarType
+                   end
     end
-    putsTagEnd(name)
   end
 
   def compileSubroutineBody
-    name = "subroutineBody"
-    putsTagStart(name)
-    process("{")
-    self.compileVarDecs
-    self.compileStatements
-    process("}")
-    putsTagEnd(name)
+    process('{')
+    compileVarDecs
+    compileStatements
+    process('}')
   end
 
   def compileVarDec
-    name = "varDec"
-    putsTagStart(name)
-    process("var")
-    self.compileVar
-    putsTagEnd(name)
+    process('var')
+    compileVar(@subroutineTable)
   end
 
   def compileStatements
-    name = "statements"
-    putsTagStart(name)
-
-    predicate = lambda { |currentToken| @statementKeyWords.include? currentToken }
-    self.compileVarDecsHelper(predicate) do |currentToken|
-      if @statementKeyWords.include? currentToken
-        @statementKeyWords[currentToken].call
-      else
-        raise "Statement is #{@statementKeyWords.keys.to_s} and not #{currentToken}"
+    predicate = ->(currentToken) { @statementKeyWords.include? currentToken }
+    compileVarDecsHelper(predicate) do |currentToken|
+      unless @statementKeyWords.include? currentToken
+        raise "Statement is #{@statementKeyWords.keys} and not #{currentToken}"
       end
+
+      @statementKeyWords[currentToken].call
     end
-    putsTagEnd(name)
   end
 
   def compileLet
-    name = "letStatement"
-    putsTagStart(name)
-    process("let")
-    process(@tokenizer.identifier) #varName
+    process('let')
+    process(@tokenizer.identifier) # varName
     tokenType = @tokenizer.tokenType
-    if tokenType == :SYMBOL and @tokenizer.symbol == "["
-      process("[")
-      self.compileExpression
-      process("]")
+    if tokenType == :SYMBOL and @tokenizer.symbol == '['
+      process('[')
+      compileExpression
+      process(']')
     end
-    process("=")
-    self.compileExpression
-    process(";")
-    putsTagEnd(name)
+    process('=')
+    compileExpression
+    process(';')
   end
 
   def compileIf
-    name = "ifStatement"
-    putsTagStart(name)
-    process("if")
-    process("(")
-    self.compileExpression
-    process(")")
-    process("{")
-    self.compileStatements
-    process("}")
+    process('if')
+    process('(')
+    compileExpression
+    process(')')
+    process('{')
+    compileStatements
+    process('}')
 
     tokenType = @tokenizer.tokenType
 
-    if tokenType == :KEYWORD && @tokenizer.keyWord == :ELSE
-      process("else")
-      process("{")
-      self.compileStatements
-      process("}")
-    end
+    return unless tokenType == :KEYWORD && @tokenizer.keyWord == :ELSE
 
-    putsTagEnd(name)
+    process('else')
+    process('{')
+    compileStatements
+    process('}')
   end
 
   def compileWhile
-    name = "whileStatement"
-    putsTagStart(name)
-    process("while")
-    process("(")
-    self.compileExpression
-    process(")")
-    process("{")
-    self.compileStatements
-    process("}")
-    putsTagEnd(name)
+    process('while')
+    process('(')
+    compileExpression
+    process(')')
+    process('{')
+    compileStatements
+    process('}')
   end
 
   def compileDo
-    name = "doStatement"
-    putsTagStart(name)
-    process("do")
-    self.compileSubroutineCall
-    process(";")
-    putsTagEnd(name)
+    process('do')
+    compileSubroutineCall
+    process(';')
   end
 
   def compileReturn
-    name = "returnStatement"
-    putsTagStart(name)
-    process("return")
-    self.compileExpression unless @tokenizer.tokenType == :SYMBOL && @tokenizer.symbol == ";"
-    process(";")
-    putsTagEnd(name)
+    process('return')
+    compileExpression unless @tokenizer.tokenType == :SYMBOL && @tokenizer.symbol == ';'
+    process(';')
   end
 
   def compileExpression
-    name = "expression"
-    putsTagStart(name)
-    self.compileTerm
+    compileTerm
     tokenType = @tokenizer.tokenType
     while tokenType == :SYMBOL && @operators.include?(@tokenizer.symbol)
       process(@tokenizer.symbol)
-      self.compileTerm
+      compileTerm
       tokenType = @tokenizer.tokenType
     end
-    putsTagEnd(name)
   end
 
   def compileTerm
-    name = "term"
-    putsTagStart(name)
     tokenType = @tokenizer.tokenType
     if tokenType == :INT_CONST
       process(@tokenizer.intVal)
@@ -227,13 +184,13 @@ class CompilationEngine
     elsif tokenType == :KEYWORD && @keywordConstants.include?(@tokenizer.keyWord)
       process(@keywordConstants[@tokenizer.keyWord])
     elsif tokenType == :SYMBOL
-      if @tokenizer.symbol == "("
-        process("(")
-        self.compileExpression
-        process(")")
-      elsif @tokenizer.symbol == "-" || @tokenizer.symbol == "~"
+      if @tokenizer.symbol == '('
+        process('(')
+        compileExpression
+        process(')')
+      elsif @tokenizer.symbol == '-' || @tokenizer.symbol == '~'
         process(@tokenizer.symbol)
-        self.compileTerm
+        compileTerm
       else
         raise "in a term, the first symbol must be '(', '-', or '~', and not #{@tokenizer.symbol}"
       end
@@ -241,48 +198,42 @@ class CompilationEngine
       process(@tokenizer.identifier)
       tokenType = @tokenizer.tokenType
       if tokenType == :SYMBOL
-        if @tokenizer.symbol == "["
-          process("[")
-          self.compileExpression
-          process("]")
-        elsif @tokenizer.symbol == "("
-          process("(")
-          self.compileExpressionList
-          process(")")
-        elsif @tokenizer.symbol == "."
-          process(".")
-          process(@tokenizer.identifier) #subroutine name
-          process("(")
-          self.compileExpressionList
-          process(")")
+        if @tokenizer.symbol == '['
+          process('[')
+          compileExpression
+          process(']')
+        elsif @tokenizer.symbol == '('
+          process('(')
+          compileExpressionList
+          process(')')
+        elsif @tokenizer.symbol == '.'
+          process('.')
+          process(@tokenizer.identifier) # subroutine name
+          process('(')
+          compileExpressionList
+          process(')')
         end
       end
     end
-    putsTagEnd(name)
   end
 
   def compileExpressionList
-    name = "expressionList"
-    putsTagStart(name)
     tokenType = @tokenizer.tokenType
-    if self.isCurrentTokenATerm?(tokenType)
-      self.compileExpression
-      tokenType = @tokenizer.tokenType
-      if tokenType == :SYMBOL
-        currentToken = @tokenizer.symbol
-        while currentToken == ","
-          process(",")
-          self.compileExpression
-          if @tokenizer.tokenType == :SYMBOL
-            currentToken = @tokenizer.symbol
-          else
-            break
-          end
-        end
-      end
-    end
+    return unless isCurrentTokenATerm?(tokenType)
 
-    putsTagEnd(name)
+    compileExpression
+    tokenType = @tokenizer.tokenType
+    return unless tokenType == :SYMBOL
+
+    currentToken = @tokenizer.symbol
+    while currentToken == ','
+      process(',')
+      compileExpression
+      break unless @tokenizer.tokenType == :SYMBOL
+
+      currentToken = @tokenizer.symbol
+
+    end
   end
 
   def close
@@ -293,40 +244,44 @@ class CompilationEngine
 
   def compileSubroutineCall
     process(@tokenizer.identifier)
-    if @tokenizer.symbol == "("
-      process("(")
-      self.compileExpressionList
-      process(")")
-    elsif @tokenizer.symbol == "."
-      process(".")
-      process(@tokenizer.identifier) #subroutine name
-      process("(")
-      self.compileExpressionList
-      process(")")
+    if @tokenizer.symbol == '('
+      process('(')
+      compileExpressionList
+      process(')')
+    elsif @tokenizer.symbol == '.'
+      process('.')
+      process(@tokenizer.identifier) # subroutine name
+      process('(')
+      compileExpressionList
+      process(')')
     end
   end
 
-  def compileVar
-    process(getVarType)
-    process(@tokenizer.identifier) #varName
+  def compileVar(table, modifier = nil)
+    kind =  modifier.nil? ? :VAR : modifier
+    varType = getVarType
+    process(varType)
+    process(@tokenizer.identifier) # varName
     tokenType = @tokenizer.tokenType
-    if tokenType == :SYMBOL && @tokenizer.symbol == ","
+    if tokenType == :SYMBOL && @tokenizer.symbol == ','
       currentToken = @tokenizer.symbol
 
-      until currentToken == ";"
+      until currentToken == ';'
         tokenType = @tokenizer.tokenType
 
         if tokenType == :SYMBOL
           currentToken = @tokenizer.symbol
         elsif tokenType == :IDENTIFIER
           currentToken = @tokenizer.identifier
+
+          table.define(currentToken, varType, kind)
         else
           raise "var names list must contain symbol or identifier and not #{tokenType}"
         end
         process(currentToken)
       end
     else
-      process(";")
+      process(';')
     end
   end
 
@@ -335,16 +290,16 @@ class CompilationEngine
     if tokenType == :KEYWORD
       varTypeSym = @tokenizer.keyWord
       varType = if varTypeSym == :INT
-          "int"
-        elsif varTypeSym == :BOOLEAN
-          "boolean"
-        elsif varTypeSym == :CHAR
-          "char"
-        elsif void && varTypeSym == :VOID
-          "void"
-        else
-          raise "ilegal class var type: #{varTypeSym}"
-        end
+                  'int'
+                elsif varTypeSym == :BOOLEAN
+                  'boolean'
+                elsif varTypeSym == :CHAR
+                  'char'
+                elsif void && varTypeSym == :VOID
+                  'void'
+                else
+                  raise "ilegal class var type: #{varTypeSym}"
+                end
     elsif tokenType == :IDENTIFIER
       varType = @tokenizer.identifier
     else
@@ -354,48 +309,39 @@ class CompilationEngine
   end
 
   def compileVarDecs
-    predicate = lambda { |currentToken| currentToken == :VAR }
-    self.compileVarDecsHelper(predicate) { |a| self.compileVarDec }
+    predicate = ->(currentToken) { currentToken == :VAR }
+    compileVarDecsHelper(predicate) { |_a| compileVarDec }
   end
 
   def compileClassVarDecs
-    predicate = lambda { |currentToken| currentToken == :FIELD || currentToken == :STATIC }
-    self.compileVarDecsHelper(predicate) { |a| self.compileClassVarDec }
+    predicate = ->(currentToken) { %i[FIELD STATIC].include?(currentToken) }
+    compileVarDecsHelper(predicate) { |_a| compileClassVarDec }
   end
 
   def compileVarDecsHelper(predicate)
     return if @tokenizer.tokenType != :KEYWORD
+
     currentToken = @tokenizer.keyWord
 
     while predicate.call(currentToken)
       yield(currentToken)
       return if @tokenizer.tokenType != :KEYWORD
+
       currentToken = @tokenizer.keyWord
     end
   end
 
   def compileSubroutines
-    return if @tokenizer.tokenType == :SYMBOL && @tokenizer.symbol == "}"
+    return if @tokenizer.tokenType == :SYMBOL && @tokenizer.symbol == '}'
 
-    self.compileSubroutine
+    compileSubroutine
 
-    self.compileSubroutines
-  end
-
-  def putsTagStart(tag)
-    @outputFile.puts("<#{tag}>")
-  end
-
-  def putsTagEnd(tag)
-    @outputFile.puts("</#{tag}>")
+    compileSubroutines
   end
 
   def process(str)
-    if @currentToken.to_s == str.to_s || @currentToken.to_s[1..-2] == str.to_s
-      type = @tokenTypesNames[@tokenizer.tokenType]
-      @outputFile.puts("<#{type}> #{str} </#{type}>")
-    else
-      raise "syntax error: current token: #{@currentToken.to_s} different from str: #{str.to_s}"
+    unless @currentToken.to_s == str.to_s || @currentToken.to_s[1..-2] == str.to_s
+      raise "syntax error: current token: #{@currentToken} different from str: #{str}"
     end
 
     @currentToken = @tokenizer.advance if @tokenizer.hasMoreTokens
@@ -403,11 +349,11 @@ class CompilationEngine
 
   def isCurrentTokenATerm?(tokenType)
     tokenType == :INT_CONST ||
-    tokenType == :STRING_CONST ||
-    tokenType == :IDENTIFIER ||
-    (tokenType == :KEYWORD && @keywordConstants.include?(@tokenizer.keyWord)) ||
-    (tokenType == :SYMBOL && (@tokenizer.symbol == "(" ||
-                              @tokenizer.symbol == "-" ||
-                              @tokenizer.symbol == "~"))
+      tokenType == :STRING_CONST ||
+      tokenType == :IDENTIFIER ||
+      (tokenType == :KEYWORD && @keywordConstants.include?(@tokenizer.keyWord)) ||
+      (tokenType == :SYMBOL && (@tokenizer.symbol == '(' ||
+                                @tokenizer.symbol == '-' ||
+                                @tokenizer.symbol == '~'))
   end
 end
