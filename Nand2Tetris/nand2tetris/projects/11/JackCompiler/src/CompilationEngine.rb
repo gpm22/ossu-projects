@@ -20,7 +20,8 @@ class CompilationEngine
 
   def compileClass
     process('class')
-    process(@tokenizer.identifier) # className
+    @className = @tokenizer.identifier
+    process(@className)
     process('{')
     compileClassVarDecs
     compileSubroutines
