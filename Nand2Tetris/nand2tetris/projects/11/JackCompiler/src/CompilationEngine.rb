@@ -185,7 +185,7 @@ class CompilationEngine
     elsif tokenType == :STRING_CONST
       compileString
     elsif tokenType == :KEYWORD && @keywordConstants.include?(@tokenizer.keyWord)
-      process(@keywordConstants[@tokenizer.keyWord])
+      compileKeyword
     elsif tokenType == :SYMBOL
       if @tokenizer.symbol == '('
         process('(')
@@ -259,6 +259,22 @@ class CompilationEngine
     stringValue.chars.each do |c|
       @writer.writePush(:CONSTANT, c.ord)
       @writer.writeCall('String.appendChar', 2)
+    end
+  end
+
+  def compileKeyword
+    keyword = @tokenizer.keyWord
+    process(@keywordConstants[keyword])
+    case keyword
+    when :NULL, :FALSE
+      @writer.writePush(:CONSTANT, 0)
+    when :TRUE
+      @writer.writePush(:CONSTANT, 1)
+      @writer.writeArithmetic(:NEG)
+    when :THIS
+      @writer.writePush(:POINTER, 0)
+    else
+      raise "keyword #{keyword} does not exist"
     end
   end
 
