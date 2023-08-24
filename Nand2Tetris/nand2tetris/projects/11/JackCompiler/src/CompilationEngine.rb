@@ -181,11 +181,9 @@ class CompilationEngine
   def compileTerm
     tokenType = @tokenizer.tokenType
     if tokenType == :INT_CONST
-      intValue = @tokenizer.intVal
-      process(intValue)
-      @writer.writePush(:CONSTANT, intValue)
+      compileInteger
     elsif tokenType == :STRING_CONST
-      process(@tokenizer.stringVal)
+      compileString
     elsif tokenType == :KEYWORD && @keywordConstants.include?(@tokenizer.keyWord)
       process(@keywordConstants[@tokenizer.keyWord])
     elsif tokenType == :SYMBOL
@@ -246,6 +244,23 @@ class CompilationEngine
   end
 
   private
+
+  def compileInteger
+    intValue = @tokenizer.intVal
+    process(intValue)
+    @writer.writePush(:CONSTANT, intValue)
+  end
+
+  def compileString
+    stringValue = @tokenizer.stringVal
+    process(stringValue)
+    @writer.writePush(:CONSTANT, stringValue.size)
+    @writer.writeCall('String.new', 1)
+    stringValue.chars.each do |c|
+      @writer.writePush(:CONSTANT, c.ord)
+      @writer.writeCall('String.appendChar', 2)
+    end
+  end
 
   def compileSubroutineCall
     process(@tokenizer.identifier)
