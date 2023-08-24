@@ -8,7 +8,9 @@ class VMWriter
                   POINTER: 'pointer', TEMP: 'temp' }
     @arithmeticCommands = { ADD: 'add', SUB: 'sub', NEG: 'neg',
                             EQ: 'eq', GT: 'gt', LT: 'lt',
-                            AND: 'and', OR: 'or', NOT: 'not' }
+                            AND: 'and', OR: 'or', NOT: 'not',
+                            MULT: 'call Math.multiply 2',
+                            DIV: 'call Math.divide 2' }
   end
 
   def writePush(segment, index)
@@ -51,7 +53,7 @@ class VMWriter
   end
 
   def writeReturn
-    @outputFile.puts("return")
+    @outputFile.puts('return')
   end
 
   def close
