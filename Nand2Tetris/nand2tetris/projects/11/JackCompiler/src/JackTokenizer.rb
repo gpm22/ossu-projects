@@ -4,70 +4,78 @@ class JackTokenizer
     @fileEnum = @file.each_line
     @currentTokens = nil
     @currentLineNumber = 1
-    @symbolTable = { "{" => "{", "}" => "}", "(" => "(", ")" => ")",
-                     "[" => "[", "]" => "]", "." => ".", "," => ",",
-                     ";" => ";", "+" => "+", "-" => "-", "*" => "*",
-                     "/" => "/", "&" => "&amp;", "|" => "|", "<" => "&lt;",
-                     ">" => "&gt;", "=" => "=", "~" => "~" }
+    @symbolTable = { '{' => nil, '}' => nil, '(' => nil, ')' => nil,
+                     '[' => nil, ']' => nil, '.' => nil, ',' => nil,
+                     ';' => nil, '+' => nil, '-' => nil, '*' => nil,
+                     '/' => nil, '&' => nil, '|' => nil, '<' => nil,
+                     '>' => nil, '=' => nil, '~' => nil }
 
-    @keywordTable = { "class" => :CLASS, "constructor" => :CONSTRUCTOR, "function" => :FUNCTION,
-                      "while" => :WHILE, "field" => :FIELD, "static" => :STATIC,
-                      "var" => :VAR, "int" => :INT, "char" => :CHAR, "void" => :VOID,
-                      "true" => :TRUE, "false" => :FALSE, "null" => :NULL, "this" => :THIS,
-                      "let" => :LET, "do" => :DO, "if" => :IF, "else" => :ELSE, "return" => :RETURN,
-                      "method" => :METHOD, "boolean" => :BOOLEAN }
+    @keywordTable = { 'class' => :CLASS, 'constructor' => :CONSTRUCTOR, 'function' => :FUNCTION,
+                      'while' => :WHILE, 'field' => :FIELD, 'static' => :STATIC,
+                      'var' => :VAR, 'int' => :INT, 'char' => :CHAR, 'void' => :VOID,
+                      'true' => :TRUE, 'false' => :FALSE, 'null' => :NULL, 'this' => :THIS,
+                      'let' => :LET, 'do' => :DO, 'if' => :IF, 'else' => :ELSE, 'return' => :RETURN,
+                      'method' => :METHOD, 'boolean' => :BOOLEAN }
   end
 
   def hasMoreTokens
-    if @currentTokens.nil?
-      return false unless self.TokenizeCurrentLike
-    end
+    return false if @currentTokens.nil? && !self.TokenizeCurrentLike
 
     begin
       @currentTokens.peek
       true
     rescue StopIteration
       @currentTokens = nil
-      self.hasMoreTokens
+      hasMoreTokens
     end
   end
 
   def advance
     @currentToken = @currentTokens.next
-    @symbolTable.include?(@currentToken) ? @symbolTable[@currentToken] : @currentToken
   end
 
   def tokenType
-    return :KEYWORD if self.isKeyWord
-    return :SYMBOL if self.isSymbol
-    return :IDENTIFIER if self.isIdentifier
-    return :INT_CONST if self.isInteger
-    return :STRING_CONST if self.isString
+    return :KEYWORD if isKeyWord
+    return :SYMBOL if isSymbol
+    return :IDENTIFIER if isIdentifier
+    return :INT_CONST if isInteger
+    return :STRING_CONST if isString
+
     raiseException("tokenType not identified for #{@currentToken}")
   end
 
   def keyWord
-    raiseException("keyWord method must only be called if tokenType is KEYWORD, and not #{self.tokenType}") unless self.tokenType == :KEYWORD
+    unless tokenType == :KEYWORD
+      raiseException("keyWord method must only be called if tokenType is KEYWORD, and not #{tokenType}")
+    end
     @keywordTable[@currentToken]
   end
 
   def symbol
-    raiseException("symbol method must only be called if tokenType is SYMBOL, and not #{self.tokenType}") unless self.tokenType == :SYMBOL
-    @symbolTable[@currentToken]
+    unless tokenType == :SYMBOL
+      raiseException("symbol method must only be called if tokenType is SYMBOL, and not #{tokenType}")
+    end
+    @currentToken
   end
 
   def identifier
-    raiseException("identifier method must only be called if tokenType is IDENTIFIER, and not #{self.tokenType}") unless self.tokenType == :IDENTIFIER
+    unless tokenType == :IDENTIFIER
+      raiseException("identifier method must only be called if tokenType is IDENTIFIER, and not #{tokenType}")
+    end
     @currentToken
   end
 
   def intVal
-    raiseException("intVal method must only be called if tokenType is INT_CONST, and not #{self.tokenType}") unless self.tokenType == :INT_CONST
+    unless tokenType == :INT_CONST
+      raiseException("intVal method must only be called if tokenType is INT_CONST, and not #{tokenType}")
+    end
     @currentToken.to_i
   end
 
   def stringVal
-    raiseException("stringVal method must only be called if tokenType is STRING_CONST, and not #{self.tokenType}") unless self.tokenType == :STRING_CONST
+    unless tokenType == :STRING_CONST
+      raiseException("stringVal method must only be called if tokenType is STRING_CONST, and not #{tokenType}")
+    end
     @currentToken[1..-2]
   end
 
@@ -102,10 +110,10 @@ class JackTokenizer
   end
 
   def TokenizeCurrentLike
-    return false unless self.hasMoreLines
+    return false unless hasMoreLines
 
-    self.advanceLine
-    @currentTokens = @currentLine.split(/([[[:alnum:]]_]+|"[^"]*")*/).reject { |a| a.gsub(/\s+/, "") == "" }.to_enum
+    advanceLine
+    @currentTokens = @currentLine.split(/([[[:alnum:]]_]+|"[^"]*")*/).reject { |a| a.gsub(/\s+/, '') == '' }.to_enum
     true
   end
 
@@ -117,7 +125,7 @@ class JackTokenizer
   end
 
   def advanceLine
-    raiseException("no more lines to read") unless hasMoreLines
+    raiseException('no more lines to read') unless hasMoreLines
 
     while true
       begin
@@ -127,13 +135,15 @@ class JackTokenizer
       end
 
       @currentLineNumber += 1
-      nextLineWithoutSpaces = nextLine.gsub(/\s+/, "")
-      next if nextLineWithoutSpaces == "" || (nextLineWithoutSpaces[0] == "/" && nextLineWithoutSpaces[1] == "/") || (nextLineWithoutSpaces[0] == "/" && nextLineWithoutSpaces[1] == "*" && nextLineWithoutSpaces[-2] == "*" && nextLineWithoutSpaces[-1] == "/")
+      nextLineWithoutSpaces = nextLine.gsub(/\s+/, '')
+      if nextLineWithoutSpaces == '' || (nextLineWithoutSpaces[0] == '/' && nextLineWithoutSpaces[1] == '/') || (nextLineWithoutSpaces[0] == '/' && nextLineWithoutSpaces[1] == '*' && nextLineWithoutSpaces[-2] == '*' && nextLineWithoutSpaces[-1] == '/')
+        next
+      end
 
-      if nextLineWithoutSpaces[0] == "/" && nextLineWithoutSpaces[1] == "*" && nextLineWithoutSpaces[-1] != "/"
-        until nextLineWithoutSpaces[-2] == "*" && nextLineWithoutSpaces[-1] == "/"
+      if nextLineWithoutSpaces[0] == '/' && nextLineWithoutSpaces[1] == '*' && nextLineWithoutSpaces[-1] != '/'
+        until nextLineWithoutSpaces[-2] == '*' && nextLineWithoutSpaces[-1] == '/'
           @currentLineNumber += 1
-          nextLineWithoutSpaces = @fileEnum.next.gsub(/\s+/, "")
+          nextLineWithoutSpaces = @fileEnum.next.gsub(/\s+/, '')
         end
 
         next
