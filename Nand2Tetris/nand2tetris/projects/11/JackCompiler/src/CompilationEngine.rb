@@ -12,9 +12,9 @@ class CompilationEngine
                            WHILE: -> { compileWhile },
                            DO: -> { compileDo },
                            RETURN: -> { compileReturn } }
-    @operators = { '+' => nil, '-' => nil, '*' => nil,
-                   '/' => nil, '&amp;' => nil, '|' => nil, '&lt;' => nil,
-                   '&gt;' => nil, '=' => nil }
+    @operators = { '+' => :ADD, '-' => :SUB, '*' => :MULT,
+                   '/' => :DIV, '&' => :AND, '|' => :OR, '<' => :LT,
+                   '>' => :GT, '=' => :EQ }
     @keywordConstants = { TRUE: 'true', FALSE: 'false', NULL: 'null', THIS: 'this' }
   end
 
@@ -170,8 +170,10 @@ class CompilationEngine
     compileTerm
     tokenType = @tokenizer.tokenType
     while tokenType == :SYMBOL && @operators.include?(@tokenizer.symbol)
-      process(@tokenizer.symbol)
+      symbol = @tokenizer.symbol
+      process(symbol)
       compileTerm
+      @writer.writeArithmetic(@operators[symbol])
       tokenType = @tokenizer.tokenType
     end
   end
@@ -179,7 +181,9 @@ class CompilationEngine
   def compileTerm
     tokenType = @tokenizer.tokenType
     if tokenType == :INT_CONST
-      process(@tokenizer.intVal)
+      intValue = @tokenizer.intVal
+      process(intValue)
+      @writer.writePush(:CONSTANT, intValue)
     elsif tokenType == :STRING_CONST
       process(@tokenizer.stringVal)
     elsif tokenType == :KEYWORD && @keywordConstants.include?(@tokenizer.keyWord)
@@ -341,7 +345,7 @@ class CompilationEngine
   end
 
   def process(str)
-    unless @currentToken.to_s == str.to_s || @currentToken.to_s[1..-2] == str.to_s
+    unless @currentToken.to_s == str.to_s
       raise "syntax error: current token: #{@currentToken} different from str: #{str}"
     end
 
