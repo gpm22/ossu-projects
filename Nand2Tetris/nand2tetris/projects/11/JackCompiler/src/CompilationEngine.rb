@@ -187,16 +187,7 @@ class CompilationEngine
     elsif tokenType == :KEYWORD && @keywordConstants.include?(@tokenizer.keyWord)
       compileKeyword
     elsif tokenType == :SYMBOL
-      if @tokenizer.symbol == '('
-        process('(')
-        compileExpression
-        process(')')
-      elsif @tokenizer.symbol == '-' || @tokenizer.symbol == '~'
-        process(@tokenizer.symbol)
-        compileTerm
-      else
-        raise "in a term, the first symbol must be '(', '-', or '~', and not #{@tokenizer.symbol}"
-      end
+      compileSymbol
     else # tokenType is :IDENTIFIER
       process(@tokenizer.identifier)
       tokenType = @tokenizer.tokenType
@@ -275,6 +266,21 @@ class CompilationEngine
       @writer.writePush(:POINTER, 0)
     else
       raise "keyword #{keyword} does not exist"
+    end
+  end
+
+  def compileSymbol
+    symbol = @tokenizer.symbol
+    if symbol == '('
+      process('(')
+      compileExpression
+      process(')')
+    elsif ['-', '~'].include?(symbol)
+      process(symbol)
+      compileTerm
+      @writer.writeArithmetic(symbol == '-' ? :NEG : :NOT)
+    else
+      raise "in a term, the first symbol must be '(', '-', or '~', and not #{symbol}"
     end
   end
 
