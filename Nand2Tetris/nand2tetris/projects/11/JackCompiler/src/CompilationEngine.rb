@@ -514,6 +514,6 @@ class CompilationEngine
 
   def getLabel
     @currentLabel += 1
-    "L#{@currentLabel}"
+    "#{@className}.#{@currentLabel}"
   end
 end
