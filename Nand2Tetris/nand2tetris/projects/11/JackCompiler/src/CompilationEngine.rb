@@ -16,6 +16,7 @@ class CompilationEngine
                    '/' => :DIV, '&' => :AND, '|' => :OR, '<' => :LT,
                    '>' => :GT, '=' => :EQ }
     @keywordConstants = { TRUE: 'true', FALSE: 'false', NULL: 'null', THIS: 'this' }
+    @mapSymbolWriter = { STATIC: :STATIC, FIELD: :THIS, VAR: :LOCAL, ARG: :ARGUMENT }
   end
 
   def compileClass
@@ -188,46 +189,31 @@ class CompilationEngine
       compileKeyword
     elsif tokenType == :SYMBOL
       compileSymbol
-    else # tokenType is :IDENTIFIER
-      process(@tokenizer.identifier)
-      tokenType = @tokenizer.tokenType
-      if tokenType == :SYMBOL
-        if @tokenizer.symbol == '['
-          process('[')
-          compileExpression
-          process(']')
-        elsif @tokenizer.symbol == '('
-          process('(')
-          compileExpressionList
-          process(')')
-        elsif @tokenizer.symbol == '.'
-          process('.')
-          process(@tokenizer.identifier) # subroutine name
-          process('(')
-          compileExpressionList
-          process(')')
-        end
-      end
+    else
+      compileIdentifier
     end
   end
 
   def compileExpressionList
     tokenType = @tokenizer.tokenType
-    return unless isCurrentTokenATerm?(tokenType)
+    return 0 unless isCurrentTokenATerm?(tokenType)
 
     compileExpression
     tokenType = @tokenizer.tokenType
-    return unless tokenType == :SYMBOL
+    return 1 unless tokenType == :SYMBOL
 
+    numberOfExpressions = 1
     currentToken = @tokenizer.symbol
     while currentToken == ','
       process(',')
       compileExpression
+      numberOfExpressions += 1
       break unless @tokenizer.tokenType == :SYMBOL
 
       currentToken = @tokenizer.symbol
 
     end
+    numberOfExpressions
   end
 
   def close
@@ -282,6 +268,80 @@ class CompilationEngine
     else
       raise "in a term, the first symbol must be '(', '-', or '~', and not #{symbol}"
     end
+  end
+
+  def compileIdentifier
+    identifier = @tokenizer.identifier
+    process(identifier)
+    tokenType = @tokenizer.tokenType
+    if tokenType == :SYMBOL
+      symbol = @tokenizer.symbol
+      if symbol == '['
+        compileArrayIdentifier(identifier)
+      elsif symbol == '('
+        compileFunctionIdentifier(identifier)
+      elsif symbol == '.'
+        compileMethodIdentifier(identifier)
+      end
+    else
+      compileVariableIdentifier(identifier)
+    end
+  end
+
+  def compileArrayIdentifier(_identifier)
+    process('[')
+    compileExpression
+    process(']')
+  end
+
+  def compileFunctionIdentifier(identifier)
+    process('(')
+    nVar = compileExpressionList
+    process(')')
+    @writer.writeCall(@className + '.' + identifier, nVar)
+  end
+
+  def compileMethodIdentifier(identifier)
+    # TODO: verify constructor case
+
+    identifierKind, table = getIndentifierKindAndUsedTable(identifier)
+
+    if identifierKind == :NONE
+      nVar = 0
+      type = identifier
+    else
+      @writer.writePush(@mapSymbolWriter[identifierKind], table.indexOf(identifier))
+      type = table.typeOf(identifier)
+      nVar = 1
+    end
+
+    process('.')
+    subroutineName = @tokenizer.identifier
+    process(subroutineName)
+    process('(')
+    nVar += compileExpressionList
+    process(')')
+    @writer.writeCall(type + '.' + subroutineName, nVar)
+  end
+
+  def compileVariableIdentifier(identifier)
+    identifierKind, table = getIndentifierKindAndUsedTable(identifier)
+    raise "variable #{identifier} does not has a kind" if identifierKind == :NONE
+
+    @writer.writePush(@mapSymbolWriter[identifierKind], table.indexOf(identifier))
+  end
+
+  def getIndentifierKindAndUsedTable(identifier)
+    identifierKindSubroutine = @subroutineTable.kindOf(identifier)
+    table = nil
+    if identifierKindSubroutine != :NONE
+      identifierKind = identifierKindSubroutine
+      table = @subroutineTable
+    else
+      identifierKind = @classTable.kindOf(identifier)
+      table = @classTable if identifierKind != :NONE
+    end
+    [identifierKind, table]
   end
 
   def compileSubroutineCall
