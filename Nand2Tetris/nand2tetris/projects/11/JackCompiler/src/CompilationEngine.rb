@@ -54,6 +54,7 @@ class CompilationEngine
     raise "subroutine modifier must be constructor, function, or method and not #{modifier}" unless %i[CONSTRUCTOR
                                                                                                        FUNCTION METHOD].include?(modifier)
 
+    @subroutineTable.define('this', @className, :ARG) if modifier == :METHOD
     process(modifier.to_s.downcase)
     process(getVarType(true))
     process(@tokenizer.identifier) # subroutineName
@@ -68,9 +69,10 @@ class CompilationEngine
     return if tokenType == :SYMBOL && @tokenizer.symbol == ')'
 
     currentVarType = getVarType
-    process(varType)
-    process(@tokenizer.identifier) # varName
-
+    process(currentVarType)
+    varName = @tokenizer.identifier
+    process(varName)
+    @subroutineTable.define(varName, currentVarType, :ARG)
     tokenType = @tokenizer.tokenType
     return unless tokenType == :SYMBOL and @tokenizer.symbol == ','
 
@@ -363,7 +365,7 @@ class CompilationEngine
     kind =  modifier.nil? ? :VAR : modifier
     varType = getVarType
     process(varType)
-    varName = @tokenizer.identifier 
+    varName = @tokenizer.identifier
     process(varName)
     table.define(varName, varType, kind)
     tokenType = @tokenizer.tokenType
