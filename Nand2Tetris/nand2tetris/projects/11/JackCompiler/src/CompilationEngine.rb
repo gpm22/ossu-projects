@@ -46,18 +46,23 @@ class CompilationEngine
 
   def compileSubroutine
     @subroutineTable.reset
+    @subroutineName = nil
+    @subroutineModifier = nil
+    @subroutineType = nil
     tokenType = @tokenizer.tokenType
 
     raise "subroutine modifier must be keyword and not #{tokenType}" unless tokenType == :KEYWORD
 
-    modifier = @tokenizer.keyWord
-    raise "subroutine modifier must be constructor, function, or method and not #{modifier}" unless %i[CONSTRUCTOR
+    @subroutineModifier = @tokenizer.keyWord
+    raise "subroutine modifier must be constructor, function, or method and not #{@subroutineModifier}" unless %i[CONSTRUCTOR
                                                                                                        FUNCTION METHOD].include?(modifier)
 
-    @subroutineTable.define('this', @className, :ARG) if modifier == :METHOD
-    process(modifier.to_s.downcase)
-    process(getVarType(true))
-    process(@tokenizer.identifier) # subroutineName
+    @subroutineTable.define('this', @className, :ARG) if @subroutineModifier == :METHOD
+    process(@subroutineModifier.to_s.downcase)
+    @subroutineType = getVarType(true)
+    process(@subroutineType)
+    @subroutineName = @tokenizer.identifier
+    process(@subroutineName)
     process('(')
     compileParameterList
     process(')')
@@ -94,6 +99,15 @@ class CompilationEngine
   def compileSubroutineBody
     process('{')
     compileVarDecs
+    @writer.writeFunction(@className + '.' + @subroutineName, @subroutineTable.varCount(:VAR))
+    if @subroutineModifier == :METHOD
+      @writer.writePush(:ARGUMENT, 0)
+      @writer.writePop(:POINTER, 0)
+    elsif @subroutineModifier == :CONSTRUCTOR
+      @writer.writePush(:CONSTANT, @classTable.varCount(:FIELD))
+      @writer.writeCall('Memory.alloc', 1)
+      @writer.writePop(:POINTER, 0)
+    end
     compileStatements
     process('}')
   end
@@ -166,6 +180,9 @@ class CompilationEngine
   def compileReturn
     process('return')
     compileExpression unless @tokenizer.tokenType == :SYMBOL && @tokenizer.symbol == ';'
+    @writer.writePush(:POINTER, 0) if @subroutineModifier == :CONSTRUCTOR
+    @writer.writerPus(:CONSTANT, 0) if @subroutineType == 'void'
+    @writer.writeReturn
     process(';')
   end
 
