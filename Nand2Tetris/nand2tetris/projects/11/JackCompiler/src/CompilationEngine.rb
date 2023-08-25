@@ -363,7 +363,9 @@ class CompilationEngine
     kind =  modifier.nil? ? :VAR : modifier
     varType = getVarType
     process(varType)
-    process(@tokenizer.identifier) # varName
+    varName = @tokenizer.identifier 
+    process(varName)
+    table.define(varName, varType, kind)
     tokenType = @tokenizer.tokenType
     if tokenType == :SYMBOL && @tokenizer.symbol == ','
       currentToken = @tokenizer.symbol
