@@ -2,6 +2,7 @@ require_relative './SymbolTable'
 
 class CompilationEngine
   def initialize(tokenizer, writer)
+    @currentLabel = -1
     @writer = writer
     @tokenizer = tokenizer
     @classTable = SymbolTable.new
@@ -146,19 +147,27 @@ class CompilationEngine
     process('if')
     process('(')
     compileExpression
+    @writer.writeArithmetic(:NOT)
+    elseLabel = getLabel
+    exitLabel = getLabel
+    @writer.writeIf(elseLabel) # TODO
     process(')')
     process('{')
     compileStatements
+    @writer.writeGoto(exitLabel)
     process('}')
 
     tokenType = @tokenizer.tokenType
 
-    return unless tokenType == :KEYWORD && @tokenizer.keyWord == :ELSE
+    @writer.writeLabel(elseLabel)
+    if tokenType == :KEYWORD && @tokenizer.keyWord == :ELSE
 
-    process('else')
-    process('{')
-    compileStatements
-    process('}')
+      process('else')
+      process('{')
+      compileStatements
+      process('}')
+    end
+    @writer.writeLabel(exitLabel)
   end
 
   def compileWhile
@@ -501,5 +510,10 @@ class CompilationEngine
       (tokenType == :SYMBOL && (@tokenizer.symbol == '(' ||
                                 @tokenizer.symbol == '-' ||
                                 @tokenizer.symbol == '~'))
+  end
+
+  def getLabel
+    @currentLabel += 1
+    "L#{@currentLabel}"
   end
 end
