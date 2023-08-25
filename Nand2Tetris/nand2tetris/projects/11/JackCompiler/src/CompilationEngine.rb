@@ -55,7 +55,7 @@ class CompilationEngine
 
     @subroutineModifier = @tokenizer.keyWord
     raise "subroutine modifier must be constructor, function, or method and not #{@subroutineModifier}" unless %i[CONSTRUCTOR
-                                                                                                       FUNCTION METHOD].include?(modifier)
+                                                                                                                  FUNCTION METHOD].include?(modifier)
 
     @subroutineTable.define('this', @className, :ARG) if @subroutineModifier == :METHOD
     process(@subroutineModifier.to_s.downcase)
@@ -130,7 +130,11 @@ class CompilationEngine
 
   def compileLet
     process('let')
-    process(@tokenizer.identifier) # varName
+    varName = @tokenizer.identifier
+    process(varName)
+    varKind, table = getIndentifierKindAndUsedTable(varName)
+    raise "variable #{varName} is not defined!" if varKind == :NONE
+
     tokenType = @tokenizer.tokenType
     if tokenType == :SYMBOL and @tokenizer.symbol == '['
       process('[')
@@ -139,6 +143,7 @@ class CompilationEngine
     end
     process('=')
     compileExpression
+    @writer.writePop(varKind, table.indexOf(varName))
     process(';')
   end
 
@@ -345,7 +350,7 @@ class CompilationEngine
 
   def compileVariableIdentifier(identifier)
     identifierKind, table = getIndentifierKindAndUsedTable(identifier)
-    raise "variable #{identifier} does not has a kind" if identifierKind == :NONE
+    raise "variable #{identifier} is not defined!" if identifierKind == :NONE
 
     @writer.writePush(@mapSymbolWriter[identifierKind], table.indexOf(identifier))
   end
