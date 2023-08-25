@@ -391,18 +391,14 @@ class CompilationEngine
   end
 
   def compileSubroutineCall
-    process(@tokenizer.identifier)
+    identifier = @tokenizer.identifier
+    process(identifier)
     if @tokenizer.symbol == '('
-      process('(')
-      compileExpressionList
-      process(')')
+      compileFunctionIdentifier(identifier)
     elsif @tokenizer.symbol == '.'
-      process('.')
-      process(@tokenizer.identifier) # subroutine name
-      process('(')
-      compileExpressionList
-      process(')')
+      compileMethodIdentifier(identifier)
     end
+    @writer.writePop(:TEMP, 0) # get rid of the returned value
   end
 
   def compileVar(table, modifier = nil)
