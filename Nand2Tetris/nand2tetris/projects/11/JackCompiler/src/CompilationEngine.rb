@@ -143,7 +143,7 @@ class CompilationEngine
     end
     process('=')
     compileExpression
-    @writer.writePop(varKind, table.indexOf(varName))
+    @writer.writePop(@mapSymbolWriter(varKind), table.indexOf(varName))
     process(';')
   end
 
