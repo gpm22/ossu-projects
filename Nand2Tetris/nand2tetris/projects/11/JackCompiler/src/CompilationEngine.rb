@@ -312,10 +312,14 @@ class CompilationEngine
     end
   end
 
-  def compileArrayIdentifier(_identifier)
+  def compileArrayIdentifier(identifier)
+    compileVariableIdentifier(identifier)
     process('[')
     compileExpression
+    @writer.writeArithmetic(:ADD)
+    @writer.writePop(:POINTER, 1)
     process(']')
+    @writer.writePush(:THAT, 0)
   end
 
   def compileFunctionIdentifier(identifier)
