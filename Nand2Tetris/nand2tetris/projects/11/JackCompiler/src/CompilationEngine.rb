@@ -132,18 +132,13 @@ class CompilationEngine
     process('let')
     varName = @tokenizer.identifier
     process(varName)
-    varKind, table = getIndentifierKindAndUsedTable(varName)
-    raise "variable #{varName} is not defined!" if varKind == :NONE
 
     tokenType = @tokenizer.tokenType
     if tokenType == :SYMBOL and @tokenizer.symbol == '['
-      process('[')
-      compileExpression
-      process(']')
+      compileLetArray(varName)
+    else
+      compileLetVar(varName)
     end
-    process('=')
-    compileExpression
-    @writer.writePop(@mapSymbolWriter(varKind), table.indexOf(varName))
     process(';')
   end
 
@@ -245,6 +240,29 @@ class CompilationEngine
   end
 
   private
+
+  def compileLetVar(varName)
+    varKind, table = getIndentifierKindAndUsedTable(varName)
+    raise "variable #{varName} is not defined!" if varKind == :NONE
+
+    process('=')
+    compileExpression
+    @writer.writePop(@mapSymbolWriter[varKind], table.indexOf(varName))
+  end
+
+  def compileLetArray(varName)
+    compileVariableIdentifier(varName)
+    process('[')
+    compileExpression
+    @writer.writeArithmetic(:ADD)
+    process(']')
+    process('=')
+    compileExpression
+    @writer.writePop(:TEMP, 0)
+    @writer.writePop(:POINTER, 1)
+    @writer.writePush(:TEMP, 0)
+    @writer.writePop(:THAT, 0)
+  end
 
   def compileInteger
     intValue = @tokenizer.intVal
