@@ -171,12 +171,19 @@ class CompilationEngine
   end
 
   def compileWhile
+    enterLabel = getLabel
+    exitLabel = getLabel
     process('while')
     process('(')
+    @writer.writeLabel(enterLabel)
     compileExpression
+    @writer.writeArithmetic(:NOT)
+    @writer.writeIf(exitLabel)
     process(')')
     process('{')
     compileStatements
+    @writer.writeGoto(enterLabel)
+    @writer.writeLabel(exitLabel)
     process('}')
   end
 
