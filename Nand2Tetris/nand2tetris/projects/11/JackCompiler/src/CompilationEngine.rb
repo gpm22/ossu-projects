@@ -333,7 +333,7 @@ class CompilationEngine
       if symbol == '['
         compileArrayIdentifier(identifier)
       elsif symbol == '('
-        compileFunctionIdentifier(identifier)
+        compileLocalMethodIdentifier(identifier)
       elsif symbol == '.'
         compileMethodIdentifier(identifier)
       end
@@ -352,16 +352,15 @@ class CompilationEngine
     @writer.writePush(:THAT, 0)
   end
 
-  def compileFunctionIdentifier(identifier)
+  def compileLocalMethodIdentifier(identifier)
     process('(')
-    nVar = compileExpressionList
+    @writer.writePush(:POINTER, 0)
+    nVar = compileExpressionList + 1
     process(')')
     @writer.writeCall(@className + '.' + identifier, nVar)
   end
 
   def compileMethodIdentifier(identifier)
-    # TODO: verify constructor case
-
     identifierKind, table = getIndentifierKindAndUsedTable(identifier)
 
     if identifierKind == :NONE
@@ -406,7 +405,7 @@ class CompilationEngine
     identifier = @tokenizer.identifier
     process(identifier)
     if @tokenizer.symbol == '('
-      compileFunctionIdentifier(identifier)
+      compileLocalMethodIdentifier(identifier)
     elsif @tokenizer.symbol == '.'
       compileMethodIdentifier(identifier)
     end
