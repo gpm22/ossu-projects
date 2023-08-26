@@ -332,14 +332,16 @@ class CompilationEngine
       symbol = @tokenizer.symbol
       if symbol == '['
         compileArrayIdentifier(identifier)
+        return
       elsif symbol == '('
         compileLocalMethodIdentifier(identifier)
+        return
       elsif symbol == '.'
         compileMethodIdentifier(identifier)
+        return
       end
-    else
-      compileVariableIdentifier(identifier)
     end
+    compileVariableIdentifier(identifier)
   end
 
   def compileArrayIdentifier(identifier)
