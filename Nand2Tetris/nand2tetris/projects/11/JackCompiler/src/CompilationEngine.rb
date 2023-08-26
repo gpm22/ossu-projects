@@ -55,8 +55,9 @@ class CompilationEngine
     raise "subroutine modifier must be keyword and not #{tokenType}" unless tokenType == :KEYWORD
 
     @subroutineModifier = @tokenizer.keyWord
-    raise "subroutine modifier must be constructor, function, or method and not #{@subroutineModifier}" unless %i[CONSTRUCTOR
-                                                                                                                  FUNCTION METHOD].include?(modifier)
+    unless %i[CONSTRUCTOR FUNCTION METHOD].include?(@subroutineModifier)
+      raise "subroutine modifier must be constructor, function, or method and not #{@subroutineModifier}"
+    end
 
     @subroutineTable.define('this', @className, :ARG) if @subroutineModifier == :METHOD
     process(@subroutineModifier.to_s.downcase)
@@ -196,8 +197,7 @@ class CompilationEngine
   def compileReturn
     process('return')
     compileExpression unless @tokenizer.tokenType == :SYMBOL && @tokenizer.symbol == ';'
-    @writer.writePush(:POINTER, 0) if @subroutineModifier == :CONSTRUCTOR
-    @writer.writerPus(:CONSTANT, 0) if @subroutineType == 'void'
+    @writer.writePush(:CONSTANT, 0) if @subroutineType == 'void'
     @writer.writeReturn
     process(';')
   end
@@ -249,10 +249,6 @@ class CompilationEngine
 
     end
     numberOfExpressions
-  end
-
-  def close
-    @outputFile.close
   end
 
   private
