@@ -499,7 +499,7 @@ class CompilationEngine
   end
 
   def process(str)
-    unless @currentToken.to_s == str.to_s
+    unless @currentToken.to_s == str.to_s || (@currentToken[1..-2].to_s == str.to_s && @tokenizer.tokenType == :STRING_CONST)
       raise "syntax error: current token: #{@currentToken} different from str: #{str}"
     end
 
