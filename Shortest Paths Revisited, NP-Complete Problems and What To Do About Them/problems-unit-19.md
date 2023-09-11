@@ -97,14 +97,28 @@ The input in the traveling salesman path problem (TSPP) is the same as that in t
 
 * TSPP reduces to TSP.
   * First create the graph $G'$ by adding a new vertex $v'$ to original graph $G$, this new vertex is connected to all other vertices by zero-cost edges
-  * Then we run the TSPP solver, this will create a path
-  * you just need to add and the edge from the last vertex to the first.
-  * This will create the minimum-cost tour.
-  * This adding is done in $O(1)$
+  * Then we run the TSP solver on $G'$, this will create a tour with value $T$.
+  * As the tour must contains $v'$, the cycle must contain it.
+  * So removing it will also remove the cycle.
+  * We then remove the new vertex from the tour, as their edges are all 0 valued, the value of the path is also $T$.
+  * Adding the new vertex is done in $O(n)$.
+  * The removing is done in $O(1)$
 * TSP reduces to TSPP
-  * After running the TSP solver you just need to remove the edge with the greatest value from the tour.
-  * Doing that will result in the minimum-cost cycle-free path that visits every vertex.
-  * This removing is done in $O(n)$.
+  * First create the graph $G'$ from $G$.
+  * This is done by two steps:
+    1. Splitting an arbitrary vertex $v$ into copies $v'$ and $v''$.
+       * Both new vertices have the same edges as $v$ and a new one, which is $c_{v'v''} = + \infty$.
+    2. Adding new vertices $x, y$.
+       * They are connected to all the original vertices with $+\infty$ costs and $c_{xv'} = c_{yv''} =0$.
+  * Then we run the TSPP solver on $G'$, which results in a minimum-cost cycle-free path containing every vertex.
+  * In this path, the head and tail will be $x$ and $y$, so we remove them.
+  * Now the head and tail are $v'$ and $v''$.
+  * Then we remove then and put $v$ back connect by the edges that were in $v'$ and $v''$.
+  * As $v'$ have $v''$ the same edges as $v$ and there is no cycle in the path, this merging process will keep the value of the path.
+  * Creating the new graph is $O(n)$.
+  * Transforming the path into a tour is $O(1)$.
+  
+* Therefore TSPP is NP-Hard.
 
 ### Problem 19.8
 
