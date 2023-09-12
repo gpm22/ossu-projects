@@ -122,6 +122,19 @@ The input in the traveling salesman path problem (TSPP) is the same as that in t
 
 ### Problem 19.8
 
+This problem describes a computationally tractable special case of the TSP. Consider a connected and acyclic graph $T = (V,F)$ in which each edge $e \in F$ has a nonnegative length $a_e \geq  0$. Define the corresponding **tree instance** $G = (V,E)$ of the TSP by setting the cost $c_{vw}$ of each edge $(v, w) \in E$ equal to the length $\sum_{e \in P_{vw}} a_e$ of the (unique) $v-w$ path $P_{vw}$ in $T$.
+Design a linear-time algorithm that, given a connected acyclic graph with nonnegative edge lengths, outputs a minimum-cost traveling salesman tour of the corresponding tree instance. Prove that your algorithm is correct.
+
+**ANSWER**
+
+* Algorithm
+  * We traverse the graph $T$ in the order which depth-first search would be traverse $G$, using an arbitrary starting vertex.
+  * We traverse using the edge connecting the current vertex to the next vertex.
+  * Then we connect the tail with the head of the path.
+* Proof
+  * The total cost of any tour will be $2 \sum_{e\in F}a_e$.
+
+
 ## Programming Problems
 
 ### Problem 19.9
