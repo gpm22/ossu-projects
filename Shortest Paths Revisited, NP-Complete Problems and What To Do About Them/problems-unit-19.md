@@ -132,10 +132,22 @@ Design a linear-time algorithm that, given a connected acyclic graph with nonneg
   * We traverse using the edge connecting the current vertex to the next vertex.
   * Then we connect the tail with the head of the path.
 * Proof
-  * The total cost of any tour will be $2 \sum_{e\in F}a_e$.
+  * As the traverse order used is based on the original graph that does not have cycles, the path created will be indeed a tour.
+  * Let's number the vertices in the order they are traversed as $1$ being the first and $n$ the last: $\{1, 2, \dots, n\}$
+  * In dfs, the idea is to follow the vertices until you get in a leaf.
+  * So when following the dfs traversing we start adding the original edges until we get to a left.
+  * The next vertex will be one that wasn't originally connected to the current one, so the value of the edge connecting them is the value of the path that has some original edges already traversed and others don't.
+  * So the original ones already traversed are counted twice.
+  * The ones not traversed will now be traversed and will be counted once more when going from a leaf to the next vertex.
+  * As the traverse order used is based on the original graph that does not have cycles, each edge will only be counted twice.
+  * So each original edge will be counted twice and the total cost of any tour will be $2 \sum_{e\in F}a_e$.
+  * This is the minimum value a tour can have, as any tour will necessarily count each original edge twice.
 
 
 ## Programming Problems
 
 ### Problem 19.9
 
+Implement in your favorite programming language the exhaustive search algorithm for the TSP (as seen in Quiz 19.2). Give your implementation a spin on instances with edge costs chosen independently and uniformly at random from the set $\{1, 2, \dots, 100\}$. How large an input size (that is, how many vertices) can your program reliably process in under a minute? What about in under an hour?
+
+**ANSWER**
