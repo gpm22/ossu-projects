@@ -5,11 +5,11 @@ class Graph
   end
 
   def tsp
-    n = @vertices.size
-    w = (1..(n - 1)).inject { |sum, i| sum + getEdgeValue(i, i + 1) } + getEdgeValue(n, 1)
-    currentResult = [n, (1..n).to_a, w]
-    s = [1, [1], 0]
-    tspSearch(s, currentResult)
+    tspBase { |s, currentResult| tspSearch(s, currentResult) }
+  end
+
+  def tspNaive
+    tspBase { |s, currentResult| tspSearch(s, currentResult, true) }
   end
 
   def addEdge(firstVertex, secondVertex, value)
@@ -21,11 +21,19 @@ class Graph
 
   private
 
+  def tspBase
+    n = @vertices.size
+    w = (1..(n - 1)).inject { |sum, i| sum + getEdgeValue(i, i + 1) } + getEdgeValue(n, 1)
+    currentResult = [n, (1..n).to_a, w]
+    s = [1, [1], 0]
+    yield(s, currentResult)
+  end
+
   def getEdgeValue(firstVertex, secondVertex)
     @edges["#{firstVertex}:#{secondVertex}"]
   end
 
-  def tspSearch(s, currentResult)
+  def tspSearch(s, currentResult, naive = false)
     k, arr, w = s
     n = currentResult[0]
     wB = currentResult[2]
@@ -36,8 +44,10 @@ class Graph
       notInArr = (1..n).to_a - arr
       notInArr.each do |j|
         new_w = w + getEdgeValue(arr[k - 1], j)
-        new_S = [k + 1, arr + [j], new_w]
-        currentResult = tspSearch(new_S, currentResult)
+        if new_w < wB || naive
+          new_S = [k + 1, arr + [j], new_w]
+          currentResult = tspSearch(new_S, currentResult, naive)
+        end
       end
     end
     currentResult
