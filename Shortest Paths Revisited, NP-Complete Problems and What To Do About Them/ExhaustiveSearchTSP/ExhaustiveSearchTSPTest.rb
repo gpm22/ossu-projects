@@ -1,6 +1,6 @@
 STDOUT.sync = true
 require_relative "./ExhaustiveSearchTSP"
-
+require "benchmark"
 require "test/unit"
 extend Test::Unit::Assertions
 
@@ -24,5 +24,28 @@ def test(file, expected, name)
   puts "Test passed! #{name}"
 end
 
-test("tsptest1", 13, "quiz 19.2")
-test("tsptest2", 23, "quiz 20.7")
+def runTestFiles
+  test("tsptest1", 13, "quiz 19.2")
+  test("tsptest2", 23, "quiz 20.7")
+end
+
+def generateGraphWithNVertices(n)
+  graph = Graph.new
+  (1..n).each do |i|
+    (1..n).each do |j|
+      next if i == j
+      graph.addEdge(i, j, rand(0..100))
+    end
+  end
+  graph
+end
+
+def testToVerifyPerformance(n)
+  graph = generateGraphWithNVertices(n)
+  time = Benchmark.measure { graph.tsp }
+  puts "for n: #{n} time: #{time.real}"
+end
+
+testToVerifyPerformance(11)
+testToVerifyPerformance(12)
+testToVerifyPerformance(13)
