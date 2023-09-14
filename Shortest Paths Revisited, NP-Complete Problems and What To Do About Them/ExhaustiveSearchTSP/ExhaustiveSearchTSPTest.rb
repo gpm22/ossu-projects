@@ -41,11 +41,15 @@ def generateGraphWithNVertices(n)
 end
 
 def testToVerifyPerformance(n)
+  puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  puts "creating graph with #{n} vertices"
   graph = generateGraphWithNVertices(n)
-  time = Benchmark.measure { graph.tsp }
-  puts "for n: #{n} time: #{time.real}"
+  #timeNaive = Benchmark.measure { graph.tspNaive }
+  puts "running tsp"
+  timeOptimized = Benchmark.measure { graph.tsp }
+
+  #puts "for n: #{n} - time naive: #{timeNaive.real} - time optimized: #{timeOptimized.real}"
+  puts "for n: #{n} - time optimized: #{timeOptimized.real}"
 end
 
-testToVerifyPerformance(11)
-testToVerifyPerformance(12)
-testToVerifyPerformance(13)
+5.times { testToVerifyPerformance(17) }
