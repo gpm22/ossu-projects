@@ -151,3 +151,127 @@ Design a linear-time algorithm that, given a connected acyclic graph with nonneg
 Implement in your favorite programming language the exhaustive search algorithm for the TSP (as seen in Quiz 19.2). Give your implementation a spin on instances with edge costs chosen independently and uniformly at random from the set $\{1, 2, \dots, 100\}$. How large an input size (that is, how many vertices) can your program reliably process in under a minute? What about in under an hour?
 
 **ANSWER**
+
+The algorithms used here are based on **Naive Exhaustive-Search for TSP** and **Naive Branch-and-Bound for TSP** available on [CS267. Assignment 4: Traveling Salesman Problem](https://people.eecs.berkeley.edu/~demmel/cs267/assignment4.html).
+
+#### Graph Class
+
+```ruby
+class Graph
+  def initialize
+    @edges = {}
+    @vertices = {}
+  end
+
+  def tsp
+    tspBase { |s, currentResult| tspSearch(s, currentResult) }
+  end
+
+  def tspNaive
+    tspBase { |s, currentResult| tspSearch(s, currentResult, true) }
+  end
+
+  def addEdge(firstVertex, secondVertex, value)
+    @vertices[firstVertex.to_s] = nil
+    @vertices[secondVertex.to_s] = nil
+    @edges["#{firstVertex}:#{secondVertex}"] = value
+    @edges["#{secondVertex}:#{firstVertex}"] = value
+  end
+
+  private
+
+  def tspBase
+    n = @vertices.size
+    w = (1..(n - 1)).inject { |sum, i| sum + getEdgeValue(i, i + 1) } + getEdgeValue(n, 1)
+    currentResult = [n, (1..n).to_a, w]
+    s = [1, [1], 0]
+    yield(s, currentResult)
+  end
+
+  def getEdgeValue(firstVertex, secondVertex)
+    @edges["#{firstVertex}:#{secondVertex}"]
+  end
+
+  def tspSearch(s, currentResult, naive = false)
+    k, arr, w = s
+    n = currentResult[0]
+    wB = currentResult[2]
+    if k == n
+      new_w = w + getEdgeValue(arr[k - 1], arr[0])
+      currentResult = [k, arr, new_w] if new_w < wB
+    else
+      notInArr = (1..n).to_a - arr
+      notInArr.each do |j|
+        new_w = w + getEdgeValue(arr[k - 1], j)
+        if new_w < wB || naive
+          new_S = [k + 1, arr + [j], new_w]
+          currentResult = tspSearch(new_S, currentResult, naive)
+        end
+      end
+    end
+    currentResult
+  end
+end
+
+```
+
+#### Performance tests
+
+```ruby
+STDOUT.sync = true
+require_relative "./ExhaustiveSearchTSP"
+require "benchmark"
+
+def generateGraphWithNVertices(n)
+  graph = Graph.new
+  (1..n).each do |i|
+    (1..n).each do |j|
+      next if i == j
+      graph.addEdge(i, j, rand(0..100))
+    end
+  end
+  graph
+end
+
+def testToVerifyPerformance(n)
+  graph = generateGraphWithNVertices(n)
+  time = Benchmark.measure { graph.tsp }
+  puts "for n: #{n} time: #{time.real}"
+end
+
+testToVerifyPerformance(11)
+testToVerifyPerformance(12)
+testToVerifyPerformance(13)
+```
+
+
+
+### Input size analysis
+
+#### Without the improvement
+
+Under a minute it can reliably process 10, as 11 vertices sometimes took above 1 min.
+
+Under an hour, it can reliably process 12 vertices, which took 471 s. 13 vertices took 6996 s, which are almost two hours!
+
+#### With the improvement
+
+Under a minute it can reliably process 15, as 16 vertices sometimes took above 1 min.
+
+Under an hour, it can reliably process 17 vertices, which took in average 485 s, as 18 vertices frequently took more than an hour.
+
+#### Time Comparison Between pure naïve and optimized for $3 \geq n \leq 11$
+
+| $n$  | time naïve            | time optimized        |
+| ---- | --------------------- | --------------------- |
+| 3    | $5.16 \times 10^{-5}$ | $1.4 \times 10^{-5}$  |
+| 4    | $5.49 \times 10^{-5}$ | $2.64 \times 10^{-5}$ |
+| 5    | $1.68 \times 10^{-4}$ | $1.47 \times 10^{-4}$ |
+| 6    | $6.87 \times 10^{-4}$ | $4.36 \times 10^{-4}$ |
+| 7    | $7.82 \times 10^{-3}$ | $1.28 \times 10^{-3}$ |
+| 8    | 0.05                  | 0.01                  |
+| 9    | 0.43                  | 0.06                  |
+| 10   | 3.66                  | 0.16                  |
+| 11   | 91.55                 | 2.94                  |
+
+The optimization indeed makes the code away faster than the complete naïve version.
