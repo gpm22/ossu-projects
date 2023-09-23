@@ -119,11 +119,13 @@ class Math {
         var int result, j, helper, powerOf2;
         let result = 0;
         let j = 7; //16/2-1, 16 is the number of bits
+
         while(j > -1){
-            let powerOf2 = Math.pow(2, j);
+            let powerOf2 = twoToThe[j];
             let helper = result+powerOf2;
             let helper = helper * helper;
-            if ((helper < x | helper = x) & (helper > 0)){
+
+            if (~(helper > x) & (helper > 0)){
                 let result = result + powerOf2;
             }
             let j = j - 1;
