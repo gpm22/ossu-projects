@@ -71,22 +71,16 @@ class Math {
      */
     function int divide(int x, int y) {
         var int result;
-        var boolean isXNeg, isYNeg;
+        var boolean xSignal, ySignal;
 
-        let isXNeg = x < 0;
-        let isYNeg = y < 0;
-
-        if (isXNeg){
-            let x = -x;
-        }
-
-        if (isYNeg) {
-            let y = -y;
-        }
+        let xSignal = x > 0;
+        let ySignal = y > 0;
+        let x = abs(x);
+        let y = abs(y);
 
         let result = divideHelper(x, y)[0];
 
-        if (isXNeg = isYNeg){
+        if (xSignal = ySignal){
             return result;
         } else {
             return -result;
