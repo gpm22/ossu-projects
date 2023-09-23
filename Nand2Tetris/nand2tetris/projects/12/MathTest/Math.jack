@@ -116,7 +116,40 @@ class Math {
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
-        return 0;
+        var int result, j, helper, powerOf2;
+        let result = 0;
+        let j = 7; //16/2-1, 16 is the number of bits
+        while(j > -1){
+            let powerOf2 = Math.pow(2, j);
+            let helper = result+powerOf2;
+            let helper = helper * helper;
+            if ((helper < x | helper = x) & (helper > 0)){
+                let result = result + powerOf2;
+            }
+            let j = j - 1;
+        }
+        return result;
+    }
+
+    function in pow(int x, int n){
+        if (n=0){
+            return 1;
+        }
+
+        if (Math.isEven(n)) {
+            return Math.pow((x*x), (n/2));
+        } 
+
+        // n is odd
+        return x*Math.pow((x*x), ((n-1))/2);
+    }
+
+    function boolean isEven(int x){
+        return ~Math.bit(x, 0);
+    }
+
+    function boolean isOdd(int x){
+        return Math.bit(x, 0);
     }
 
     /** Returns the greater number. */
