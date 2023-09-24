@@ -106,19 +106,26 @@ class String {
 
     /** Sets this string to hold a representation of the given value. */
     method void setInt(int val) {
-        var int currentValue, newLenght, i;
         var Array inversed;
         var boolean isNegative;
-        let inversed = Array.new(6);
         let isNegative = val < 0;
-        do chars.dispose();
-        let newLenght = 0;
 
         if(isNegative){
             let val = -val;
         }
 
-        let currentValue = val;
+        let inversed = getInversedIntArray(val);
+
+        do fillUpChars(inversed[6], inversed, isNegative);
+        return;
+    }
+
+    method Array getInversedIntArray(int currentValue){
+        var Array inversed;
+        var int newLenght;
+        let inversed = Array.new(7);
+
+        let newLenght = 0;
         while(currentValue > 10){
             let inversed[newLenght] = getLessSignificantDigitChar(currentValue);
             let currentValue = currentValue/10;
@@ -126,9 +133,16 @@ class String {
         }
 
         let inversed[newLenght] = getLessSignificantDigitChar(currentValue);
+        let inversed[6] = newLenght;
+        return inversed;
+    }
 
+    method void fillUpChars(int newLenght, Array inversed, boolean isNegative){
+        var int newLenght, i;
         let maxLength = newLenght;
 
+        do chars.dispose();
+        
         if(isNegative){
             let maxLength = maxLength + 1;
         }
@@ -147,7 +161,6 @@ class String {
             let chars[i] = inversed[newLenght-i];
             let i = i + 1;
         }
-        
         return;
     }
 
