@@ -82,16 +82,16 @@ class String {
         var int val, d, i;
         var boolean isNegative;
         let val = 0;
+        let isNegative = (charAt(0) = 45);
 
-        if (charAt(0) = 45){
+        if(isNegative){
             let i = 1;
-            let isNegative = true;
         } else {
             let i = 0;
-            let isNegative = false;
         }
+
         while(i < length) {
-            let d = charAt(i) - 48;
+            let d = fromCharToInt(charAt(i));
             if (d>9){
                 do Sys.error(101);
             }
@@ -102,6 +102,10 @@ class String {
             return -val;
         }
         return val;
+    }
+
+    method int fromCharToInt(char charValue){
+        return charValue - 48;
     }
 
     /** Sets this string to hold a representation of the given value. */
