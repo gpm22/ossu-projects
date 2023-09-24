@@ -107,7 +107,6 @@ class String {
     /** Sets this string to hold a representation of the given value. */
     method void setInt(int val) {
         var int currentValue, newLenght, i;
-        var char currentDigitCharValue;
         var Array inversed;
         var boolean isNegative;
         let inversed = Array.new(6);
@@ -121,14 +120,12 @@ class String {
 
         let currentValue = val;
         while(currentValue > 10){
-            let currentDigitCharValue = (rest(currentValue, 10)) + 48;
-            let inversed[newLenght] = currentDigitCharValue;
+            let inversed[newLenght] = getLessSignificantDigitChar(currentValue);
             let currentValue = currentValue/10;
             let newLenght = newLenght + 1;
         }
 
-        let currentDigitCharValue = (rest(currentValue, 10)) + 48;
-        let inversed[newLenght] = currentDigitCharValue;
+        let inversed[newLenght] = getLessSignificantDigitChar(currentValue);
 
         let maxLength = newLenght;
 
@@ -154,8 +151,8 @@ class String {
         return;
     }
 
-    method int rest(int x, int y){
-       return x-((x/y)*y); 
+    method int getLessSignificantDigitChar(int x){
+       return x-((x/10)*10) + 48; 
     }
 
     /** Returns the new line character. */
