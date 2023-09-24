@@ -10,6 +10,7 @@ class Keyboard {
 
     /** Initializes the keyboard. */
     function void init() {
+        return;
     } 
 
     /**
@@ -43,15 +44,18 @@ class Keyboard {
      */
     function char readChar() {
         var char c;
+        do Output.printChar(32); //print space character
         // waits until a key is pressed
         while(Keyboard.keyPressed() = 0){
             //do nothing
         }
         let c = Keyboard.keyPressed();
         // waits until key is released
-        while(~(keyPressed() = 0)){
+        while(~(Keyboard.keyPressed() = 0)){
             //do nothing
         }
+
+        do Output.backSpace();
         do Output.printChar(c);
         return c; 
     }
@@ -71,9 +75,10 @@ class Keyboard {
             if (c = String.newLine()){
                 do Output.println();
                 return str;
-            } else if (c = Keyboard.backSpace()){
+            }
+            
+            if (c = String.backSpace()){
                 do str.eraseLastChar();
-                do Output.backSpace();
             } else {
                 do str.appendChar(c);
             }
