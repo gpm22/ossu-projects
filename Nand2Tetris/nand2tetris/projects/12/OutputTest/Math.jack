@@ -1,0 +1,174 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Math.jack
+
+/**
+ * A library of commonly used mathematical functions.
+ * Note: Jack compilers implement multiplication and division using OS method calls.
+ */
+class Math {
+
+    static Array twoToThe;
+
+    /** Initializes the library. */
+    function void init() {
+        do Math.initTwoToThe();
+        return;
+    }
+
+    function void initTwoToThe(){
+        var int i, currentValue;
+        let i = 0;
+        let currentValue = 1;
+        let twoToThe = Array.new(16);
+
+        while (i<16){
+            let twoToThe[i] = currentValue; 
+            let currentValue = currentValue + currentValue;
+            let i = i + 1;
+        }   
+        return;
+    }
+
+    /** Returns the absolute value of x. */
+    function int abs(int x) {
+        if (x < 0){
+            let x = -x;
+        }
+        return x;
+    }
+
+    /** Returns the product of x and y. 
+     *  When a Jack compiler detects the multiplication operator '*' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x*y and multiply(x,y) return the same value.
+     */
+    function int multiply(int x, int y) {
+        var int sum, shiftedx, i;
+        let i = 0;
+        let sum = 0;
+        let shiftedx = x;
+
+        while (i<16){
+           if (Math.bit(y, i)){
+                let sum = sum + shiftedx;
+           }
+           let shiftedx = shiftedx + shiftedx;
+           let i = i + 1;
+        }        
+        return sum;
+    }
+
+    function boolean bit(int x, int i){
+        return ~((x & twoToThe[i]) =0);
+    }
+
+    /** Returns the integer part of x/y.
+     *  When a Jack compiler detects the multiplication operator '/' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x/y and divide(x,y) return the same value.
+     */
+    function int divide(int x, int y) {
+        var int result;
+        var Array resultArr;
+        var boolean xSignal, ySignal;
+
+        let xSignal = x > 0;
+        let ySignal = y > 0;
+        let x = Math.abs(x);
+        let y = Math.abs(y);
+
+        let resultArr = Math.divideHelper(x, y);
+        let result = resultArr[0];
+
+        if (xSignal = ySignal){
+            return result;
+        } else {
+            return -result;
+        }
+    }
+
+    function int divideHelper(int x, int y){
+        var Array result, previousResult;
+        var int q, r;
+        let result = Array.new(2);
+        if (y > x){
+            let result[0] = 0;
+            let result[1] = x;
+            return result;
+        }
+
+        let previousResult = Math.divideHelper(x, (y+y));
+        let q = previousResult[0];
+        let r = previousResult[1];
+
+        if (r < y){
+            let result[0] = q + q;
+            let result[1] = r;
+            return result;
+        }
+
+        let result[0] = q + q + 1;
+        let result[1] = r - y;
+        return result;
+    }
+
+    /** Returns the integer part of the square root of x. */
+    function int sqrt(int x) {
+        var int result, j, helper, powerOf2;
+        let result = 0;
+        let j = 7; //16/2-1, 16 is the number of bits
+
+        while(j > -1){
+            let powerOf2 = twoToThe[j];
+            let helper = result+powerOf2;
+            let helper = helper * helper;
+
+            if (~(helper > x) & (helper > 0)){
+                let result = result + powerOf2;
+            }
+            let j = j - 1;
+        }
+        return result;
+    }
+
+    function in pow(int x, int n){
+        if (n=0){
+            return 1;
+        }
+
+        if (Math.isEven(n)) {
+            return Math.pow((x*x), (n/2));
+        } 
+
+        // n is odd
+        return x*Math.pow((x*x), ((n-1))/2);
+    }
+
+    function boolean isEven(int x){
+        return ~Math.bit(x, 0);
+    }
+
+    function boolean isOdd(int x){
+        return Math.bit(x, 0);
+    }
+
+    /** Returns the greater number. */
+    function int max(int a, int b) {
+        if (a > b){
+            return a;
+        } else {
+            return b;
+        }
+    }
+
+    /** Returns the smaller number. */
+    function int min(int a, int b) {
+        if (a < b){
+            return a;
+        } else {
+            return b;
+        }
+    }
+}

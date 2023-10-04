@@ -36,6 +36,10 @@ class Main {
         do Output.printInt(-12345);
         do Output.backSpace();
         do Output.printInt(6789);
+
+        do Output.println();
+        do Output.printString("Awesome Job! Andarilho Amigo!");
+        do Output.println();
         
         return;
     }
