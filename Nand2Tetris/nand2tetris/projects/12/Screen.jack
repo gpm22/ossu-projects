@@ -77,17 +77,13 @@ class Screen {
 
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
-        var int ramAddress, newValue, helpingMask;
-        if(currentColor){
-            let helpingMask = blackMask[(x/16)];
-        } else {
-            let helpingMask = whiteMask[(x/16)];
-        }
+        var int ramAddress, currentValue, newValue;
         let ramAddress = 16384 + (32*y) + (x/16);
+        let currentValue = Memory.peek(ramAddress);
         if(currentColor){
-            let newValue = (Memory.peek(ramAddress)) | helpingMask;
+            let newValue = currentValue | blackMask[(x/16)];
         } else {
-            let newValue = (Memory.peek(ramAddress)) & helpingMask;
+            let newValue = currentValue & whiteMask[(x/16)];
         }
         Memory.poke(ramAddress, newValue);
         return;
