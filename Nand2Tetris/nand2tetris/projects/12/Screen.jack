@@ -65,7 +65,13 @@ class Screen {
 
     /** Erases the entire screen. */
     function void clearScreen() {
-        // use & 0
+        var int ramAddress;
+        let ramAddress = 16384;
+        while (ramAddress < 24576){
+            Memory.poke(ramAddress, 0);
+            let ramAddress = ramAddress + 1;
+        }
+        return;
     }
 
     /** Sets the current color, to be used for all subsequent drawXXX commands.
