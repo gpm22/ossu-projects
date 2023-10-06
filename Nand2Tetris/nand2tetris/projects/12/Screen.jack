@@ -13,11 +13,14 @@ class Screen {
 
     static boolean currentColor;
     static Array blackMask, whiteMap;
+    static int MAX_COLUMN, MAX_ROW;
 
     /** Initializes the Screen. */
     function void init() {
         do Screen.initBlackMask();
         do Screen.initWhiteMask();
+        let MAX_COLUMN = 511;
+        let MAX_ROW = 255;
         return;
     }
 
@@ -84,6 +87,15 @@ class Screen {
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
         var int ramAddress, currentValue, newValue;
+
+        if ( (x < 0 ) | (x > MAX_COLUMN)){
+            Sys.error(17);
+        }
+
+        if ( (y < 0) | (y > MAX_ROW)){
+            Sys.error(18);
+        }
+
         let ramAddress = 16384 + (32*y) + (x/16);
         let currentValue = Memory.peek(ramAddress);
         if(currentColor){
