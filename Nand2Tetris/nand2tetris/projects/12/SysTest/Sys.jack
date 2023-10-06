@@ -8,18 +8,18 @@
  */
 class Sys {
 
-    static int TIME_CONSTANT;
+    static int TIME_CONSTANT_MAX, TIME_CONSTANT_LOW, TIME_CONSTANT_DIVIDING;
 
     /** Performs all the initializations required by the OS. */
     function void init() {
-        let TIME_CONSTANT = 10000;
-        do Array.init();
+        let TIME_CONSTANT_MAX = 32767;
+        let TIME_CONSTANT_LOW = -32767;
+        let TIME_CONSTANT_DIVIDING = 610;
         do Keyboard.init();
         do Math.init();
         do Memory.init();
         do Output.init();
         do Screen.init();
-        do String.init();
         do Main.main();
         return;
     }
@@ -34,12 +34,21 @@ class Sys {
 
     /** Waits approximately duration milliseconds and returns.  */
     function void wait(int duration) {
-        var int time, i;
+        var int time, i, j, newDurantion;
 
-        let i = 0;
-        let time = duration*TIME_CONSTANT;
+        if (duration < 0){
+            return;
+        }
+
+        let newDurantion = (duration/TIME_CONSTANT_DIVIDING)+1;
+        let i = TIME_CONSTANT_LOW;
+        let time = TIME_CONSTANT_MAX-1;
         
-        while(i < time){
+        while(j < newDurantion){
+            if (i > time){
+                let j = j + 1;
+                let i = 0;
+            }
             let i = i + 1;
         }
         return;
