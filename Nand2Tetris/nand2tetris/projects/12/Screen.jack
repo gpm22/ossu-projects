@@ -97,6 +97,41 @@ class Screen {
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
+        var int x, y, dx, dy, diff, up, right;
+
+        if (x1 < x2){
+            let x = x1;
+            let dx = x2-x1;
+        } else {
+            let x = x2;
+            let dx = x1-x2;
+        }
+
+       if (y1 < y2){
+            let y = y1;
+            let dy = y2-y1;
+        } else {
+            let y = y2;
+            let dy = y1-y2;
+        }
+
+        let up = 0;
+        let right = 0;
+        let diff = 0;
+
+        while (~(up>dy) & ~(right>dx)){
+            do Screen.drawPixel(x+right, y+up);
+
+            if (diff < 0){
+                let right = right + 1;
+                let diff = diff + dy;
+            } else {
+                let up = up + 1;
+                let diff = diff - dx;
+            }
+        }
+    
+        return;
     }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
