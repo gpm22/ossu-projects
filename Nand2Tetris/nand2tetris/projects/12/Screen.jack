@@ -11,21 +11,86 @@
  */
 class Screen {
 
+    static boolean currentColor;
+    static Array blackMask, whiteMap;
+
     /** Initializes the Screen. */
     function void init() {
+        do Screen.initBlackMask();
+        do Screen.initWhiteMask();
+        return;
     }
+
+    function void initBlackMask(){
+        let blackMask[0] = 1;        //0000000000000001
+        let blackMask[1] = 2;        //0000000000000010
+        let blackMask[2] = 4;        //0000000000000100
+        let blackMask[3] = 8;        //0000000000001000
+        let blackMask[4] = 16;       //0000000000010000
+        let blackMask[5] = 32;       //0000000000100000
+        let blackMask[6] = 64;       //0000000001000000
+        let blackMask[7] = 128;      //0000000010000000
+        let blackMask[8] = 256;      //0000000100000000
+        let blackMask[9] = 512;      //0000001000000000
+        let blackMask[10] = 1024;    //0000010000000000
+        let blackMask[11] = 2048;    //0000100000000000
+        let blackMask[12] = 4096;    //0001000000000000
+        let blackMask[13] = 8192;    //0010000000000000
+        let blackMask[14] = 16384;   //0100000000000000
+        let blackMask[15] = 16384*2; //1000000000000000
+        return;
+    }
+
+    function void initWhiteMask(){
+        let whiteMask[0] = -2;             //1111111111111110
+        let whiteMask[1] = -3;             //1111111111111101
+        let whiteMask[2] = -5;             //1111111111111011
+        let whiteMask[3] = -9;             //1111111111110111
+        let whiteMask[4] = -17;            //1111111111101111
+        let whiteMask[5] = -33;            //1111111111011111
+        let whiteMask[6] = -65;            //1111111110111111
+        let whiteMask[7] = -129;           //1111111101111111
+        let whiteMask[8] = -257;           //1111111011111111
+        let whiteMask[9] = -513;           //1111110111111111
+        let whiteMask[10] = -1025;         //1111101111111111
+        let whiteMask[11] = -2049;         //1111011111111111
+        let whiteMask[12] = -4097;         //1110111111111111
+        let whiteMask[13] = -8193;         //1101111111111111
+        let whiteMask[14] = -16385;        //1011111111111111
+        let whiteMask[15] = ((2*16384)+1); //0111111111111111
+        return;
+    }
+
+    
 
     /** Erases the entire screen. */
     function void clearScreen() {
+        // use & 0
     }
 
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
     function void setColor(boolean b) {
+        let currentColor = b;
+        return;
     }
 
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
+        var int ramAddress, newValue, helpingMask;
+        if(currentColor){
+            let helpingMask = blackMask[(x/16)];
+        } else {
+            let helpingMask = whiteMask[(x/16)];
+        }
+        let ramAddress = 16384 + (32*y) + (x/16);
+        if(currentColor){
+            let newValue = (Memory.peek(ramAddress)) | helpingMask;
+        } else {
+            let newValue = (Memory.peek(ramAddress)) & helpingMask;
+        }
+        Memory.poke(ramAddress, newValue);
+        return;
     }
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
