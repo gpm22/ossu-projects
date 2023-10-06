@@ -80,6 +80,16 @@ class Screen {
         return;
     }
 
+    function void fillUpScreen() {
+        var int ramAddress;
+        let ramAddress = 16384;
+        while (ramAddress < 24576){
+            do Memory.poke(ramAddress, -1);
+            let ramAddress = ramAddress + 1;
+        }
+        return;
+    }
+
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
     function void setColor(boolean b) {
@@ -102,6 +112,7 @@ class Screen {
         let xD16 = x/16;
         let ramAddress = 16384 + (32*y) + xD16;
         let mapIndex = x-(xD16*16);
+
         let currentValue = Memory.peek(ramAddress);
         if(currentColor){
             let newValue = currentValue | blackMask[mapIndex];
@@ -112,32 +123,55 @@ class Screen {
         return;
     }
 
-    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
-    function void drawLine(int x1, int y1, int x2, int y2) {
-        var int x, y, dx, dy, diff, up, right;
+    function void drawHorizontalLine(int x, int dx, int y, int bigger){
+        var int right, currentX;
+        let right = 0;
+            while ((right<dx) | (right=dx)){
+                if(bigger){
+                    let currentX = x - right;
+                } else {
+                    let currentX = x + right;
+                }
+                do Screen.drawPixel(currentX, y);
+                let right = right + 1;
+            }
+            return;
+    }
 
-        if (x1 < x2){
-            let x = x1;
-            let dx = x2-x1;
-        } else {
-            let x = x2;
-            let dx = x1-x2;
+    function void drawVerticalLine(int y, int dy, int x, int bigger){
+        var int up, currentY;
+        let up = 0;
+        while ((up<dy) | (up=dy)){
+            if(bigger){
+                let currentY = y - up;
+            } else {
+                let currentY = y + up;
+            }
+            do Screen.drawPixel(x, currentY);
+            let up = up + 1;
         }
+        return;
+    }
 
-       if (y1 < y2){
-            let y = y1;
-            let dy = y2-y1;
-        } else {
-            let y = y2;
-            let dy = y1-y2;
-        }
-
+    function void drawDiagonalLine(int x, int y, int dx, int dy, int biggerX, int biggerY){
+        var int diff, up, right, currentX, currentY;
         let up = 0;
         let right = 0;
         let diff = 0;
+        while (((up<dy) | (up=dy)) & ((right<dx) | (right=dx))){
+            if(biggerX){
+                let currentX = x - right;
+            } else {
+                let currentX = x + right;
+            }
 
-        while (~(up>dy) & ~(right>dx)){
-            do Screen.drawPixel(x+right, y+up);
+            if(biggerY){
+                let currentY = y - up;
+            } else {
+                let currentY = y + up;
+            }
+
+            do Screen.drawPixel(currentX, currentY);
 
             if (diff < 0){
                 let right = right + 1;
@@ -147,7 +181,41 @@ class Screen {
                 let diff = diff - dx;
             }
         }
-    
+        return;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawLine(int x1, int y1, int x2, int y2) {
+        var int dx, dy;
+        var boolean biggerX, biggerY;
+
+        let dy = y2-y1;
+        if (dy < 0){
+            let dy = -dy;
+            let biggerY = true;
+        } else{
+            let biggerY = false;
+        }
+
+        let dx = x2-x1;
+        if (dx < 0){
+            let dx = -dx;
+            let biggerX = true;
+        } else {
+            let biggerX = false;
+        }
+
+        if (dy = 0){
+            do Screen.drawHorizontalLine(x1, dx, y1, biggerX);
+            return;
+        }
+
+        if (dx = 0){
+            do Screen.drawVerticalLine(y1, dy, x1, biggerY);
+            return;
+        }
+
+        do Screen.drawDiagonalLine(x1, y1, dx, dy, biggerX, biggerY);
         return;
     }
 
