@@ -1,0 +1,60 @@
+class MemoryList{
+
+    field MemoryListElement head, tail;
+
+    constructor MemoryList new(MemoryListElement _head){
+        let head = _head;
+        let tail = _head.getNext();
+         
+        return this;
+    }
+
+    method MemoryListElement getAppropriateBlock(int size){
+        var MemoryListElement currentBlock;
+        let currentBlock = head;
+
+        while(true){
+            if(currentBlock.size < size){
+                let currentBlock = currentBlock.getNext();
+            } else {
+                if (currentBlock.size = size){ 
+                    return currentBlock;
+                }
+
+                return newSmallerBlock(currentBlock, size);
+            }
+        }
+        return null;
+    }
+
+    method MemoryListElement newSmallerBlock(MemoryListElement currentBlock, int size){
+        var int newSize, newBaseAdrees;
+        var MemoryListElement newNext, newBlock;
+
+        let newSize = currentBlock.getSize() - size;
+        let newBaseAddress = currentBlock.getBaseAddress() + size;
+        let newNext = currentBlock.getNext(); 
+
+        let newBlock = MemoryListElement.new(newBaseAddress, newSize, newNext);
+
+        if (currentBlock.equals(tail)){
+            let tail = newBlock;
+        }
+
+        do currentBlock.letSize(size);
+        do currentBlock.letNext(newBlock);
+
+        return currentBlock;
+    }
+
+    method void addElement(MemoryListElement newElement){
+        do tail.setNext(newElement);
+        let tail = newElement;
+        return;
+    }
+
+    method void defragment(){
+       return; 
+    }
+
+}

@@ -1,0 +1,47 @@
+class MemoryListElement {
+    field int size;
+    filed Array baseAddress;
+    field MemoryListElement next;
+
+    constructor MemoryListElement new(Array _baseAddress, int _size, MemoryListElement _next){
+        let baseAddress = _baseAddress;
+        let size = _size;
+        let next = _next;
+        return this;
+    }
+
+    method void setSize(int newSize){
+        let size = newSize;
+        return;
+    }
+
+    method void setNext(MemoryListElement newNext){
+        let next = newNext;
+        return;
+    }
+
+    method int getSize(){
+        return size;
+    }
+
+    method Array getBaseAddress(){
+        return baseAddress;
+    }
+
+    method MemoryListElement getNext(){
+        return next;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method boolean equals(MemoryListElement other){
+        if (other = null){
+            return false;
+        }
+
+        return (other.getBaseAddress() = baseAddress);
+    }
+}
