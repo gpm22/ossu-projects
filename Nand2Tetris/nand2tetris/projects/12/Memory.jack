@@ -37,22 +37,25 @@ class Memory {
      *  a reference to its base address. */
     function int alloc(int size) {
         var LinkedListElement block;
-        let block = freeMemory.getAppropriateBlock(size + 2);
+        var int realSize;
+        let realSize = size + 2;
+        let block = freeMemory.getAppropriateBlock(realSize);
 
         if (block = null){
             do freeMemory.defragment();
-            let block = freeMemory.getAppropriateBlock(size + 2);
+            let block = freeMemory.getAppropriateBlock(realSize);
         }
 
-        // set block[-1] to size
-        return block.getBaseAddress();
+        let memory[block.getBaseAddress()] = block.getBaseAddress();
+        let memory[block.getBaseAddress()+1] = realSize;
+        return (block.getBaseAddress()+2);
     }
 
     /** De-allocates the given object (cast as an array) by making
      *  it available for future allocations. */
     function void deAlloc(Array o) {
         var MemoryListElement newElement;
-        let newElement = MemoryListElement.new(o[0], o[-1], null)
+        let newElement = MemoryListElement.new(o[-2], o[-1], null);
         do freeMemory.addElement(newElement);
         return;
     }    
