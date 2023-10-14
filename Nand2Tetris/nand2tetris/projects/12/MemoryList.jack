@@ -10,24 +10,35 @@ class MemoryList{
     }
 
     method MemoryListElement getAppropriateBlock(int size){
-        var MemoryListElement currentBlock;
+        var MemoryListElement currentBlock, parent;
         let currentBlock = head;
-
-        while(true){
+        let parent = null;
+        
+        while((~(currentBlock.getNext() = null)) | (parent = null)){
             if(currentBlock.size < size){
+                let parent = currentBlock;
                 let currentBlock = currentBlock.getNext();
             } else {
                 if (currentBlock.size = size){ 
+                    if (~(parent = null)){
+                        do parent.setNext(currentBlock.getNext());
+                    } else {
+                        let head = currentBlock.getNext();
+                    }
+
+                    if (currentBlock.getNext() = null) {
+                        let tail = parent;
+                    }
                     return currentBlock;
                 }
 
-                return newSmallerBlock(currentBlock, size);
+                return newSmallerBlock(currentBlock, size, parent);
             }
         }
         return null;
     }
 
-    method MemoryListElement newSmallerBlock(MemoryListElement currentBlock, int size){
+    method MemoryListElement newSmallerBlock(MemoryListElement currentBlock, int size, MemoryListElement parent){
         var int newSize, newBaseAdrees;
         var MemoryListElement newNext, newBlock;
 
@@ -37,12 +48,17 @@ class MemoryList{
 
         let newBlock = MemoryListElement.new(newBaseAddress, newSize, newNext);
 
-        if (currentBlock.equals(tail)){
-            let tail = newBlock;
+        if (~(parent = null)){
+            do parent.setNext(newBlock);
+        } else {
+            let head = newBlock;
         }
 
-        do currentBlock.letSize(size);
-        do currentBlock.letNext(newBlock);
+        if (currentBlock.getNext() = null) {
+            let tail = newBlock;
+        }
+        
+        do currentBlock.setSize(size);
 
         return currentBlock;
     }
