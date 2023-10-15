@@ -78,9 +78,21 @@ class Main {
             let i = i + 1;
         }
 
-        do Output.printString("Test 6 - part II");
         do testD.dispose();
+        
+        do Output.printString("Test 6 - part II");
+        do Output.println();
+        do Output.printString("before defrag");
+        do Output.println();
+        do Output.printInt(Memory.countNumberOfBlocks());
+
         do Memory.alloc(10000);
+
+        do Output.println();
+        do Output.printString("after defrag");
+        do Output.println();
+        do Output.printInt(Memory.countNumberOfBlocks());
+        do Output.println();
         do Output.printString("Tests are done!");
         return;
     }

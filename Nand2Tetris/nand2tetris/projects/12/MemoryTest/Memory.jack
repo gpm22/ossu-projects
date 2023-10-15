@@ -69,17 +69,7 @@ class Memory {
             	    // no free space
 	           	    do Sys.error(6);
                 }
-                    do Output.println();
-                    do Output.printString("before defrag");
-                    do Output.println();
-                    do Output.printInt(Memory.countNumberOfBlocks());
-
-                    do Memory.defragment();
-
-                    do Output.println();
-                    do Output.printString("after defrag");
-                    do Output.println();
-                    do Output.printInt(Memory.countNumberOfBlocks());
+                do Memory.defragment();
                 return Memory.allocHelper(size, true);
             }
         }
