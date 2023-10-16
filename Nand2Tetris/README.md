@@ -22,4 +22,3 @@ Both projects from part I and II are here.
 10. [Project 10](https://github.com/gpm22/ossu-projects/tree/main/Nand2Tetris/nand2tetris/projects/10)
 11. [Project 11](https://github.com/gpm22/ossu-projects/tree/main/Nand2Tetris/nand2tetris/projects/11)
 12. [Project 12](https://github.com/gpm22/ossu-projects/tree/main/Nand2Tetris/nand2tetris/projects/12)
-13. [Project 13](https://github.com/gpm22/ossu-projects/tree/main/Nand2Tetris/nand2tetris/projects/13)
