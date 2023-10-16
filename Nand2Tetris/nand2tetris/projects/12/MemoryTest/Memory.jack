@@ -97,13 +97,14 @@ class Memory {
     }
 
     function void defragment(){
-        do Memory.defragmentHelper(true);
+        do Memory.defragmentHelper(1);
         return;
     }
 
-    function void defragmentHelper(boolean firstTime){
+    function void defragmentHelper(int previousBlockCount){
         var Array currentBlock, parentBlock, comparingBlock, comparingParent;
         var boolean blockNotUpdated;
+        var int currentBlockCount;
 
         let currentBlock = freeMemoryHead;
         let parentBlock = null;
@@ -140,9 +141,14 @@ class Memory {
             }
         }
 
-        if(firstTime){
-            do Memory.defragmentHelper(false);
+
+        let currentBlockCount = Memory.countNumberOfBlocks();
+
+        if(previousBlockCount = currentBlockCount){
+            return;
         }
+
+        do Memory.defragmentHelper(currentBlockCount);
         return;
     }
     
