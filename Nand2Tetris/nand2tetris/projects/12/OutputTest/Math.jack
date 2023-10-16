@@ -81,7 +81,7 @@ class Math {
 
         let resultArr = Math.divideHelper(x, y);
         let result = resultArr[0];
-
+        do resultArr.dispose();
         if (xSignal = ySignal){
             return result;
         } else {
@@ -103,6 +103,7 @@ class Math {
         let q = previousResult[0];
         let r = previousResult[1];
 
+        do previousResult.dispose();
         if (r < y){
             let result[0] = q + q;
             let result[1] = r;
