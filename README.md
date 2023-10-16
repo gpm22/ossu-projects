@@ -36,5 +36,5 @@ My OSSU progress can be seen in [OSSU progress](https://trello.com/b/DIZv8gOk/os
 
 ### Core Systems
 
-* [Build a Modern Computer from First Principles: From Nand to Tetris](https://github.com/gpm22/ossu-projects/tree/main/Nand2Tetris) (In progress)
+* [Build a Modern Computer from First Principles: From Nand to Tetris](https://github.com/gpm22/ossu-projects/tree/main/Nand2Tetris) (**Done**)
 
