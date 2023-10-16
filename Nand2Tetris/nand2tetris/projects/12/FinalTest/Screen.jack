@@ -1,0 +1,258 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Screen.jack
+
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 256 rows (indexed 0..255, top to bottom)
+ * of 512 pixels each (indexed 0..511, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+class Screen {
+
+    static boolean currentColor;
+    static Array blackMask, whiteMask;
+    static int MAX_COLUMN, MAX_ROW;
+
+    /** Initializes the Screen. */
+    function void init() {
+        let currentColor = true;
+        do Screen.initBlackMask();
+        do Screen.initWhiteMask();
+        let MAX_COLUMN = 511;
+        let MAX_ROW = 255;
+        return;
+    }
+
+    function void initBlackMask(){
+        let blackMask = Array.new(16);
+        let blackMask[0] = 1;        //0000000000000001
+        let blackMask[1] = 2;        //0000000000000010
+        let blackMask[2] = 4;        //0000000000000100
+        let blackMask[3] = 8;        //0000000000001000
+        let blackMask[4] = 16;       //0000000000010000
+        let blackMask[5] = 32;       //0000000000100000
+        let blackMask[6] = 64;       //0000000001000000
+        let blackMask[7] = 128;      //0000000010000000
+        let blackMask[8] = 256;      //0000000100000000
+        let blackMask[9] = 512;      //0000001000000000
+        let blackMask[10] = 1024;    //0000010000000000
+        let blackMask[11] = 2048;    //0000100000000000
+        let blackMask[12] = 4096;    //0001000000000000
+        let blackMask[13] = 8192;    //0010000000000000
+        let blackMask[14] = 16384;   //0100000000000000
+        let blackMask[15] = 16384*2; //1000000000000000
+        return;
+    }
+
+    function void initWhiteMask(){
+        let whiteMask = Array.new(16);
+        let whiteMask[0] = -2;      //1111111111111110
+        let whiteMask[1] = -3;      //1111111111111101
+        let whiteMask[2] = -5;      //1111111111111011
+        let whiteMask[3] = -9;      //1111111111110111
+        let whiteMask[4] = -17;     //1111111111101111
+        let whiteMask[5] = -33;     //1111111111011111
+        let whiteMask[6] = -65;     //1111111110111111
+        let whiteMask[7] = -129;    //1111111101111111
+        let whiteMask[8] = -257;    //1111111011111111
+        let whiteMask[9] = -513;    //1111110111111111
+        let whiteMask[10] = -1025;  //1111101111111111
+        let whiteMask[11] = -2049;  //1111011111111111
+        let whiteMask[12] = -4097;  //1110111111111111
+        let whiteMask[13] = -8193;  //1101111111111111
+        let whiteMask[14] = -16385; //1011111111111111
+        let whiteMask[15] = 32767;  //0111111111111111
+        return;
+    }
+
+    
+
+    /** Erases the entire screen. */
+    function void clearScreen() {
+        var int ramAddress;
+        let ramAddress = 16384;
+        while (ramAddress < 24576){
+            do Memory.poke(ramAddress, 0);
+            let ramAddress = ramAddress + 1;
+        }
+        return;
+    }
+
+    function void fillUpScreen() {
+        var int ramAddress;
+        let ramAddress = 16384;
+        while (ramAddress < 24576){
+            do Memory.poke(ramAddress, -1);
+            let ramAddress = ramAddress + 1;
+        }
+        return;
+    }
+
+    /** Sets the current color, to be used for all subsequent drawXXX commands.
+     *  Black is represented by true, white by false. */
+    function void setColor(boolean b) {
+        let currentColor = b;
+        return;
+    }
+
+    /** Draws the (x,y) pixel, using the current color. */
+    function void drawPixel(int x, int y) {
+        var int ramAddress, currentValue, newValue, mapIndex, xD16;
+
+        if ( (x < 0 ) | (x > MAX_COLUMN)){
+            do Sys.error(17);
+        }
+
+        if ( (y < 0) | (y > MAX_ROW)){
+            do Sys.error(18);
+        }
+
+        let xD16 = x/16;
+        let ramAddress = 16384 + (32*y) + xD16;
+        let mapIndex = x-(xD16*16);
+
+        let currentValue = Memory.peek(ramAddress);
+        if(currentColor){
+            let newValue = currentValue | blackMask[mapIndex];
+        } else {
+            let newValue = currentValue & whiteMask[mapIndex];
+        }
+        do Memory.poke(ramAddress, newValue);
+        return;
+    }
+
+    function void drawHorizontalLine(int x, int dx, int y, int bigger){
+        var int right, currentX;
+        let right = 0;
+            while ((right<dx) | (right=dx)){
+                if(bigger){
+                    let currentX = x - right;
+                } else {
+                    let currentX = x + right;
+                }
+                do Screen.drawPixel(currentX, y);
+                let right = right + 1;
+            }
+            return;
+    }
+
+    function void drawVerticalLine(int y, int dy, int x, int bigger){
+        var int up, currentY;
+        let up = 0;
+        while ((up<dy) | (up=dy)){
+            if(bigger){
+                let currentY = y - up;
+            } else {
+                let currentY = y + up;
+            }
+            do Screen.drawPixel(x, currentY);
+            let up = up + 1;
+        }
+        return;
+    }
+
+    function void drawDiagonalLine(int x, int y, int dx, int dy, int biggerX, int biggerY){
+        var int diff, up, right, currentX, currentY;
+        let up = 0;
+        let right = 0;
+        let diff = 0;
+        while (((up<dy) | (up=dy)) & ((right<dx) | (right=dx))){
+            if(biggerX){
+                let currentX = x - right;
+            } else {
+                let currentX = x + right;
+            }
+
+            if(biggerY){
+                let currentY = y - up;
+            } else {
+                let currentY = y + up;
+            }
+
+            do Screen.drawPixel(currentX, currentY);
+
+            if (diff < 0){
+                let right = right + 1;
+                let diff = diff + dy;
+            } else {
+                let up = up + 1;
+                let diff = diff - dx;
+            }
+        }
+        return;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawLine(int x1, int y1, int x2, int y2) {
+        var int dx, dy;
+        var boolean biggerX, biggerY;
+
+        let dy = y2-y1;
+        if (dy < 0){
+            let dy = -dy;
+            let biggerY = true;
+        } else{
+            let biggerY = false;
+        }
+
+        let dx = x2-x1;
+        if (dx < 0){
+            let dx = -dx;
+            let biggerX = true;
+        } else {
+            let biggerX = false;
+        }
+
+        if (dy = 0){
+            do Screen.drawHorizontalLine(x1, dx, y1, biggerX);
+            return;
+        }
+
+        if (dx = 0){
+            do Screen.drawVerticalLine(y1, dy, x1, biggerY);
+            return;
+        }
+
+        do Screen.drawDiagonalLine(x1, y1, dx, dy, biggerX, biggerY);
+        return;
+    }
+
+    /** Draws a filled rectangle whose top left corner is (x1, y1)
+     * and bottom right corner is (x2,y2), using the current color. */
+    function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int y;
+        let y = y1;
+
+        while ( ~(y > y2) ){
+            do Screen.drawLine(x1, y, x2, y);
+            let y = y + 1;
+        }
+        return;
+    }
+
+    /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+    function void drawCircle(int x, int y, int r) {
+        var int dy, x1, x2, radialDistance, currentY, squaredR;
+
+        if ((r < 0) | (r > 181)){
+            do Sys.error(19);
+        }
+
+        let dy = -r;
+        let squaredR = r*r;
+
+        while (~(dy > r)){
+            let radialDistance = Math.sqrt(squaredR-(dy*dy));
+            let x1 = x - radialDistance;
+            let x2 = x + radialDistance;
+            let currentY = y + dy;
+            do Screen.drawLine(x1, currentY, x2, currentY);
+            let dy = dy + 1;
+        }
+
+        return;
+    }
+
+}
