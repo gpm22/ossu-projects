@@ -1,0 +1,189 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/String.jack
+
+/**
+ * Represents character strings. In addition for constructing and disposing
+ * strings, the class features methods for getting and setting individual
+ * characters of the string, for erasing the string's last character,
+ * for appending a character to the string's end, and more typical
+ * string-oriented operations.
+ */
+class String {
+
+    field Array chars; 
+    field int maxLength, length;
+
+    /** constructs a new empty string with a maximum length of _maxLength
+     *  and initial length of 0. */
+    constructor String new(int _maxLength) {
+        let maxLength = _maxLength;
+        if(maxLength < 1){
+            let maxLength = 1;
+        }
+        let length = 0;
+        let chars = Array.new(maxLength);
+        return this;
+    }
+
+    /** Disposes this string. */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Returns the current length of this string. */
+    method int length() {
+        return length;
+    }
+
+    /** Returns the character at the j-th location of this string. */
+    method char charAt(int j) {
+        return chars[j];
+    }
+
+    /** Sets the character at the j-th location of this string to c. */
+    method void setCharAt(int j, char c) {
+        let chars[j] = c;
+        return;
+    }
+
+    /** Appends c to this string's end and returns this string. */
+    method String appendChar(char c) {
+        var Array newChars;
+        var int i;
+        if (~(length < maxLength)){
+            let maxLength = maxLength + 1;
+            let newChars = Array.new(maxLength);
+            let i = 0;
+
+            while(i < (maxLength-1)){
+                let newChars[i] = chars[i];
+            }
+            do chars.dispose();
+            let chars = newChars;
+        }
+        let chars[length] = c;
+        let length = length + 1;
+        return this;
+    }
+
+    /** Erases the last character from this string. */
+    method void eraseLastChar() {
+        let chars[length-1] = 0;
+        let length = length - 1;
+        return;
+    }
+
+    /** Returns the integer value of this string, 
+     *  until a non-digit character is detected. */
+    method int intValue() {
+        var int val, d, i;
+        var boolean isNegative;
+        let val = 0;
+        let isNegative = (charAt(0) = 45);
+
+        if(isNegative){
+            let i = 1;
+        } else {
+            let i = 0;
+        }
+
+        while(i < length) {
+            let d = fromCharToInt(charAt(i));
+            if (d>9){
+                do Sys.error(101);
+            }
+            let val = val*10 + d;
+            let i = i +1;
+        }
+        if (isNegative){
+            return -val;
+        }
+        return val;
+    }
+
+    method int fromCharToInt(char charValue){
+        return charValue - 48;
+    }
+
+    /** Sets this string to hold a representation of the given value. */
+    method void setInt(int val) {
+        var Array inversed;
+        var boolean isNegative;
+        let isNegative = val < 0;
+
+        if(isNegative){
+            let val = -val;
+        }
+
+        let inversed = getInversedIntArray(val);
+
+        do fillUpChars(inversed[6], inversed, isNegative);
+        return;
+    }
+
+    method Array getInversedIntArray(int currentValue){
+        var Array inversed;
+        var int newLenght;
+        let inversed = Array.new(7);
+
+        let newLenght = 0;
+        while(currentValue > 10){
+            let inversed[newLenght] = getLessSignificantDigitChar(currentValue);
+            let currentValue = currentValue/10;
+            let newLenght = newLenght + 1;
+        }
+
+        let inversed[newLenght] = getLessSignificantDigitChar(currentValue);
+        let inversed[6] = newLenght;
+        return inversed;
+    }
+
+    method void fillUpChars(int newLenght, Array inversed, boolean isNegative){
+        var int newLenght, i;
+        let maxLength = newLenght;
+
+        do chars.dispose();
+        
+        if(isNegative){
+            let maxLength = maxLength + 1;
+        }
+        let length = newLenght+1;
+
+        let chars = Array.new(maxLength);
+        if(isNegative){
+            let chars[0]=45;
+            let i = 1;
+            let newLenght = newLenght + 1;
+            let length = length + 1;
+        } else {
+            let i = 0;
+        }
+        while(i < length){
+            let chars[i] = inversed[newLenght-i];
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method int getLessSignificantDigitChar(int x){
+       return x-((x/10)*10) + 48; 
+    }
+
+    /** Returns the new line character. */
+    function char newLine() {
+        return 128;
+    }
+
+    /** Returns the backspace character. */
+    function char backSpace() {
+        return 129;
+    }
+
+    /** Returns the double quote (") character. */
+    function char doubleQuote() {
+        return 34;
+    }
+}
