@@ -223,7 +223,6 @@ This problem improves Theorem 20.4 and extends the example in Quiz 20.3 to ident
   & = & \left(4- \frac 1m \right) \cdot \frac {M^*}3
   $$
   
-
 * **(c)** Generalize the example in Quiz 20.3 to show that, for every $m \geq 1$, there is an example with $m$ machines in which the schedule produced by the `LPT` algorithm has makespan $\frac 43- \frac 1{3m}$ times the minimum possible.
 
   **ANSWER**
@@ -248,11 +247,47 @@ This problem improves Theorem 20.4 and extends the example in Quiz 20.3 to ident
 
   As the `LPT`sorts the input, after 2m interactions, all the machines with have the makespan $3m-1$, so the makespan from `LPT`will be $4m-1$.
 
-  Therefore i$ M =\left(4- \frac 1m \right) \cdot \frac {M^*}3$.
+  Therefore is $M =\left(4- \frac 1m \right) \cdot \frac {M^*}3$.
 
-  
 
 ### Problem 20.8
+
+Recall the bad example for the `GreedyCoverage` algorithm in Quiz 20.5.
+
+* **(a)** Prove Proposition 20.6.
+
+  **ANSWER**
+
+  Proposition 20.6 states that for every positive integer $k$, there is an instance of the maximum coverage problem in which:
+
+  1. There exist $k$ subsets that cover the entire ground set
+  2. With arbitrary tie-breaking, the `GreedyCoverage` algorithm might cover only a $1 - \left(1 - \frac 1k \right)^k$ fraction of the elements.
+
+  To prove it, for each positive integer $k$ we create an instance with $n=k^{2(k-1)}$ elements and $2k-1$ subsets, where $k$ subsets have $\frac nk$ elements that are disjoint between them, so the first item is proved. The other $k-1$ subsets are organized to have $m = k^{k-2} (k^k - k^{k-1}-[k-1]^k)$ elements disjoint between them and one of the subsets with $\frac nk$ elements.
+
+  Doing that the fraction will be
+  $$
+  \frac {m+n/k}n & = & \frac{km+n}{kn} \\
+  & = & \frac{k^{k-1} (k^k - k^{k-1}-[k-1]^k) + k^{2(k-1)}}{k^{2k-1}} \\
+  & = & \frac{k^{2k-1} \left(1 - \frac 1k -\left[1-\frac 1k \right]^k\right) + k^{2(k1)}}{k^{2k-1}} \\
+  & = & 1 - \frac 1k -\left[1-\frac 1k \right]^k + \frac 1k \\
+  & = & 1  -\left[1-\frac 1k \right]^k 
+  $$
+  QED.
+
+* **(b)** Extend your examples in **(a)** to show that, even with best-case tie-breaking, for every constant $\epsilon > 0$, the `GreedyCoverage` algorithm does not guarantee a $1 - \left(1 - \frac 1k \right)^k + \epsilon$ fraction of the maximum-possible coverage (where $k$ denotes the number of subsets chosen).
+
+  **ANSWER**
+
+  First we replace each element with a group of $N$ copies of it, where they keep belonging to the same subsets as before.
+
+  The value of $N$ is chosen based on $\epsilon$, so $N = f(\epsilon)$.
+
+  Then the new number of elements $n_2 = n \cdot N$.
+
+  To eliminate the ties we add one additional copy to some of the groups, so they become bigger.
+
+  
 
 ### Problem 20.9
 
