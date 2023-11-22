@@ -73,15 +73,184 @@ Let $k$ denote the **minimum number of subsets** required to cover all of $U$. W
 
 ### Problem 20.3
 
+This problem considers three greedy heuristics for the knapsack problem. The input consists of $n$ items with values $v_1, v_2,\dots,v_n$ and sizes $s_1, s_2, \dots,s_n$, and a knapsack capacity $C$.
+
+#### Greedy Heuristic Algorithm #1 for Knapsack
+
+```ruby
+I := {}, S := 0 # chosen items and their size
+sort and reindex the jobs so that v1 >= v2 >= ··· >= vn
+for i = 1 to n do
+	if S + si <= C then # choose item if feasible
+		I := I union {i}, S := S + si
+    end
+end
+return I
+```
+
+#### Greedy Heuristic Algorithm #2 for Knapsack
+
+```ruby
+I := {}, S := 0 # chosen items and their size
+sort and reindex the jobs so that 'v1/s1' >= 'v2/s2' >= ··· >= 'vn/sn'
+for i = 1 to n do
+	if S + si <= C then # choose item if feasible
+		I := I union {i}, S := S + si
+    end
+end
+return I
+```
+
+#### Greedy Heuristic Algorithm #3 for Knapsack
+
+```ruby
+I1 := output of greedy heuristic algorithm #1
+I2 := output of greedy heuristic algorithm #2
+return whichever of I1, I2 has higher total value
+```
+
+Which of the following statements are true? (Choose all that apply.)
+
+* **a)** The total value of the solution returned by the first greedy algorithm is always at least 50% of the maximum possible.
+* **b)** The total value of the solution returned by the second greedy algorithm is always at least 50% of the maximum possible.
+* **c)** The total value of the solution returned by the third greedy algorithm is always at least 50% of the maximum possible.
+* **d)** If every item size is at most 10% of the knapsack capacity (that is, $\max_{i=1}^n si \leq C/10$), the total value of the solution returned by the first greedy algorithm is at least 90% of the maximum possible.
+* **e)** If every item size is at most 10% of the knapsack capacity, the total value of the solution returned by the second greedy algorithm is at least 90% of the maximum possible.
+* **f)** If every item size is at most 10% of the knapsack capacity, the total value of the solution returned by the third greedy algorithm is at least 90% of the maximum possible.
+
+**ANSWER**
+
+* **c)** The total value of the solution returned by the third greedy algorithm is always at least 50% of the maximum possible.
+* **e)** If every item size is at most 10% of the knapsack capacity, the total value of the solution returned by the second greedy algorithm is at least 90% of the maximum possible.
+* **f)** If every item size is at most 10% of the knapsack capacity, the total value of the solution returned by the third greedy algorithm is at least 90% of the maximum possible.
+
 ### Problem 20.4
 
+In the **vertex cover** problem, the input is an undirected graph $G = (V,E)$, and the goal is to identify a minimum-size subset $S \subseteq V$ of vertices that includes at least one endpoint of every edge in $E$. One simple heuristic algorithm repeatedly chooses a not-yet-covered edge and adds **both** its endpoints to its solution-so-far:
+
+#### Heuristic Algorithm for Vertex Cover
+
+```ruby
+S := {} # chosen vertices
+while there is an edge (v, w) in E with v, w not in S do
+	S := S union {v, w} # add both endpoints of edge
+end
+return S
+```
+
+Let $k$ denote the minimum number of vertices required to capture at least one endpoint of each edge. Which of the following approximate correctness guarantees holds for this algorithm? (Choose the strongest true statement.)
+
+* **a)** Its solution consists of at most $2$k vertices.
+* **b)** Its solution consists of $O(k \log |E|)$ vertices.
+* **c)** Its solution consists of $O(k \cdot \sqrt{|E|})$ vertices.
+* **d)** Its solution consists of $O(k \cdot |E|)$ vertices.
+
+**ANSWER**
+
+As the solution add both endpoints of an edge at the same time, not two edges of the solution share an endpoint.
+
+So the answer is
+
+* **a)** Its solution consists of at most $2$k vertices.
+
 ### Problem 20.5
+
+Which of the following statements about the generic local search algorithm is not true?
+
+* **a)** Its output generally depends on the choice of the initial feasible solution.
+* **b)** Its output generally depends on the method for choosing one improving local move from many.
+* **c)** It will always, eventually, halt at an optimal solution.
+* **d)** In some cases, it performs an exponential (in the input size) number of iterations before halting.
+
+**ANSWER**
+
+It will at a local optimal solution, not a global one.
+
+**c)** It will always, eventually, halt at an optimal solution.
 
 ## Challenge Problems
 
 ### Problem 20.6
 
+Propose an implementation of the Graham algorithm that uses a heap data structure and runs in $O(n \log m)$ time, where $n$ is the number of jobs and $m$ is the number of machines.
+
+**ANSWER**
+
+```ruby
+# Initialization
+heap = {}
+for i = 1 to m do
+    J_i := {} ; # jobs assigned to machine i
+    heap.set(L_i) := 0 # current load of machine i
+end
+# Main loop
+for j = 1 to n do
+    k := heap.getMin # least-loaded machine2
+    J_k := J_k union { j } # assign current job
+    heap.update(L_k) := heap.get(L_k) + l_j # update loads
+end
+
+return J_1, J_2,...,J_m
+```
+
+As the `update` and `getMin` run in $log(m)$, it runs in $O(n \log m)$.
+
 ### Problem 20.7
+
+This problem improves Theorem 20.4 and extends the example in Quiz 20.3 to identify the best-possible approximate correctness guarantee for the `LPT` algorithm
+
+* **(a)** Let job $j$ be the last job assigned to the most heavily loaded machine in the schedule returned by the `LPT` algorithm. Prove that if $\ell_j > M^*/3$, where $M^*$ denotes the minimum-possible makespan, then this schedule is optimal (that is, has makespan $M^*$).
+
+  **ANSWER**
+
+  The last job is the smaller one, so that would mean that all jobs are bigger than $M^*/3$.
+
+  Let's assume that it is false, that it receives the last and it is not optimal. So
+  $$
+  M^* < M_1 + \frac {M^*}3 \\
+  \frac {2M^*}3 < M_1
+  $$
+   $M_1$ must be the smaller one at time $j-1$, so all the other machines have at least one of the longest jobs, which are bigger or equal to $M^*/3$, so that is not possible for $M_1$ be greater than $M^*$ and therefore it is false.
+
+  
+
+* **(b)** Prove that the `LPT` algorithm always outputs a schedule with makespan at most $\frac 43- \frac 1{3m}$ times the minimum possible, where $m$ denotes the number of machines.
+
+  **ANSWER**
+  $$
+  M & \leq & \left(1- \frac 1m \right) \cdot lj + \frac 1m \sum_{h=1}^n \ell_h \\
+  & \leq & \left(1- \frac 1m \right) \cdot \frac {M^*}3 + M^* \\
+  & = & \left(4- \frac 1m \right) \cdot \frac {M^*}3
+  $$
+  
+
+* **(c)** Generalize the example in Quiz 20.3 to show that, for every $m \geq 1$, there is an example with $m$ machines in which the schedule produced by the `LPT` algorithm has makespan $\frac 43- \frac 1{3m}$ times the minimum possible.
+
+  **ANSWER**
+
+  For $m$ machines the example will have $2m+1$ jobs:
+
+  * 3 jobs of length $m$
+  * 2 jobs of length $m+1$
+  * $\vdots$
+  * 2 jobs of length $2m-1$.
+
+  
+
+  The perfect makespan will be
+  $$
+  (m + 2 \sum_{i=1}^{m-1} {m+i})/m & = & 1+ 2m + \frac 2 m \sum_{i=1}^{m-1} {i} \\
+  & = & 1 + 2m + \frac {2(m-1)(m-1+1)}{2m} \\
+  & = & 1 + 2m + (m-1)\\
+  & = & 3m
+  $$
+  
+
+  As the `LPT`sorts the input, after 2m interactions, all the machines with have the makespan $3m-1$, so the makespan from `LPT`will be $4m-1$.
+
+  Therefore i$ M =\left(4- \frac 1m \right) \cdot \frac {M^*}3$.
+
+  
 
 ### Problem 20.8
 
