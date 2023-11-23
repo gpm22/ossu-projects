@@ -271,7 +271,7 @@ Recall the bad example for the `GreedyCoverage` algorithm in Quiz 20.5.
   & = & \frac{k^{k-1} (k^k - k^{k-1}-[k-1]^k) + k^{2(k-1)}}{k^{2k-1}} \\
   & = & \frac{k^{2k-1} \left(1 - \frac 1k -\left[1-\frac 1k \right]^k\right) + k^{2(k1)}}{k^{2k-1}} \\
   & = & 1 - \frac 1k -\left[1-\frac 1k \right]^k + \frac 1k \\
-  & = & 1  -\left[1-\frac 1k \right]^k 
+  & = & 1  -\left[1-\frac 1k \right]^k
   $$
   QED.
 
@@ -279,19 +279,150 @@ Recall the bad example for the `GreedyCoverage` algorithm in Quiz 20.5.
 
   **ANSWER**
 
-  First we replace each element with a group of $N$ copies of it, where they keep belonging to the same subsets as before.
+  First we create an instance using the idea of **a)**.
+
+  Then we replace each element with a group of $N$ copies of it, where they keep belonging to the same subsets as before.
 
   The value of $N$ is chosen based on $\epsilon$, so $N = f(\epsilon)$.
 
-  Then the new number of elements $n_2 = n \cdot N$.
+  To eliminate the ties we add one additional copy to some of the groups, so they become bigger and will be selected.
 
-  To eliminate the ties we add one additional copy to some of the groups, so they become bigger.
-
+  Then the new number of elements $n_2 = n \cdot N+t$, where $t$ is the number of ties.
   
+  Let's make the bigger groups the ones that will result in the best case tie-breaking.
+  
+  Selecting $k$ groups will result in $m_2 = m \cdot N + k$, so the fraction is
+  $$
+  \frac {m_2}{n_2} = \frac {mN + k}{nN + t} = \frac mn + \epsilon
+  $$
+  Therefore
+  $$
+  \epsilon =  \frac {mN + k}{nN + t} - \frac mn
+  $$
+  Then we just have to select a $N$ that make it worse.
+  
+  After running the algorithm we eliminate the copies, so it rest only the original ones.
 
 ### Problem 20.9
 
+Show that every instance of the maximum coverage problem can be encoded as an instance of the influence maximization problem so that:
+
+1. The two instances have the same optimal objective function value $F^*$;
+2. Any solution to the latter instance with influence $F$ can be easily converted to a solution to the former instance with coverage at least $F$.
+
+**ANSWER**
+
+First let states both problems:
+
+**Problem: Maximum Coverage**
+
+  * **Input:**
+
+    * A collection $A_1, A_2, \dots, A_m$ of subsets of a **ground set** $U$, and a positive integer $k$.
+
+  * **Output**:
+
+    * A choice $K \subseteq \{1, 2, \dots,m\}$ of $k$ indices to maximize the coverage $f_{cov}(K)$ of the corresponding subsets, where:
+      $$
+      f_{cov}(K) = \left| \bigcup_{i \in K} A_i \right|
+      $$
+
+**Problem: Influence Maximization**
+
+* **Input**:
+    * A directed graph $G = (V,E)$, a probability $p$, and a positive integer $k$.
+* **Output**:
+    * A choice $S \subseteq V$ of $k$ vertices with the maximum-possible influence $f_{\text{inf}} (S)$ in the cascade model with activation probability $p$.
+
+We can see that vertices play the role of subsets and influence plays the role of coverage.
+
+So to transform an instance of the maximum coverage into an instance of influence Maximization, we first transform the elements of ground set $U$ in the vertices of the graph $G$ and we create the subsets by connecting the subset vertices with edges to the ground set vertices, so now we have the graph $G(V,E)$. As $f_{\text{inf}} (S)$ we use the same $f_{cov}(K)$ with $p=1$.
+
 ### Problem 20.10
+
+The goal in the maximum coverage problem is to choose $k$ subsets to maximize the coverage $f_{cov}$. The goal in the influence maximization problem is to choose $k$ vertices to maximize the influence $f_{inf}$. The general version of this type of problem is: Given a set $O$ of objects and a real-valued set function $f$ (specifying a number $f(S)$ for each subset $S \subseteq O$), choose $k$ objects of $O$ to maximize $f$. The `GreedyCoverage` and `GreedyInfluence` algorithms extend naturally to the general problem:
+
+#### Greedy Algorithm for Set Function Maximization
+
+```ruby
+S := {} # chosen objects
+for j = 1 to k do # choose objects one by one
+    # greedily increase objective function
+    o* := argmax([f(K union {o}) - f(K)]) #for o not in S
+    S := S union {o*}
+end
+return S
+```
+
+For which objective functions $f$ does this greedy algorithm enjoy an approximate correctness guarantee akin to Theorems 20.7 and 20.9?
+Here are the key properties:
+
+1. **Nonnegative**: $f(S) \geq 0$ for all $S \subseteq O$.
+2. **Monotone**: $f(S) \geq f(T)$ whenever $S \supseteq T$.
+3. **Submodular**: $f(S \cup \{o\}) - f(S) \leq f(T \cup \{o\}) - f(T)$ whenever $S \supseteq T$ and $O \notin S$
+
+* **a)** Prove that the coverage and influence functions $f_{cov}$ and $f_{inf}$ possess all three properties.
+
+  **ANSWER**
+
+  $f_{conv}(K)$ is defined as $|\cup_{i \in K} A_i|$, it is impossible to it to be negative, so is nonnegative. It is clearly monotone, as a bigger set will have more elements than a smaller one. It is submodular as:
+  $$
+  | S \cup o | - |S| = 1 \leq 1 = |T \cup o| - |T|
+  $$
+  $f_{inf}$ is defined as $E{|X(S)|}$, where $X(S)$ is the (random) set of vertices that are eventually activated when the vertices $S$ are chosen as seeds. It is impossible to it to be negative, so is nonnegative. It is clearly monotone, as a bigger set will have more elements than a smaller one, as they all have the same probability. It is submodular as:
+  $$
+  E| S \cup o | - E|S| = p \leq p = E|T \cup o| - E|T|
+  $$
+
+* **b)** Prove that whenever $f$ is nonnegative, monotone, and submodular, the general greedy heuristic algorithm is guaranteed to return a set $S$ of objects that satisfies
+  $$
+  f(S) \geq \left(1-\left(1- \frac 1k \right)^k \right) \cdot f(S^*)
+  $$
+  where $S^*$ maximizes $f$ over all size-k subsets of $O$.
+
+  **ANSWER**
+
+  This greedy algorithm always makes progress.
+
+  * For each $j \in \{1, 2, \dots,k\}$, let $C_j$ denote the coverage achieved by the first $j$ objects chosen by the algorithm.
+
+  * For each such $j$, the $j$th subset chosen covers at least $1 - (C^* - C_ {j-1})$ new elements, where $C^*$ denotes the maximum-possible coverage by $k$ subsets:
+    $$
+    C_j - C_{j-1} \geq \frac 1k \left(C^* - C_{j-1} \right)
+    $$
+
+​	To prove it let $K_{j-1}$ denote the indices of the first $j - 1$ objects chosen by the algorithm any competing set $\hat K$ of $k$ indices, so we have:
+$$
+\sum_{i \in \hat K} \left[f(K_{j-1} \cup \{i\}) - f(K_{j-1}) \right] \geq f(\hat K) - f(K_{j-1})
+$$
+​	This is true because because submodularity implies that each term in the sum is at most that in the right side. If the $k$ numbers summed on the left side were equal, each would be $\frac 1k \sum_{i \in \hat K} \left[f(K_{j-1} \cup \{i\}) - f(K_{j-1}) \right]$, so
+$$
+\max_{i \in \hat K} \left[f(K_{j-1} \cup \{i\}) - f(K_{j-1}) \right] & \geq & \frac 1k \sum_{i \in \hat K} \left[f(K_{j-1} \cup \{i\}) - f(K_{j-1}) \right] \\
+& \geq & \frac 1k \left(f(\hat K) - f(K_{j-1})\right)
+$$
+This true because $f$ is nonnegative and monotone. Which proves the lemma. Applying it for $j=k$:
+$$
+f(K_{k}) & \geq & \frac 1k \left(f(K^*) - f(K_{j-1})\right) + f(K_{k-1}) \\
+& = & \frac {f(K^*)} k + \left(1 - \frac 1k\right)f(K_{k-1})
+$$
+Applying it for $j=k-1$
+$$
+f(K_{k-1}) \geq \frac {f(K^*)} k + \left(1 - \frac 1k\right)f(K_{k-2})
+$$
+Combining both
+$$
+f(K_{k}) & \geq & \frac {f(K^*)} k + \left(1 - \frac 1k\right) \left[\frac {f(K^*)} k + \left(1 - \frac 1k\right)f(K_{k-2}) \right] \\
+& = & \frac {f(K^*)} k \left(2 - \frac 1k\right)  + \left(1 - \frac 1k\right)^2 f(K_{k-2})
+$$
+We can keep substituting the the term $f(K_{k-i}) $, where we arrived the pattern
+$$
+f(K_{k}) \geq \frac {f(\hat K)} k \left( 1 + \left(1 - \frac 1k\right) +\left(1 - \frac 1k\right)^2 + \cdots + \left(1 - \frac 1k\right)^{k-1} \right)
+$$
+The right side is a geometric series, so we get
+$$
+f(K_{k}) \geq \frac {f(\hat K)} k \left(\frac {1-\left(1-\frac 1k\right)^k}{1-\left(1-\frac 1k\right)} \right) = f(\hat K)\left(1-\left(1-\frac 1k\right)^k \right)
+$$
+Which concludes the proof.
 
 ### Problem 20.11
 
