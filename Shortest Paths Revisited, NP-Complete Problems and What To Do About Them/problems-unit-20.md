@@ -426,6 +426,12 @@ Which concludes the proof.
 
 ### Problem 20.11
 
+Problem 20.3 investigated approximate correctness guarantees for greedy heuristic algorithms for the knapsack problem. This problem outlines a dynamic programming algorithm with a much stronger guarantee: For a user-specified error parameter $\epsilon > 0$ (like .1 or .01), the algorithm outputs a solution with total value at least $1  \epsilon$ times the maximum possible.
+
+* **a)** Section 19.4.2 mentioned that the knapsack problem can be solved in $O(nC)$ time using dynamic programming, where $n$ denotes the number of items and $C$ the knapsack capacity; see also Chapter 16 of Part 3. (All item values and sizes, as well as the knapsack capacity, are positive integers.) Give a different dynamic programming algorithm for the problem that runs in $O(n^2 \cdot v_{max})$ time, where $v_{max}$ denotes the largest value of any item.
+* **b)** To shrink the item values down to a manageable magnitude, divide each of them by $m := (\epsilon \cdot vmax)/n$ and round each result down to the nearest integer (where $\epsilon$ is the user-specified error parameter). Prove that the total value of every feasible solution goes down by at least a factor of $m$ and that the total value of an optimal solution goes down by at most a factor of $m/(1 - \epsilon)$. (You can assume that every item has size at most C and hence fits in the knapsack.)
+* **c)** Propose an $O(n^3/\epsilon)$-time algorithm that is guaranteed to return a feasible solution with total value at least $1 - \epsilon$ times the maximum possible (A heuristic algorithm with this type of guarantee is called a fully polynomialtime approximation scheme (FPTAS)).
+
 ### Problem 20.12
 
 ### Problem 20.13
