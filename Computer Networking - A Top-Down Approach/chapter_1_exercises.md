@@ -132,3 +132,119 @@ An IXP earn money by providing the infrastructure, so its income comes from char
 The Google's network is formed by data centers distributed across North America, Europe, Asia, South America, and Australia. Each data center have tens or hundreds of thousands of servers. Some of the smaller data centers are often located within IXPs. These data centers are all interconnected via Google’s private TCP/IP network, which spans the entire globe but is nevertheless separate from the public Internet. The Google private network only carries traffic to/from Google servers.
 
 Content providers create their own networks in order to reduce the expenses with ISPs and to have a greater control of how its services are ultimately delivered to end users.
+
+**R16. Consider sending a packet from a source host to a destination host over a fixed route. List the delay components in the end-to-end delay. Which of these delays are constant and which are variable?**
+
+Nodal processing delay, queuing delay, transmission delay, and propagation delay.
+
+The queuing delay is variable, while the others are constant for a fixed packet size.
+
+**R17. Visit the Transmission Versus Propagation Delay interactive animation at the companion Web site. Among the rates, propagation delay, and packet sizes available, find a combination for which the sender finishes transmitting before the first bit of the packet reaches the receiver. Find another combination for which the first bit of the packet reaches the receiver before the sender finishes transmitting.**
+
+Animation used: https://computerscience.unicam.it/marcantoni/reti/applet/TransmissionVsPropagationDelay/traProp.html
+
+first combination:
+
+* length: 1000 km
+* Rate: 512 kps
+* Packet size: 100 Bytes
+
+second combination:
+
+* length: 10 km
+* Rate: 512 kps
+* Packet size: 100 Bytes
+
+**R18. How long does it take a packet of length 1,000 bytes to propagate over a link of distance 2,500 km, propagation speed $2.5 \cdot 10^8$ m/s, and transmission rate 2 Mbps? More generally, how long does it take a packet of length $L$ to propagate over a link of distance $d$, propagation speed $s$, and transmission rate $R$ bps? Does this delay depend on packet length? Does this delay depend on transmission rate?**
+
+General solution is $\frac ds$.
+
+Therefore, for the given values, the result is 10 ms.
+
+This delay does not depend on the packet length $L$ and transmission rate $R$, because it is only about the propagation.
+
+**R19. Suppose Host A wants to send a large file to Host B. The path from Host A to Host B has three links, of rates $R_1 = 500$ kbps, $R_2 = 2$ Mbps, and $R_3 = 1$ Mbps.**
+
+* **a) Assuming no other traffic in the network, what is the throughput for the file transfer?**
+
+  500 kbps
+
+* **b) Suppose the file is 4 million bytes. Dividing the file size by the throughput, roughly how long will it take to transfer the file to Host B?**
+
+  64 s
+
+* **c) Repeat (a) and (b), but now with $R_2$ reduced to 100 kbps.**
+
+  The throughput is 100 kbps and the transfer time is 320 s.
+
+**R20. Suppose end system A wants to send a large file to end system B. At a very high level, describe how end system A creates packets from the file. When one of these packets arrives to a router, what information in the packet does the router use to determine the link onto which the packet is forwarded? Why is packet switching in the Internet analogous to driving from one city to another and asking directions along the way?**
+
+End system A creates packets from the file by dividing its bits in chunks and for each chunk it adds a header with info about the file and addresses.
+
+The router uses the destination address in the packet header to determine the next link.
+
+The packet switching in the Internet analogous to driving from one city to another and asking directions along the way, because the links are the roads and the routers is the places where you would ask for directions.
+
+**R21. Visit the Queuing and Loss interactive animation at the companion Web site. What is the maximum emission rate and the minimum transmission rate? With those rates, what is the traffic intensity? Run the interactive animation with these rates and determine how long it takes for packet loss to occur. Then repeat the experiment a second time and determine again how long it takes for packet loss to occur. Are the values different? Why or why not?**
+
+The maximum emission rate is 500 packets/second the minimum transmission rate is 350 packets/second.
+
+The traffic intensity is $500/350 \approx 1.43$
+
+In the first experiment it took 8.7 $\micro$s for packet loss to occur.
+
+In the second experiment it took 9.8 $\micro$s for packet loss to occur.
+
+The values are different, as the processing time is not constant.
+
+**R22. List five tasks that a layer can perform. Is it possible that one (or more) of these tasks could be performed by two (or more) layers?**
+
+1. error control
+2. flow control
+3. segmentation and reassembly
+4. multiplexing
+5. connection setup
+
+Yes, they can be performed by two or more layers, like error control that is usually done by multiple layers.
+
+**R23. What are the five layers in the Internet protocol stack? What are the principal responsibilities of each of these layers?**
+
+1. **Application** - To allow packet exchanging between end systems.
+2. **Transport** - To transport application-layer messages between application endpoints.
+3. **Network** - To movie network-layer packets (datagrams) from one host to another.
+4. **Link** - To route a datagram through a series of routers between the source and destination.
+5. **Physical** -  To move the individual bits within the frame from one node to the next.
+
+**R24. What is an application-layer message? A transport-layer segment? A network-layer datagram? A link-layer frame?**
+
+* A application-layer message is a **packet of information** at the application layer.
+* A transport-layer segment is a **packet of information** at the transport layer, which is a application-layer message encapsulated with a transport-layer header.
+* A network-layer datagram is a **packet of information** at the network layer, which is a transport-layer segment encapsulated with a network-layer header.
+* A link-layer frame is a **packet of information** at the link layer, which is a network-layer datagram encapsulated with a link-layer header.
+
+**R25. Which layers in the Internet protocol stack does a router process? Which layers does a link-layer switch process? Which layers does a host process?**
+
+A router process the physical, link, and network layers.
+
+A link-layer switch process the physical and link layers.
+
+A host process all five layers.
+
+**R26. What is self-replicating malware?**
+
+It is a malware that after infecting one host seeks, from that first host, to entry into other hosts over the Internet, and from the newly infected hosts, it seeks entry into yet more hosts.
+
+**R27. Describe how a botnet can be created and how it can be used for a DDoS attack.**
+
+A botnet can be created by using self-replication malwares to infect a lot of computers.
+
+To use this botnet to do a DDoS, first a computer ignites the attack by sending the command to the botnet, so each computer will stark sending multiple requests to the attacked host.
+
+**R28. Suppose Alice and Bob are sending packets to each other over a computer network. Suppose Trudy positions herself in the network so that she can capture all the packets sent by Alice and send whatever she wants to Bob; she can also capture all the packets sent by Bob and send whatever she wants to Alice. List some of the malicious things Trudy can do from this position.**
+
+Trudy can capture Alice and Bob sensitive information and send malwares to them, as they were legit messages from Alice or Bob.
+
+### Problems
+
+**P1. Design and describe an application-level protocol to be used between an automatic teller machine and a bank’s centralized computer. Your protocol should allow a user’s card and password to be verified, the account balance (which is maintained at the centralized computer) to be queried, and an account withdrawal to be made (that is, money disbursed to the user). Your protocol entities should be able to handle the all-too-common case in which there is not enough money in the account to cover the withdrawal. Specify your protocol by listing the messages exchanged and the action taken by the automatic teller machine or the bank’s centralized computer on transmission and receipt of messages. Sketch the operation of your protocol for the case of a simple withdrawal with no errors, using a diagram similar to that in Figure 1.2. Explicitly state the assumptions made by your protocol about the underlying end-to-end transport service**
+
