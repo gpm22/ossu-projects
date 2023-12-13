@@ -248,8 +248,6 @@ Trudy can capture Alice and Bob sensitive information and send malwares to them,
 
 **P1. Design and describe an application-level protocol to be used between an automatic teller machine and a bank’s centralized computer. Your protocol should allow a user’s card and password to be verified, the account balance (which is maintained at the centralized computer) to be queried, and an account withdrawal to be made (that is, money disbursed to the user). Your protocol entities should be able to handle the all-too-common case in which there is not enough money in the account to cover the withdrawal. Specify your protocol by listing the messages exchanged and the action taken by the automatic teller machine or the bank’s centralized computer on transmission and receipt of messages. Sketch the operation of your protocol for the case of a simple withdrawal with no errors, using a diagram similar to that in Figure 1.2. Explicitly state the assumptions made by your protocol about the underlying end-to-end transport service**
 
-
-
 This protocol will run over the HTTP protocol.
 
 Messages:
@@ -301,3 +299,47 @@ ATM                     CENTRAL
  |        STATUS:OK        |
 ```
 
+**P2. Equation 1.1 gives a formula for the end-to-end delay of sending one packet of length $L$ over $N$ links of transmission rate $R$. Generalize this formula for sending $P$ such packets back-to-back over the $N$ links.**
+
+The first packet has delay of $N \frac LR$.
+
+The second packet has delay of $(N+1) \frac LR$.
+
+The third packet has delay of $(N+2) \frac LR$.
+
+...
+
+The $P$th packet has delay of $(N+P-1) \frac LR$.
+
+Therefore the total delay is $(N+P-1) \frac LR$.
+
+**P3. Consider an application that transmits data at a steady rate (for example, the sender generates an $N$-bit unit of data every $k$ time units, where $k$ is small and fixed). Also, when such an application starts, it will continue running for a relatively long period of time. Answer the following questions, briefly justifying your answer: **
+
+* **a) Would a packet-switched network or a circuit-switched network be more appropriate for this application? Why?**
+
+  A circuit-switched network is more appropriated, as the application will be sending data frequently for a long period of time.
+
+* **b) Suppose that a packet-switched network is used and the only traffic in this network comes from such applications as described above. Furthermore, assume that the sum of the application data rates is less than the capacities of each and every link. Is some form of congestion control needed? Why?**
+
+  No, as it will never create a queue.
+
+**P4. Consider the circuit-switched network in Figure 1.13. Recall that there are four circuits on each link. Label the four switches A, B, C, and D, going in the clockwise direction.**
+
+* **a) What is the maximum number of simultaneous connections that can be in progress at any one time in this network?**
+
+  Assuming that not machine can be in connection with more than one machine, will be 8, as there is 16 possible enters.
+
+* **b) Suppose that all connections are between switches A and C. What is the maximum number of simultaneous connections that can be in progress?**
+
+  4, as there is 4 links
+
+* **c) Suppose we want to make four connections between switches A and C, and another four connections between switches B and D. Can we route these calls through the four links to accommodate all eight connections?**
+
+  Yes.
+
+  Each switch pair would use 2 links from each switch route.
+
+**P5. Review the car-caravan analogy in Section 1.4. Assume a propagation speed of 100 km/hour.**
+
+* **a) Suppose the caravan travels 175 km, beginning in front of one tollbooth, passing through a second tollbooth, and finishing just after a third tollbooth. What is the end-to-end delay?**
+* **b) Repeat a), now assuming that there are eight cars in the caravan instead of ten.**
