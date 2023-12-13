@@ -248,3 +248,56 @@ Trudy can capture Alice and Bob sensitive information and send malwares to them,
 
 **P1. Design and describe an application-level protocol to be used between an automatic teller machine and a bank’s centralized computer. Your protocol should allow a user’s card and password to be verified, the account balance (which is maintained at the centralized computer) to be queried, and an account withdrawal to be made (that is, money disbursed to the user). Your protocol entities should be able to handle the all-too-common case in which there is not enough money in the account to cover the withdrawal. Specify your protocol by listing the messages exchanged and the action taken by the automatic teller machine or the bank’s centralized computer on transmission and receipt of messages. Sketch the operation of your protocol for the case of a simple withdrawal with no errors, using a diagram similar to that in Figure 1.2. Explicitly state the assumptions made by your protocol about the underlying end-to-end transport service**
 
+
+
+This protocol will run over the HTTP protocol.
+
+Messages:
+
+1. verify user's card
+   1. ATM send a message of type VERIFY CARD with user's card data to the Central.
+   2. Central send back a message with status OK if the card exists and status NO if don't, or an error message.
+2. verify user's password
+   1. ATM send a message of type AUTHENTICATE with user's card number and user's password.
+   2. Central send back a message with an authentication token if the password matches and status NO if don't, or an error message.
+3. get account balance
+   1. ATM send a message of type GET BALANCE with user's card number and the authentication token.
+   2. Central send back a message containing the account balance or an error message.
+4. Withdraw
+   1. ATM send a message of type WITHDRAW with user's card number, the value to be withdrawn, and the authentication token.
+   2. Central send back a message with status OK if it's possible to do and status NO if don't, or an error message.
+
+Example:
+
+```
+ATM                     CENTRAL
+ |                         |
+ |   verify user's card    |
+ |     CARD_NUMBER: 101    |
+ | ----------------------> |
+ | <---------------------- |
+ |        STATUS:OK        |
+ |                         |
+ | verify user's password  |
+ |    CARD_NUMBER: 101,    | 
+ |     PASSWORD: PASS      |
+ | ----------------------> |
+ | <---------------------- |
+ |        TOKEN:123        |
+ |                         |
+ |   get account balance   |
+ |    CARD_NUMBER: 101,    | 
+ |        TOKEN:123        |
+ | ----------------------> |
+ | <---------------------- |
+ |         168.00          |
+ |                         |
+ |         Withdraw        |
+ |    CARD_NUMBER: 101,    | 
+ |      VALUE: 151.00,     | 
+ |        TOKEN:123        |
+ | ----------------------> |
+ | <---------------------- |
+ |        STATUS:OK        |
+```
+
