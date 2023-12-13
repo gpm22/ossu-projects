@@ -342,4 +342,14 @@ Therefore the total delay is $(N+P-1) \frac LR$.
 **P5. Review the car-caravan analogy in Section 1.4. Assume a propagation speed of 100 km/hour.**
 
 * **a) Suppose the caravan travels 175 km, beginning in front of one tollbooth, passing through a second tollbooth, and finishing just after a third tollbooth. What is the end-to-end delay?**
+
+  Assuming the transmission rate of being 12 seconds per car, the 10 cars need 120 s to be in the road again.
+
+  So it is $2 \cdot \frac {120}{60} + 175/100 \cdot 60) = 109 \text{ min}$ or 1 hour and 49 min.
 * **b) Repeat a), now assuming that there are eight cars in the caravan instead of ten.**
+
+  Assuming the transmission rate of being 12 seconds per car, the 8 cars need 96 s to be in the road again.
+
+  So it is $2 \cdot \frac {96}{60} + 175/100 \cdot 60) = 108.2 \text{ min}$ or 1 hour, 48 min and 12 s.
+
+**P6**
