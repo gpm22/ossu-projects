@@ -364,13 +364,11 @@ Therefore the total delay is $(N+P-1) \frac LR$.
   d_\text{trans} = \frac LR
   $$
   
-
 * **c) Ignoring processing and queuing delays, obtain an expression for the end-to-end delay.**
   $$
   d_\text{end-to-end} = \frac ms + \frac LR
   $$
   
-
 * **d) Suppose Host $A$ begins to transmit the packet at time $t = 0$. At time $t = d_\text{trans}$, where is the last bit of the packet?**
 
   It will be in the link.
@@ -424,7 +422,6 @@ Total = 17.0448 msec
   \binom {120}n 0.1^n \left(0.9 \right)^{120-k} = \frac {120!}{n!(120-n)!}0.1^n \left(0.9 \right)^{120-n}
   $$
   
-
 * **d) Find the probability that there are 51 or more users transmitting simultaneously.**
   $$
   \sum_{n=51}^{120} \frac {120!}{n!(120-n)!}0.1^n \left(0.9 \right)^{120-n} \approx 2.06 \cdot 10^{-20}
@@ -501,7 +498,6 @@ $$
   & = & \frac LR \frac {N-1} 2 \\
   $$
   
-
 * **b) Now suppose that $N$ such packets arrive to the link every $LN/R$ seconds. What is the average queuing delay of a packet?**
 
   As this frequency is above the delay of the $N$th packet, the average will be $\frac LR \frac {N-1} 2$.
@@ -514,7 +510,6 @@ $$
   & = & \frac {IL}{R(1 - I)} + \frac LR
   $$
   
-
 * **b) Plot the total delay as a function of $L/R$.**
 
   First we create the function in $L/R$:
@@ -551,4 +546,81 @@ d_\text{total} & = & \frac {L/R}{1 - a(L/R)} \\
 & = & \frac {1/\mu}{1-a/\mu} \\
 & = & \frac 1 {\mu - a}
 $$
-**P16.**
+**P16. Consider a router buffer preceding an outbound link. In this problem, you will use Little’s formula, a famous formula from queuing theory. Let $N$ denote the average number of packets in the buffer plus the packet being transmitted. Let $a$ denote the rate of packets arriving at the link. Let $d$ denote the average total delay (i.e., the queuing delay plus the transmission delay) experienced by a packet. Little’s formula is $N = a \cdot d.$ Suppose that on average, the buffer contains 100 packets, and the average packet queuing delay is 20 msec. The link’s transmission rate is 100 packets/sec. Using Little’s formula, what is the average packet arrival rate, assuming there is no packet loss?**
+$$
+a = \frac N d = \frac {100+1}{20 \cdot 10^{-3}+ 10^{-2}} \approx 3667 \text{ packets/sec}
+$$
+**P17.**
+
+* **a) Generalize Equation 1.2 in Section 1.4.3 for heterogeneous processing rates, transmission rates, and propagation delays.**
+  $$
+  d_\text{end-end} = \sum_{i=1}^N\left(d_\text{proc,i}+d_\text{trans,i} + d_\text{prop,i} \right)
+  $$
+  where $d_\text{trans,i} = L/R_i$.
+
+* **b) Repeat a), but now also suppose that there is an average queuing delay of $d_\text{queue}$ at each node**
+  $$
+  d_\text{end-end} = \sum_{i=1}^N\left(d_\text{proc,i}+d_\text{trans,i} + d_\text{prop,i} + d_\text{queue, i} \right)
+  $$
+  where $d_\text{trans,i} = L/R_i$.
+
+**P18. Perform a Traceroute between source and destination on the same continent at three different hours of the day.**
+
+* **a) Find the average and standard deviation of the round-trip delays at each of the three hours.**
+* **b) Find the number of routers in the path at each of the three hours. Did the paths change during any of the hours?**
+* **c) Try to identify the number of ISP networks that the Traceroute packets pass through from source to destination. Routers with similar names and/ or similar IP addresses should be considered as part of the same ISP. In your experiments, do the largest delays occur at the peering interfaces between adjacent ISPs? **
+* **d) Repeat the above for a source and destination on different continents. Compare the intra-continent and inter-continent results**
+  * **a)**
+  * **b)**
+  * **c)**
+  * **Comparison**
+
+Data Intra-continent - to 200.242.40.134 (Brazil)
+
+12/14/2023 - 20h00 
+
+Tracing route to angelim.sinetram.com.br [200.242.40.134]
+over a maximum of 30 hops:
+
+  1     8 ms     8 ms     8 ms  LOCAL
+  2    21 ms    18 ms    19 ms  100.65.160.1
+  3    19 ms    17 ms    17 ms  bd060149.virtua.com.br [189.6.1.73]
+  4    19 ms    17 ms    29 ms  bd0602a4.virtua.com.br [189.6.2.164]
+  5    22 ms    18 ms    19 ms  201.39.112.25
+  6     *        *        *     Request timed out.
+  7    59 ms    60 ms    59 ms  ebt-plag-92-agg02.mnshz.embratel.net.br [200.244.66.226]
+  8    59 ms    59 ms    62 ms  ebt-plag-20-agg02.mns.embratel.net.br [200.244.66.171]
+  9    59 ms    62 ms    57 ms  ebt-t5-0-0-iacc02.mns.embratel.net.br [200.230.212.210]
+ 10    60 ms    59 ms    60 ms  sinetram-t5-1-0-154096-iacc02.mns.embratel.net.br [201.90.154.174]
+ 11    62 ms    58 ms    60 ms  angelim.sinetram.com.br [200.242.40.134]
+
+Trace complete.
+
+Data inter-continent - to 150.31.249.103 (Japan)
+
+12/14/2023 - 20h00 
+
+Tracing route to 103.249.31.150.bn.2iij.net [150.31.249.103]
+over a maximum of 30 hops:
+
+  1     8 ms     6 ms     5 ms  LOCAL
+  2    22 ms    18 ms    21 ms  100.65.160.1
+  3    17 ms    17 ms    19 ms  bd060149.virtua.com.br [189.6.1.73]
+  4    19 ms    19 ms    17 ms  bd0602a4.virtua.com.br [189.6.2.164]
+  5     *        *       20 ms  187.28.32.61
+  6     *        *        *     Request timed out.
+  7   155 ms   150 ms   151 ms  ebt-b16111-intl01.nyk.embratel.net.br [200.230.220.178]
+  8   166 ms   146 ms   145 ms  ae11.cr1-nyc2.ip4.gtt.net [209.120.132.221]
+  9   157 ms   158 ms   162 ms  ae36.cr5-was1.ip4.gtt.net [89.149.181.50]
+ 10   157 ms   159 ms   158 ms  202.232.1.113
+ 11   207 ms   210 ms   207 ms  sjc002bb00.iij.net [58.138.81.229]
+ 12   327 ms   328 ms   341 ms  tky001bb00.iij.net [58.138.88.81]
+ 13   323 ms   323 ms   322 ms  tky001lip30.iij.net [210.138.115.210]
+ 14   330 ms   330 ms   330 ms  tokyo10-ntteast0.flets.2iij.net [160.13.162.2]
+ 15   331 ms   330 ms   329 ms  tokyo10-n414.flets.2iij.net [210.148.147.146]
+ 16   331 ms   331 ms   330 ms  103.249.31.150.bn.2iij.net [150.31.249.103]
+
+Trace complete.
+
+
+
