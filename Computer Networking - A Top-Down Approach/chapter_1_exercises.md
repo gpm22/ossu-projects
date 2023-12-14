@@ -401,9 +401,154 @@ Propagation delay: 10 msec
 
 Total = 17.0448 msec
 
-**P8. Suppose users share a 10 Mbps link. Also suppose each user requires 200 kbps when transmitting, but each user transmits only 10 percent of the time. (See the discussion of packet switching versus circuit switching in Section 1.3.)**
+**P8. Suppose users share a 10 Mbps link. Also suppose each user requires 200 kbps when transmitting, but each user transmits only 10 percent of the time.**
 
 * **a) When circuit switching is used, how many users can be supported?**
+  $$
+  \frac {10 \cdot 10^6}{200 \cdot 10^3} = 50
+  $$
+  50 users.
+
 * **b) For the remainder of this problem, suppose packet switching is used. Find the probability that a given user is transmitting.**
-* **c) Suppose there are 120 users. Find the probability that at any given time, exactly n users are transmitting simultaneously. (Hint: Use the binomial distribution.)**
+
+  As a user only transmits 10 % of their time, the probability is 0.1
+
+* **c) Suppose there are 120 users. Find the probability that at any given time, exactly $n$ users are transmitting simultaneously. (Hint: Use the binomial distribution.)**
+
+  Binomial distribution mass function: 
+  $$
+  \binom nk p^k \left(1-p \right)^{n-k}
+  $$
+  as $p = 0.1$, $n=120$, and $k=n$ we got
+  $$
+  \binom {120}n 0.1^n \left(0.9 \right)^{120-k} = \frac {120!}{n!(120-n)!}0.1^n \left(0.9 \right)^{120-n}
+  $$
+  
+
 * **d) Find the probability that there are 51 or more users transmitting simultaneously.**
+  $$
+  \sum_{n=51}^{120} \frac {120!}{n!(120-n)!}0.1^n \left(0.9 \right)^{120-n} \approx 2.06 \cdot 10^{-20}
+  $$
+  
+
+**P9. Consider the discussion in Section 1.3 of packet switching versus circuit switching in which an example is provided with a 1 Mbps link. Users are generating data at a rate of 100 kbps when busy, but are busy generating data only with probability $p = 0.1$. Suppose that the 1 Mbps link is replaced by a 1 Gbps link.**
+
+* **a) What is $N$, the maximum number of users that can be supported simultaneously under circuit switching?**
+  $$
+  \frac {10^9}{100 \cdot 10^3} = 10^4
+  $$
+  10.000 users.
+
+* **b) Now consider packet switching and a user population of $M$ users. Give a formula (in terms of $p$, $M$, $N$) for the probability that more than $N$ users are sending data.**
+
+  It is the binomial distribution:
+  $$
+  \sum_{i=N}^{M} \frac {M!}{i!(M-i)!}p^i \left(1-p\right)^{M-i}
+  $$
+
+**P10. Consider a packet of length $L$ that begins at end system $A$ and travels over three links to a destination end system. These three links are connected by two packet switches. Let $d_i$, $s_i$, and $R_i$ denote the length, propagation speed, and the transmission rate of link $i$, for $i = 1, 2, 3$. The packet switch delays each packet by $d_\text{proc}$. Assuming no queuing delays, in terms of $d_i$ , $s_i$ , $R_i$, $(i = 1, 2, 3)$, and $L$, what is the total end-to-end delay for the packet? Suppose now the packet is 1,500 bytes, the propagation speed on all three links is $2.5 \cdot 10^8$ m/s, the transmission rates of all three links are 2.5 Mbps, the packet switch processing delay is 3 msec, the length of the first link is 5,000 km, the length of the second link is 4,000 km, and the length of the last link is 1,000 km. For these values, what is the end-to-end delay?**
+
+The delay of link $i$ is $D_i = \frac {d_i}{s_i} + \frac L {R_i}$.
+
+Therefore the total delay is:
+$$
+d_\text{end-to-end} & = & \sum_{i=1}^3D_i +2d_\text{proc} \\
+& = & \sum_{i=1}^3 \left( \frac {d_i}{s_i} + \frac L {R_i} \right) +2d_\text{proc}\\
+& = & \sum_{i=1}^3 \frac {d_i}{s_i} + L \sum_{i=1}^3 \frac 1 {R_i} +2d_\text{proc}\\
+$$
+For the data $L = 1500$ bytes,  $s_i = 2.5 \cdot 10^8$ m/s, $R_i = 2.5$ Mbps, the packet switch processing delay is 3 msec, the $d_1 = 5000$ km, $d_2 = 4000$ km, and $d_3 = 1000$ km.
+$$
+\frac {(5000 + 4000 + 1000)\cdot10^3}{2.5 \cdot 10^8} + (1500 \cdot 8) \frac 3 {2.5 \cdot 10^6} + 2 \cdot 3 \cdot10^{-3} = 60.4 \text{ msec}
+$$
+
+
+**P11. In the above problem, suppose $R1 = R2 = R3 = R$ and $d_\text{proc} = 0$. Further suppose that the packet switch does not store-and-forward packets but instead immediately transmits each bit it receives before waiting for the entire packet to arrive. What is the end-to-end delay?**
+
+As the packet switch doesn't store the packet, it's like the packet it is processed only once by the links, therefore:
+$$
+d_\text{end-to-end} = \sum_{i=1}^3 \frac {d_i}{s_i} + \frac LR
+$$
+For the data $L = 1500$ bytes,  $s_i = 2.5 \cdot 10^8$ m/s, $R = 2.5$ Mbps, the $d_1 = 5000$ km, $d_2 = 4000$ km, and $d_3 = 1000$ km.
+$$
+\frac {(5000 + 4000 + 1000)\cdot10^3}{2.5 \cdot 10^8} + \frac {1500 \cdot 8} {2.5 \cdot 10^6} = 44.8 \text{ msec}
+$$
+**P12. A packet switch receives a packet and determines the outbound link to which the packet should be forwarded. When the packet arrives, one other packet is halfway done being transmitted on this outbound link and four other packets are waiting to be transmitted. Packets are transmitted in order of arrival. Suppose all packets are 1,500 bytes and the link rate is 2.5 Mbps. What is the queuing delay for the packet? More generally, what is the queuing delay when all packets have length $L$, the transmission rate is $R$, $x$ bits of the currently-being-transmitted packet have been transmitted, and $n$ packets are already in the queue?**
+$$
+\frac {4.5 \cdot 1500 \cdot 8}{2.5 \cdot 10^6} = 21.6 \text{ msec}
+$$
+In general
+$$
+d_\text{queue}= \frac {n\cdot L + (L-x)} R = \frac {(n+1)L -x} R 
+$$
+**P13.**
+
+* **a) Suppose $N$ packets arrive simultaneously to a link at which no packets are currently being transmitted or queued. Each packet is of length $L$ and the link has transmission rate $R$. What is the average queuing delay for the $N$ packets?**
+
+  Delay for the first packet is 0
+
+  Delay for the second packet is $L/R$
+
+  Delay for the third packet is $2L/R$
+
+  Thus the delay for the $N$th packet is $(N-1)L/R$
+
+  Therefore the average delay will be 
+  $$
+  \overline d_\text{queue} & = & \left(0 + \frac LR + 2 \frac LR + 3 \frac LR + \cdots + (N-1) \frac LR \right)/N \\
+  & = & \frac {\sum_{i=0}^{N-1}i \frac LR} N \\
+  & = & \frac LR \frac {\sum_{i=0}^{N-1}i} N \\
+  & = & \frac LR \frac {N(N-1)} 2 \frac 1N \\
+  & = & \frac LR \frac {N-1} 2 \\
+  $$
+  
+
+* **b) Now suppose that $N$ such packets arrive to the link every $LN/R$ seconds. What is the average queuing delay of a packet?**
+
+  As this frequency is above the delay of the $N$th packet, the average will be $\frac LR \frac {N-1} 2$.
+
+**P14. Consider the queuing delay in a router buffer. Let $I$ denote traffic intensity; that is, $I = La/R$. Suppose that the queuing delay takes the form $IL/R (1 - I)$ for $I < 1$**
+
+* **a) Provide a formula for the total delay, that is, the queuing delay plus the transmission delay.**
+  $$
+  d_\text{total} & = & d_\text{queue} + d_\text{trans} \\
+  & = & \frac {IL}{R(1 - I)} + \frac LR
+  $$
+  
+
+* **b) Plot the total delay as a function of $L/R$.**
+
+  First we create the function in $L/R$:
+  $$
+  d_\text{total} & = & \frac {IL}{R(1 - I)} + \frac LR \\
+  & = & \frac {(La/R)L}{R(1 - (La/R))} + \frac LR \\
+  & = & \frac {L^2a}{R^2(1 - (La/R))} + \frac LR
+  $$
+  Substituting $x = L/R$:
+  $$
+  d_\text{total}(x) = \frac {x^2a}{1 - ax} + x = \frac x {1-ax}
+  $$
+  Assuming $a=1$:
+  $$
+  d_\text{total}(x) = \frac {x}{1 - x}
+  $$
+  Plotting from $0 \leq x \leq 1$:
+
+  ![Graph total delay x $L/R$](https://raw.githubusercontent.com/gpm22/ossu-projects/main/Computer%20Networking%20-%20A%20Top-Down%20Approach/p14_b.png)
+
+**P15. Let $a$ denote the rate of packets arriving at a link in packets/sec, and let $\mu$ denote the link’s transmission rate in packets/sec. Based on the formula for the total delay (i.e., the queuing delay plus the transmission delay) derived in the previous problem, derive a formula for the total delay in terms of $a$ and $µ$.**
+
+The link’s transmission rate is the rate of packages leaving the link, thus:
+$$
+\mu = \frac RL
+$$
+where $N$ is the number of packets leaving the link in average. So
+$$
+\frac LR = \frac 1 \mu
+$$
+Therefore
+$$
+d_\text{total} & = & \frac {L/R}{1 - a(L/R)} \\
+& = & \frac {1/\mu}{1-a/\mu} \\
+& = & \frac 1 {\mu - a}
+$$
+**P16.**
