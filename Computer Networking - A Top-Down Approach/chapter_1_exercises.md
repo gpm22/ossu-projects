@@ -352,4 +352,58 @@ Therefore the total delay is $(N+P-1) \frac LR$.
 
   So it is $2 \cdot \frac {96}{60} + 175/100 \cdot 60) = 108.2 \text{ min}$ or 1 hour, 48 min and 12 s.
 
-**P6**
+**P6 This elementary problem begins to explore propagation delay and transmission delay, two central concepts in data networking. Consider two hosts, $A$ and $B$, connected by a single link of rate $R$ bps. Suppose that the two hosts are separated by $m$ meters, and suppose the propagation speed along the link is $s$ meters/sec. Host $A$ is to send a packet of size $L$ bits to Host $B$.**
+
+* **a) Express the propagation delay, $d_\text{prop}$, in terms of $m$ and $s$.**
+  $$
+  d_\text{prop} = \frac ms
+  $$
+
+* **b) Determine the transmission time of the packet, $d_\text{trans}$, in terms of $L$ and $R$.**
+  $$
+  d_\text{trans} = \frac LR
+  $$
+  
+
+* **c) Ignoring processing and queuing delays, obtain an expression for the end-to-end delay.**
+  $$
+  d_\text{end-to-end} = \frac ms + \frac LR
+  $$
+  
+
+* **d) Suppose Host $A$ begins to transmit the packet at time $t = 0$. At time $t = d_\text{trans}$, where is the last bit of the packet?**
+
+  It will be in the link.
+
+* **e) Suppose $d_\text{prop}$ is greater than $d_\text{trans}$. At time $t = d_\text{trans}$, where is the first bit of the packet?**
+
+  It will be in the link.
+
+* **f) Suppose $d_\text{prop}$ is less than $d_\text{trans}$. At time $t = d_\text{trans}$, where is the first bit of the packet?**
+
+  It will be in the host $B$.
+
+* **g) Suppose $s = 2.5 \cdot 10^8$ , $L = 1500$ bytes, and $R = 10$ Mbps. Find the distance $m$ so that $d_\text{prop}$ equals $d_\text{trans}$.**
+  $$
+  d_\text{prop} & = & d_\text{trans} \\
+  \frac ms & = & \frac LR \\
+  m & = & s\frac LR \\
+  m & = & 3000 \text{ km}
+  $$
+
+**P7. In this problem, we consider sending real-time voice from Host $A$ to Host $B$ over a packet-switched network (VoIP). Host $A$ converts analog voice to a digital 64 kbps bit stream on the fly. Host $A$ then groups the bits into 56-byte packets. There is one link between Hosts $A$ and $B$; its transmission rate is 10 Mbps and its propagation delay is 10 msec. As soon as Host $A$ gathers a packet, it sends it to Host $B$. As soon as Host $B$ receives an entire packet, it converts the packet’s bits to an analog signal. How much time elapses from the time a bit is created (from the original analog signal at Host $A$) until the bit is decoded (as part of the analog signal at Host $B$)?**
+
+Time to create a packet: $(56 \cdot 8)/(64 \cdot 10^3) = 7$ msec
+
+Transmission delay: $(56 \cdot 8)/(10 \cdot 10^6) = 44.8 \ \micro$sec
+
+Propagation delay: 10 msec
+
+Total = 17.0448 msec
+
+**P8. Suppose users share a 10 Mbps link. Also suppose each user requires 200 kbps when transmitting, but each user transmits only 10 percent of the time. (See the discussion of packet switching versus circuit switching in Section 1.3.)**
+
+* **a) When circuit switching is used, how many users can be supported?**
+* **b) For the remainder of this problem, suppose packet switching is used. Find the probability that a given user is transmitting.**
+* **c) Suppose there are 120 users. Find the probability that at any given time, exactly n users are transmitting simultaneously. (Hint: Use the binomial distribution.)**
+* **d) Find the probability that there are 51 or more users transmitting simultaneously.**
