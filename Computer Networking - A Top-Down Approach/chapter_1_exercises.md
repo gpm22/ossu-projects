@@ -567,60 +567,349 @@ $$
 **P18. Perform a Traceroute between source and destination on the same continent at three different hours of the day.**
 
 * **a) Find the average and standard deviation of the round-trip delays at each of the three hours.**
+
+  * 12/14/2023 - 20h00 
+    * average - 60 ms
+    * standard deviation - 1.63 ms
+  * 12/15/2023 - 11h20
+    * average - 57 ms
+    * standard deviation - 0.82 ms
+  * 12/15/2023 - 14h10
+    * average - 62.67 ms
+    * standard deviation - 4.5 ms
+
 * **b) Find the number of routers in the path at each of the three hours. Did the paths change during any of the hours?**
+
+  9 routers, the same path.
+
 * **c) Try to identify the number of ISP networks that the Traceroute packets pass through from source to destination. Routers with similar names and/ or similar IP addresses should be considered as part of the same ISP. In your experiments, do the largest delays occur at the peering interfaces between adjacent ISPs? **
+
+  2 different ISPs:
+
+  * virtua
+  * embratel
+
+  The largest delays occur at the peering interfaces between adjacent ISPs, from the 5th route to the 6th there is a large difference in the delay, which is when it leaves the ISP virtua to get in the embratel.
+
 * **d) Repeat the above for a source and destination on different continents. Compare the intra-continent and inter-continent results**
   * **a)**
+
+    * 12/14/2023 - 20h00 
+      * average - 330.67 ms
+      * standard deviation - 0.47 ms
+    * 12/15/2023 - 11h20
+      * average - 329.33 ms
+      * standard deviation - 0.47 ms
+    * 12/15/2023 - 14h50
+      * average - 391 ms
+      * standard deviation - 2.83 ms
   * **b)**
+
+    14 routers for paths 1 and 2 and 15 for path 3.
+
+    Paths 1 and 2 are equal and different than 3.
+
+    The path 3 has the additional router 200.244.212.215 between 187.28.32.61 and 200.230.220.178, which are directly connected in paths 1 and 2.
   * **c)**
+
+    5 ISPs:
+
+    * virtua
+    * embratel
+    * gtt
+    * iij
+    * 2iij
+
+    The largest delay occurs inside the ISPs, which are embratel and iij.
+
+    From **ebt-plag-63-core02.bsa.embratel.net.br [200.244.212.215]** to **ebt-b16111-intl01.nyk.embratel.net.br [200.230.220.178]**, the delay is 7 times bigger. That probably means that there is an intercontinental link between these routers.
+
+    From **sjc002bb00.iij.net [58.138.81.229]** to **tky001bb00.iij.net [58.138.88.81]**, the delay is 200 ms, doubling it. That probably means that there is an intercontinental link between these routers.
   * **Comparison**
 
-Data Intra-continent - to 200.242.40.134 (Brazil)
+    The inter-continent path has more ISPs and bigger delays.
 
-12/14/2023 - 20h00 
+    I noticed that my IAP has the following routers:
 
-Tracing route to angelim.sinetram.com.br [200.242.40.134]
-over a maximum of 30 hops:
+    * 100.65.160.1
+    * bd060149.virtua.com.br [189.6.1.73]
+    * bd0602a4.virtua.com.br [189.6.2.164]
 
-  1     8 ms     8 ms     8 ms  LOCAL
-  2    21 ms    18 ms    19 ms  100.65.160.1
-  3    19 ms    17 ms    17 ms  bd060149.virtua.com.br [189.6.1.73]
-  4    19 ms    17 ms    29 ms  bd0602a4.virtua.com.br [189.6.2.164]
-  5    22 ms    18 ms    19 ms  201.39.112.25
-  6     *        *        *     Request timed out.
-  7    59 ms    60 ms    59 ms  ebt-plag-92-agg02.mnshz.embratel.net.br [200.244.66.226]
-  8    59 ms    59 ms    62 ms  ebt-plag-20-agg02.mns.embratel.net.br [200.244.66.171]
-  9    59 ms    62 ms    57 ms  ebt-t5-0-0-iacc02.mns.embratel.net.br [200.230.212.210]
- 10    60 ms    59 ms    60 ms  sinetram-t5-1-0-154096-iacc02.mns.embratel.net.br [201.90.154.174]
- 11    62 ms    58 ms    60 ms  angelim.sinetram.com.br [200.242.40.134]
+* Data
 
-Trace complete.
+  * Data Intra-continent - to 200.242.40.134 (Brazil)
 
-Data inter-continent - to 150.31.249.103 (Japan)
+    * 12/14/2023 - 20h00 
 
-12/14/2023 - 20h00 
+      ```
+      Tracing route to angelim.sinetram.com.br [200.242.40.134]
+      over a maximum of 30 hops:
+      
+        1     8 ms     8 ms     8 ms  LOCAL
+        2    21 ms    18 ms    19 ms  100.65.160.1
+        3    19 ms    17 ms    17 ms  bd060149.virtua.com.br [189.6.1.73]
+        4    19 ms    17 ms    29 ms  bd0602a4.virtua.com.br [189.6.2.164]
+        5    22 ms    18 ms    19 ms  201.39.112.25
+        6     *        *        *     Request timed out.
+        7    59 ms    60 ms    59 ms  ebt-plag-92-agg02.mnshz.embratel.net.br [200.244.66.226]
+        8    59 ms    59 ms    62 ms  ebt-plag-20-agg02.mns.embratel.net.br [200.244.66.171]
+        9    59 ms    62 ms    57 ms  ebt-t5-0-0-iacc02.mns.embratel.net.br [200.230.212.210]
+       10    60 ms    59 ms    60 ms  sinetram-t5-1-0-154096-iacc02.mns.embratel.net.br [201.90.154.174]
+       11    62 ms    58 ms    60 ms  angelim.sinetram.com.br [200.242.40.134]
+      
+      Trace complete.
+      ```
 
-Tracing route to 103.249.31.150.bn.2iij.net [150.31.249.103]
-over a maximum of 30 hops:
+    * 12/15/2023 - 11h20 
 
-  1     8 ms     6 ms     5 ms  LOCAL
-  2    22 ms    18 ms    21 ms  100.65.160.1
-  3    17 ms    17 ms    19 ms  bd060149.virtua.com.br [189.6.1.73]
-  4    19 ms    19 ms    17 ms  bd0602a4.virtua.com.br [189.6.2.164]
-  5     *        *       20 ms  187.28.32.61
-  6     *        *        *     Request timed out.
-  7   155 ms   150 ms   151 ms  ebt-b16111-intl01.nyk.embratel.net.br [200.230.220.178]
-  8   166 ms   146 ms   145 ms  ae11.cr1-nyc2.ip4.gtt.net [209.120.132.221]
-  9   157 ms   158 ms   162 ms  ae36.cr5-was1.ip4.gtt.net [89.149.181.50]
- 10   157 ms   159 ms   158 ms  202.232.1.113
- 11   207 ms   210 ms   207 ms  sjc002bb00.iij.net [58.138.81.229]
- 12   327 ms   328 ms   341 ms  tky001bb00.iij.net [58.138.88.81]
- 13   323 ms   323 ms   322 ms  tky001lip30.iij.net [210.138.115.210]
- 14   330 ms   330 ms   330 ms  tokyo10-ntteast0.flets.2iij.net [160.13.162.2]
- 15   331 ms   330 ms   329 ms  tokyo10-n414.flets.2iij.net [210.148.147.146]
- 16   331 ms   331 ms   330 ms  103.249.31.150.bn.2iij.net [150.31.249.103]
+      ```
+      Tracing route to angelim.sinetram.com.br [200.242.40.134]
+      over a maximum of 30 hops:
+      
+        1     8 ms     8 ms     7 ms  LOCAL
+        2    19 ms    18 ms    19 ms  100.65.160.1
+        3    26 ms    23 ms    44 ms  bd060149.virtua.com.br [189.6.1.73]
+        4    59 ms    25 ms    74 ms  bd0602a4.virtua.com.br [189.6.2.164]
+        5    56 ms    63 ms    19 ms  201.39.112.25
+        6     *        *        *     Request timed out.
+        7    59 ms    57 ms    64 ms  ebt-plag-92-agg02.mnshz.embratel.net.br [200.244.66.226]
+        8    59 ms    58 ms    58 ms  ebt-plag-20-agg02.mns.embratel.net.br [200.244.66.171]
+        9    58 ms    65 ms    59 ms  ebt-t5-0-0-iacc02.mns.embratel.net.br [200.230.212.210]
+       10    59 ms    57 ms    60 ms  sinetram-t5-1-0-154096-iacc02.mns.embratel.net.br [201.90.154.174]
+       11    57 ms    56 ms    58 ms  angelim.sinetram.com.br [200.242.40.134]
+      
+      Trace complete.
+      ```
 
-Trace complete.
+    * 12/15/2023 - 14h10
+
+      ```
+      Tracing route to angelim.sinetram.com.br [200.242.40.134]
+      over a maximum of 30 hops:
+      
+        1     8 ms     8 ms     7 ms  LOCAL
+        2    19 ms    18 ms    20 ms  100.65.160.1
+        3    20 ms    17 ms    16 ms  bd060149.virtua.com.br [189.6.1.73]
+        4    19 ms    18 ms    19 ms  bd0602a4.virtua.com.br [189.6.2.164]
+        5    19 ms    17 ms    19 ms  201.39.112.25
+        6     *        *        *     Request timed out.
+        7    62 ms    59 ms    58 ms  ebt-plag-92-agg02.mnshz.embratel.net.br [200.244.66.226]
+        8    59 ms    61 ms    60 ms  ebt-plag-20-agg02.mns.embratel.net.br [200.244.66.171]
+        9    59 ms    59 ms    61 ms  ebt-t5-0-0-iacc02.mns.embratel.net.br [200.230.212.210]
+       10    60 ms    65 ms    56 ms  sinetram-t5-1-0-154096-iacc02.mns.embratel.net.br [201.90.154.174]
+       11    69 ms    59 ms    60 ms  angelim.sinetram.com.br [200.242.40.134]
+      
+      Trace complete.
+      ```
+
+      
+
+  * Data inter-continent - to 150.31.249.103 (Japan)
+
+    * 12/14/2023 - 20h00 
+
+      ```
+      Tracing route to 103.249.31.150.bn.2iij.net [150.31.249.103]
+      over a maximum of 30 hops:
+      
+        1     8 ms     6 ms     5 ms  LOCAL
+        2    22 ms    18 ms    21 ms  100.65.160.1
+        3    17 ms    17 ms    19 ms  bd060149.virtua.com.br [189.6.1.73]
+        4    19 ms    19 ms    17 ms  bd0602a4.virtua.com.br [189.6.2.164]
+        5     *        *       20 ms  187.28.32.61
+        6     *        *        *     Request timed out.
+        7   155 ms   150 ms   151 ms  ebt-b16111-intl01.nyk.embratel.net.br [200.230.220.178]
+        8   166 ms   146 ms   145 ms  ae11.cr1-nyc2.ip4.gtt.net [209.120.132.221]
+        9   157 ms   158 ms   162 ms  ae36.cr5-was1.ip4.gtt.net [89.149.181.50]
+       10   157 ms   159 ms   158 ms  202.232.1.113
+       11   207 ms   210 ms   207 ms  sjc002bb00.iij.net [58.138.81.229]
+       12   327 ms   328 ms   341 ms  tky001bb00.iij.net [58.138.88.81]
+       13   323 ms   323 ms   322 ms  tky001lip30.iij.net [210.138.115.210]
+       14   330 ms   330 ms   330 ms  tokyo10-ntteast0.flets.2iij.net [160.13.162.2]
+       15   331 ms   330 ms   329 ms  tokyo10-n414.flets.2iij.net [210.148.147.146]
+       16   331 ms   331 ms   330 ms  103.249.31.150.bn.2iij.net [150.31.249.103]
+      
+      Trace complete.
+      ```
+
+    * 12/15/2023 - 11h20 
+
+      ```
+      Tracing route to 103.249.31.150.bn.2iij.net [150.31.249.103]
+      over a maximum of 30 hops:
+      
+        1    11 ms    14 ms     1 ms  LOCAL
+        2    20 ms    20 ms    18 ms  100.65.160.1
+        3    18 ms    18 ms    17 ms  bd060149.virtua.com.br [189.6.1.73]
+        4    18 ms    22 ms    18 ms  bd0602a4.virtua.com.br [189.6.2.164]
+        5    14 ms    19 ms    18 ms  187.28.32.61
+        6     *        *        *     Request timed out.
+        7   153 ms   151 ms   151 ms  ebt-b16111-intl01.nyk.embratel.net.br [200.230.220.178]
+        8   152 ms   150 ms   155 ms  ae11.cr1-nyc2.ip4.gtt.net [209.120.132.221]
+        9   156 ms   154 ms   163 ms  ae36.cr5-was1.ip4.gtt.net [89.149.181.50]
+       10   152 ms   155 ms   156 ms  202.232.1.113
+       11   207 ms   212 ms   207 ms  sjc002bb00.iij.net [58.138.81.229]
+       12   328 ms   328 ms   328 ms  tky001bb00.iij.net [58.138.88.81]
+       13   318 ms   319 ms   318 ms  tky001lip30.iij.net [210.138.115.210]
+       14   331 ms   330 ms   331 ms  tokyo10-ntteast0.flets.2iij.net [160.13.162.2]
+       15   331 ms   330 ms   333 ms  tokyo10-n414.flets.2iij.net [210.148.147.146]
+       16   330 ms   329 ms   329 ms  103.249.31.150.bn.2iij.net [150.31.249.103]
+      
+      Trace complete.
+      ```
+
+    * 12/15/2023 - 14h50
+
+      ```
+      Tracing route to 103.249.31.150.bn.2iij.net [150.31.249.103]
+      over a maximum of 50 hops:
+      
+        1     8 ms     8 ms     7 ms  LOCAL
+        2    17 ms    21 ms    19 ms  100.65.160.1
+        3    20 ms    18 ms    16 ms  bd060149.virtua.com.br [189.6.1.73]
+        4    19 ms    20 ms    20 ms  bd0602a4.virtua.com.br [189.6.2.164]
+        5    23 ms    18 ms    18 ms  187.28.32.61
+        6    19 ms    18 ms    18 ms  ebt-plag-63-core02.bsa.embratel.net.br [200.244.212.215]
+        7   153 ms   151 ms   151 ms  ebt-b16111-intl01.nyk.embratel.net.br [200.230.220.178]
+        8   144 ms   177 ms   145 ms  ae11.cr1-nyc2.ip4.gtt.net [209.120.132.221]
+        9   156 ms   157 ms   156 ms  ae36.cr5-was1.ip4.gtt.net [89.149.181.50]
+       10   158 ms   158 ms   156 ms  202.232.1.113
+       11   208 ms   206 ms   210 ms  sjc002bb00.iij.net [58.138.81.229]
+       12   395 ms   392 ms   403 ms  tky001bb00.iij.net [58.138.88.81]
+       13   380 ms   378 ms   377 ms  tky001lip30.iij.net [210.138.115.210]
+       14   385 ms   387 ms   382 ms  tokyo10-ntteast0.flets.2iij.net [160.13.162.2]
+       15   392 ms   392 ms   395 ms  tokyo10-n414.flets.2iij.net [210.148.147.146]
+       16   389 ms   389 ms   395 ms  103.249.31.150.bn.2iij.net [150.31.249.103]
+      
+      Trace complete.
+      
+      ```
+
+**P19. Metcalfe’s law states the value of a computer network is proportional to the square of the number of connected users of the system. Let $n$ denote the number of users in a computer network. Assuming each user sends one message to each of the other users, how many messages will be sent? Does your answer support Metcalfe’s law?**
+
+Each user will send $n-1$ messages, therefore, $n(n-1) = n^2 -n$ messages will be sent.
+
+This supports Metcalfe's law.
+
+**P20. Suppose that there are $M$ client-server pairs. Denote $R_s$, $R_c$, and $R$ for the rates of the server links, client links, and network link. Assume all other links have abundant capacity and that there is no other traffic in the network besides the traffic generated by the $M$ client-server pairs. Derive a general expression for throughput in terms of $R_s$, $R_c$, $R$, and $M$.**
+
+The throughput will be
+$$
+\min \left\{R_s, R_c, \frac RM \right\}
+$$
+**P21. Suppose that there are $M$ paths between the server and the client. No two paths share any link. Path $k (k = 1, \dots, M)$ consists of $N$ links with transmission rates $R^k_1, R^k_2, \dots, R^k_ N$. If the server can only use one path to send data to the client, what is the maximum throughput that the server can achieve? If the server can use all $M$ paths to send data, what is the maximum throughput that the server can achieve?**
+
+In the case of using only one path, the maximum throughput will be largest between the minimum transmission rate of each path:
+$$
+\max \left\{
+	\min\left\{R^1_1, R_2^1, \dots, R^1_N \right\},
+	\min\left\{R^2_1, R_2^2, \dots, R^2_N \right\},
+	\dots,
+	\min\left\{R^M_1, R_2^M \dots, R^M_N \right\},
+\right\}
+$$
 
 
+In the case of using all paths together, the maximum throughput will be the total sum of the minimum transmission rate of each path:
+$$
+\sum_{k=1}^M \min\left\{R^k_1, R_2^k \dots, R^k_N \right\},
+$$
+**P22. Suppose that each link between the server and the client has a packet loss probability $p$, and the packet loss probabilities for these links are independent. What is the probability that a packet (sent by the server) is successfully received by the receiver? If a packet is lost in the path from the server to the client, then the server will re-transmit the packet. On average, how many times will the server re-transmit the packet in order for the client to successfully receive the packet?**
 
+Let $n$ be the number of links in the path between client and server, the probability that a packet (sent by the server) is successfully received by the receiver is $(1-p)^n$.
+
+As this is described as a geometric distribution, the expectation is $\frac 1p$. Therefore, the average number of re-transmissions needed is $\frac 1p - 1$.
+
+**P23. Assume that we know the bottleneck link along the path from the server to the client is the first link with rate $R_s$ bits/sec. Suppose we send a pair of packets back to back from the server to the client, and there is no other traffic on this path. Assume each packet of size $L$ bits, and both links have the same propagation delay $d_\text{prop}$.**
+
+* **a) What is the packet inter-arrival time at the destination? That is, how much time elapses from when the last bit of the first packet arrives until the last bit of the second packet arrives?**
+
+  As the bottleneck is the first link, the second packet will only be queued in the first link, therefore the inter-arrival time is $1/R_s$.
+
+* **b) Now assume that the second link is the bottleneck link (i.e., $R_c < R_s$). Is it possible that the second packet queues at the input queue of the second link? Explain. Now suppose that the server sends the second packet $T$ seconds after sending the first packet. How large must $T$ be to ensure no queuing before the second link? Explain.**
+
+  It is possible that the second packet queues at the input queue of the second link, as when its first bit arrives there, the first packet will not have finished being sent if $L/R_c \leq L/R_s$.
+
+  To ensure no querying $T$ must be
+  $$
+  T = L \left(\frac 1 {R_c} - \frac 1 {R_s} \right)
+  $$
+  
+
+  **P24. Suppose you would like to urgently deliver 50 terabytes data from Boston to Los Angeles. You have available a 100 Mbps dedicated link for data transfer. Would you prefer to transmit the data via this link or instead use FedEx overnight delivery? Explain.**
+
+  The time to transfer it over the link is
+  $$
+  \frac {50 \cdot 8 \cdot 10^{12}}{100 \cdot 10^6} = 4 \cdot 10^6 \text{ s} 
+  $$
+  Which is 6 weeks, 4 days, 7 hours, 6 minutes and 40 s.
+
+  Therefore FedEx overnight is faster.
+
+  **P25. Suppose two hosts, $A$ and $B$, are separated by 20,000 kilometers and are connected by a direct link of $R = 5$ Mbps. Suppose the propagation speed over the link is $2.5 \cdot 10^8$ meters/sec.**
+
+  * **a) Calculate the bandwidth-delay product, $R \cdot d_\text{prop}$.**
+    $$
+    R \cdot d_\text{prop} = 5 \cdot 10^6 \cdot \frac {20 \cdot 10^6}{2.5 \cdot 10^8} = 4 \cdot 10^5 \text{ bits}
+    $$
+    
+  * **b) Consider sending a file of 800,000 bits from Host $A$ to Host $B$. Suppose the file is sent continuously as one large message. What is the maximum number of bits that will be in the link at any given time?**
+  
+    400,000 bits.
+  
+  * **c) Provide an interpretation of the bandwidth-delay product.**
+  
+    It is the maximum number of bits that cab be in the link at any given time
+  
+  * **d) What is the width (in meters) of a bit in the link? Is it longer than a football field?**
+  
+    50 meters, which is smaller than a football field.
+  
+  * **e) Derive a general expression for the width of a bit in terms of the propagation speed $s$, the transmission rate $R$, and the length of the link $m$.**
+    $$
+    \frac m {R \cdot d_\text{prop}} =  \frac m {R \cdot (m/s)} = \frac sR \text{ m/bit}
+    $$
+
+**P26. Referring to problem P25, suppose we can modify $R$. For what value of $R$ is the width of a bit as long as the length of the link?**
+$$
+\frac sR = m \to R= \frac sm
+$$
+which results in 12.5 bps
+
+**P27. Consider problem P25 but now with a link of $R = 500$ Mbps.**
+
+* **a) Calculate the bandwidth-delay product, $R \cdot d_\text{prop}$.**
+  $$
+  R \cdot d_\text{prop} = 500 \cdot 10^6 \cdot \frac {20 \cdot 10^6}{2.5 \cdot 10^8} = 4 \cdot 10^7 \text{ bits}
+  $$
+  
+* **b) Consider sending a file of 800,000 bits from Host $A$ to Host $B$. Suppose the file is sent continuously as one big message. What is the maximum number of bits that will be in the link at any given time?**
+
+  800,000
+
+* **c) What is the width (in meters) of a bit in the link?**
+  $$
+  \frac sR = \frac {2.5 \cdot 10^8}{5 \cdot 10^8} = 0.5 \text{ m/bit}
+  $$
+  50 cm.
+
+**P28. Refer again to problem P25.**
+
+* **a) How long does it take to send the file, assuming it is sent continuously?**
+  $$
+  \frac LR + \frac ms = \frac {8 \cdot 10^5}{5 \cdot 10^6} + \frac {20 \cdot 10^6}{2.5 \cdot 10^8} = 0.24
+  $$
+  240 msec
+
+* **b) Suppose now the file is broken up into 20 packets with each packet containing 40,000 bits. Suppose that each packet is acknowledged by the receiver and the transmission time of an acknowledgment packet is negligible. Finally, assume that the sender cannot send a packet until the preceding one is acknowledged. How long does it take to send the file?**
+  $$
+  20 \cdot \left(\frac {L}{20R}+ 2\frac ms \right)= \frac LR + 40 \frac ms = 3.36
+  $$
+
+  3. 36s
+
+* **c) Compare the results from (a) and (b).**
+
+  Sending direct is away faster, because the propagation delay only affects it once.
+
+**P29.**
