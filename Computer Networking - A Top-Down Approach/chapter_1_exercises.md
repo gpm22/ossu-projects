@@ -912,4 +912,103 @@ which results in 12.5 bps
 
   Sending direct is away faster, because the propagation delay only affects it once.
 
-**P29.**
+**P29. Suppose there is a 10 Mbps microwave link between a geostationary satellite and its base station on Earth. Every minute the satellite takes a digital photo and sends it to the base station. Assume a propagation speed of $2.4 \cdot 10^8$ meters/sec.**
+
+* **a) What is the propagation delay of the link?**
+
+  The geostationary orbit is 36,000 km above the earth, therefore
+  $$
+  d_\text{prop} = \frac {35.785 \cdot 10^6}{2.4 \cdot 10^8} = 150 \text{ msec}
+  $$
+  
+
+* **b) What is the bandwidth-delay product, $R \cdot d_\text{prop}$?**
+  $$
+  R \cdot d_\text{prop} = 1.5 \text{ Mbit}
+  $$
+  
+
+* **c) Let $x$ denote the size of the photo. What is the minimum value of $x$ for the microwave link to be continuously transmitting?**
+
+  To be continuously transmitting, the microwave will have to keep sending a file for at least a minute, therefore the transmission delay must be a minute:
+  $$
+  d_\text{trans} = \frac LR  \\
+  L = d_\text{trans}R
+  $$
+  which results in $6 \cdot 10^8$ bits or 75 MB.
+
+**P30. Consider the airline travel analogy in our discussion of layering in Section 1.5, and the addition of headers to protocol data units as they flow down the protocol stack. Is there an equivalent notion of header information that is added to passengers and baggage as they move down the airline protocol stack?**
+
+Yes. The baggage receives a "header" as a tag info to go in the right airplane and also in a way to allow the passengert o get it back.
+
+The passanger's ticket also receive more info as the passanger passes through the gate, get into the airplane and etc.
+
+**P31. In modern packet-switched networks, including the Internet, the source host segments long, application-layer messages (for example, an image or a music file) into smaller packets and sends the packets into the network. The receiver then reassembles the packets back into the original message. We refer to this process as message segmentation. Figure 1.27 illustrates the end-to-end transport of a message with and without message segmentation. Consider a message that is $10^6$ bits long that is to be sent from source to destination in Figure 1.27. Suppose each link in the figure is 5 Mbps. Ignore propagation, queuing, and processing delays.**
+
+* **a) Consider sending the message from source to destination without message segmentation. How long does it take to move the message from the source host to the first packet switch? Keeping in mind that each switch uses store-and-forward packet switching, what is the total time to move the message from source host to destination host?**
+
+  It takes 200 msec to move it to the first packet-switch.
+
+  The total time to move the message from source host to destination host is 600 msec.
+
+* **b) Now suppose that the message is segmented into 100 packets, with each packet being 10,000 bits long. How long does it take to move the first packet from source host to the first switch? When the first packet is being sent from the first switch to the second switch, the second packet is being sent from the source host to the first switch. At what time will the second packet be fully received at the first switch?**
+
+  It takes 2 msec to move the first packet to the first packet-switch.
+
+  The second packet be fully received at the first switch at 4 msec.
+
+* **c) How long does it take to move the file from source host to destination host when message segmentation is used? Compare this result with your answer in part (a) and comment.**
+
+  The first packet takes 6 msec.
+
+  The second 8 msec.
+
+  The $n$th takes $6 + (n-1)2$, therefore it is 204 msec, which is significant less (almost a third from the full one).
+
+* **d) In addition to reducing delay, what are reasons to use message segmentation?**
+
+  1. To deal better with packet loss.
+  2. To allow pause of the transmission to continue it later.
+  3. To not lost all the message if an error occurrs.
+  4. Huge packets would get into the network creating insane queueing delays.
+
+* **e) Discuss the drawbacks of message segmentation.**
+
+  1. Segmenting and recreating can be hard, as it packet must have a sequence id.
+  2. As the header size is usually the same for all packets regardless their sizes, message segmentation will increase the total amount of bytes sent.
+
+**P32. Experiment with the Message Segmentation interactive animation at the book’s Web site. Do the delays in the interactive animation correspond to the delays in the previous problem? How do link propagation delays affect the overall end-to-end delay for packet switching (with message segmentation) and for message switching?**
+
+They will correspond if you consider the file as 16 kbits long and the links as 4 kbps.
+
+The propagation delay affects both equally.
+
+**P33. Consider sending a large file of $F$ bits from Host $A$ to Host $B$. There are three links (and two switches) between $A$ and $B$, and the links are uncongested (that is, no queuing delays). Host $A$ segments the file into segments of $S$ bits each and adds 80 bits of header to each segment, forming packets of $L = 80 + S$ bits. Each link has a transmission rate of $R$ bps. Find the value of $S$ that minimizes the delay of moving the file from Host $A$ to Host $B$. Disregard propagation delay.**
+
+First packet takes $3\frac LR$ from $A$ to $B$.
+
+Second packet takes $3\frac LR + \frac LR$ from $A$ to $B$.
+
+$m$th packet takes $3\frac LR + (m-1)\frac LR$ from $A$ to $B$.
+
+$m$ is $F/S$ and $L = 80 +S$, therefore the total delay is
+$$
+d_\text{total} & = & (m+2) \frac LR \\
+& = & \left(\frac FS + 2 \right) \frac {(80 + S)}{R} \\
+& = & \frac {(F + 2S)(80 + S)}{SR} \\
+& = & \frac {80F+S(F+160)+2S^2}{SR} \\
+& = & \frac {80F}{SR} + \frac {F+160}R + \frac {2S}R
+$$
+To get the minimal value we take the derivative of $d_\text{total}$ in relation to $S$ and equals it to zero:
+$$
+\frac {dd_\text{total}}{dS} = -\frac {80F}{S^2R} + \frac 2R
+$$
+So we get
+$$
+\frac {80F}{S^2R}=\frac2R \\
+\frac {80F}{S^2}=2 \\
+S = \sqrt{40F}
+$$
+**P34. Skype offers a service that allows you to make a phone call from a PC to an ordinary phone. This means that the voice call must pass through both the Internet and through a telephone network. Discuss how this might be done**
+
+Both Internet and telephone nertworks are connected together at gateways. So, when a skype user calls a telephone, a circuit is established between the used gateway and the called telephone. The skype user's voice is sent in packets to the gateway, where the voice is reconstructed and sent over the circuit to the telephone. On the other hand, the telephone user's voice is packaged at the gateway and sent in packetes to the skype user.
