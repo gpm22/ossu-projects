@@ -426,11 +426,123 @@ Which concludes the proof.
 
 ### Problem 20.11
 
-Problem 20.3 investigated approximate correctness guarantees for greedy heuristic algorithms for the knapsack problem. This problem outlines a dynamic programming algorithm with a much stronger guarantee: For a user-specified error parameter $\epsilon > 0$ (like .1 or .01), the algorithm outputs a solution with total value at least $1  \epsilon$ times the maximum possible.
+Problem 20.3 investigated approximate correctness guarantees for greedy heuristic algorithms for the knapsack problem. This problem outlines a dynamic programming algorithm with a much stronger guarantee: For a user-specified error parameter $\epsilon > 0$ (like .1 or .01), the algorithm outputs a solution with total value at least $1 - \epsilon$ times the maximum possible.
 
-* **a)** Section 19.4.2 mentioned that the knapsack problem can be solved in $O(nC)$ time using dynamic programming, where $n$ denotes the number of items and $C$ the knapsack capacity; see also Chapter 16 of Part 3. (All item values and sizes, as well as the knapsack capacity, are positive integers.) Give a different dynamic programming algorithm for the problem that runs in $O(n^2 \cdot v_{max})$ time, where $v_{max}$ denotes the largest value of any item.
-* **b)** To shrink the item values down to a manageable magnitude, divide each of them by $m := (\epsilon \cdot vmax)/n$ and round each result down to the nearest integer (where $\epsilon$ is the user-specified error parameter). Prove that the total value of every feasible solution goes down by at least a factor of $m$ and that the total value of an optimal solution goes down by at most a factor of $m/(1 - \epsilon)$. (You can assume that every item has size at most C and hence fits in the knapsack.)
-* **c)** Propose an $O(n^3/\epsilon)$-time algorithm that is guaranteed to return a feasible solution with total value at least $1 - \epsilon$ times the maximum possible (A heuristic algorithm with this type of guarantee is called a fully polynomialtime approximation scheme (FPTAS)).
+* **a)** Section 19.4.2 mentioned that the knapsack problem can be solved in $O(nC)$ time using dynamic programming, where $n$ denotes the number of items and $C$ the knapsack capacity; see also Chapter 16 of Part 3. (All item values and sizes, as well as the knapsack capacity, are positive integers.) Give a different dynamic programming algorithm for the problem that runs in $O(n^2 \cdot v_\text{max})$ time, where $v_\text{max}$ denotes the largest value of any item.
+
+  **ANSWER**
+
+  **Subproblems**
+
+  Let $i = 0, 1, 2, \dots, n$ and $x = 0, 1, 2, \dots, n \cdot v_\text{max}$ and define
+  $$
+  S_{i, x} = \text{ minimum total size needed to achieve a value } \geq x \\ \text{ while using only the first } i \text{ items or} +\infty \text{ if impossible}
+  $$
+  
+
+  **Recurrence**
+
+  If $i \geq 1$
+  $$
+  S_{i, x} = \min \begin{cases}
+  	S_{(i-1), x}, \ \text{if item } i \text{ is not used in the optimal solution} \\
+  	w_i + S_{(i-1), (x - v_i)}, \ \text{if item } i \text{ is used in the optimal solution}
+  \end{cases}
+  $$
+  $S_{(i-1), (x - v_i)} = 0$ if $v_i \geq x$.
+
+  **Algorithm**
+
+  ```ruby
+  # subproblem solutions (indexed from 0)
+  A := (n + 1) * (n * v_max + 1) two-dimensional array
+  X := n * v_max
+  # base case (i = 0)
+  A[0][0] = 0
+  for x = 1 to X do
+  	A[0][x]=+inf
+  end
+  # systematically solve all subproblems
+  for i = 1 to n do
+      for x = 0 to X do
+          previousOptiomal := vi >= x ? 0 : A[i - 1][x - vi]
+          A[i][x] := min{A[i - 1][x], wi + previousOptiomal}
+      end
+  end
+  
+  # return the biggext x for wich A[n, x] <= W
+  for x = X to 0 do
+      return x if A[n, x] <= W
+  end
+  ```
+
+  It is clearly $O(n^2 \cdot v_\text{max})$.
+* **b)** To shrink the item values down to a manageable magnitude, divide each of them by $m = (\epsilon \cdot v_\text{max})/n$ and round each result down to the nearest integer (where $\epsilon$ is the user-specified error parameter). Prove that the total value of every feasible solution goes down by at least a factor of $m$ and that the total value of an optimal solution goes down by at most a factor of $m/(1 - \epsilon)$. (You can assume that every item has size at most $C$ and hence fits in the knapsack.)
+
+  **ANSWER**
+
+  First we prove that the total value of every feasible solution goes down by at least a factor of $m$.
+
+  As $\hat v_i = \left \lfloor \frac {v_i}m \right \rfloor$, we got $v_i \geq m \cdot \hat v_i$ and $m \cdot \hat v_i \geq v_i-m$
+
+  If $S^*$ is the optimal solution to the original problem, and $S$ is solution resulted from using the shrunk items, then
+  $$
+  \sum_{i \in S} \hat v_i \geq \sum_{i \in S^*} \hat v_i
+  $$
+  Since $S$ is optimal for the $\hat v_i$'s.
+  
+  Then by multiplying both sides of the previous inequality by $m$ and using the first two inequalities we get:
+  $$
+  \sum_{i \in S} v_i \geq m\sum_{i \in S} \hat v_i \geq m\sum_{i \in S^*} \hat v_i \geq \sum_{i \in S^*} (v_i-m)
+  $$
+  Thus
+  $$
+  \sum_{i \in S} v_i \geq  \left(\sum_{i \in S^*} v_i\right)-nm
+  $$
+  So, every feasible solution goes down by at least a factor of $m$.
+  
+  
+  
+  Now we prove that the total value of an optimal solution goes down by at most a factor of $m/(1 - \epsilon)$. 
+  
+  We now that
+  
+  
+  $$
+  \sum_{i \in S} v_i \geq  (1-\epsilon) \sum_{i \in S^*} \hat v_i
+  $$
+  and
+  $$
+  \sum_{i \in S} v_i \geq m\sum_{i \in S^*} \hat v_i
+  $$
+  Thus
+  $$
+  \sum_{i \in S} v_i & \geq &  m\sum_{i \in S^*} \hat v_i \\
+  & \geq &  m \left(\frac {\sum_{i \in S} v_i}{1-\epsilon} \right)  \\
+  & = & \frac m {1-\epsilon}\sum_{i \in S} v_i \\
+  & \geq & \frac m {1-\epsilon}\sum_{i \in S} \hat v_i
+  $$
+  Therefore the total value of an optimal solution goes down by at most a factor of $m/(1 - \epsilon)$.
+  
+  
+  
+* **c)** Propose an $O(n^3/\epsilon)$-time algorithm that is guaranteed to return a feasible solution with total value at least $1 - \epsilon$ times the maximum possible (A heuristic algorithm with this type of guarantee is called a fully polynomial time approximation scheme (FPTAS)).
+
+  **ANSWER**
+
+  **Step 1**: Create a new instance of the knapsack problem with values $\hat v_i$, where $\hat v_i = \left\lfloor \frac {v_i}m \right\rfloor$ and $m = (\epsilon \cdot v_\text{max}/n$).
+
+  **Step 2**: Use the dynamic program proposed in **a)** to solve this new instance.
+
+  
+
+  The running time is $O(n^2 \cdot \max_{i=0}^n\{\hat v_i\})$, as 
+  $$
+  \max_{i=0}^n\{\hat v_i\} & = & \left\lfloor \frac {v_\text{max}}m \right\rfloor \\
+   & = &  \frac {v_\text{max}n}{v_\text{max} \epsilon}  \\
+   & = &  \frac n\epsilon
+  $$
+  we got $O(n^3/\epsilon)$.
 
 ### Problem 20.12
 
