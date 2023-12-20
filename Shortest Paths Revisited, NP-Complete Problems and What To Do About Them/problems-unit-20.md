@@ -538,7 +538,7 @@ Problem 20.3 investigated approximate correctness guarantees for greedy heuristi
 
   The running time is $O(n^2 \cdot \max_{i=0}^n\{\hat v_i\})$, as 
   $$
-  \max_{i=0}^n\{\hat v_i\} & = & \left\lfloor \frac {v_\text{max}}m \right\rfloor \\
+  \max|_{i=0}^n\{\hat v_i\} & = & \left\lfloor \frac {v_\text{max}}m \right\rfloor \\
    & = &  \frac {v_\text{max}n}{v_\text{max} \epsilon}  \\
    & = &  \frac n\epsilon
   $$
@@ -546,10 +546,108 @@ Problem 20.3 investigated approximate correctness guarantees for greedy heuristi
 
 ### Problem 20.12
 
+This problem describes a commonly encountered special case of the traveling salesman problem for which there are fast heuristic algorithms with good approximate correctness guarantees. In a metric instance $G = (V,E)$ of the TSP, all the edge costs $c_e$ are nonnegative and the shortest path between any two vertices is the direct one-hop path (a condition that is known as the “triangle inequality”):
+$$
+c_{vw} \leq \sum_{e \in P} c_e
+$$
+for every pair $v, w \in V$ of vertices and $v-w$ path $P$. The triangle inequality typically holds in applications in which edge costs correspond to physical distances. The TSP remains NP-hard in the special case of metric instances.
+
+Our starting point for a fast heuristic algorithm is the linear-time algorithm for tree instances described in Problem 19.8. The key idea is to reduce a general metric instance to a tree instance by computing a minimum spanning tree.
+
+**MST Heuristic for Metric TSP** 
+
+* $T :=$ minimum spanning tree of the input graph $G$.
+* Return an optimal tour of the tree instance defined by $T$.
+
+The first step can be implemented in near-linear time using Prim’s or Kruskal’s algorithm. The second step can be implemented in linear time using the solution to Problem 19.8. In the tree TSP instance constructed in the second step, the length $a_e$ of an edge $e$ of $T$ is set to the cost $c_e$ of that edge in the given metric TSP instance (with the cost of each edge $(v, w)$ in the tree instance then defined as the total length $\sum_{e \in P_{vw}} a_e$ of the unique $v-w$ path $P_{vw}$ in $T$).
+
+* **a)** Prove that the minimum total cost of a traveling salesman tour is at least that of a minimum spanning tree. (This step does not require the triangle inequality.)
+
+  **ANSWER**
+
+  A minimum spanning tree is a connected tree with the minimum possible total edge weight possible.
+
+  As all the edges are nonnegative, you can create a MST from a traveling salesman tour by removing the biggest edge from the tour.
+
+  Thus it is clearly impossible for a traveling salesman tour to be smaller than the MST.
+
+* **b)**  Prove that, for every instance of metric TSP, the total cost of the tour computed by the MST heuristic is at most twice the minimum possible.
+
+  **ANSWER**
+
+  As proved before the minimum possible value is that of a minimum spanning tree.
+
+  The algorithm of the second step, the one created and proved for [problem 19.8 ](https://github.com/gpm22/ossu-projects/blob/main/Shortest%20Paths%20Revisited%2C%20NP-Complete%20Problems%20and%20What%20To%20Do%20About%20Them/problems-unit-19.md#problem-198), will result in a tour which the value is twice of the minimum spanning tree.
+
+  Therefore, for every instance of metric TSP, the total cost of the tour computed by the MST heuristic is at most twice the minimum possible, which is the value of the MST.
+
 ### Problem 20.13
 
+Propose an implementation of the `2OPT` algorithm (Section 20.4.3) in which each iteration of the main while loop runs in $O(n^2)$ time, where $n$ is the number of vertices.
+
+**ANSWER**
+
+My proposed algorithm is
+
+```ruby
+T := initial tour # perhaps greedily constructed
+def 2OPT(T)
+	for edge1 in T
+    	for edge2 in T
+        	T_1 := 2Change(T, edge1, edge2)
+        	return 2OPT(T_1) if T_1 < T
+    	end
+	end
+	return T
+end
+```
+
+My implementation of the `2Change` is
+
+```ruby
+def 2Change(T, (v, w), (u, x))
+    T = removeEdge(T, (v, w))
+    T = removeEdge(T, (u, x))
+    T_1 = addEdge(T, (v, x))
+    T_1 = addEdge(T_1, (u, x))
+    
+    return T_1 if T_1 is a tour
+    
+    T_2 = addEdge(T, (u, v))
+    T_2 = addEdge(T_2, (w, x))
+    
+    return T_2
+end
+```
+
 ### Problem 20.14
+
+Most local search algorithms lack polynomial running time and approximate correctness guarantees; this problem describes a rare exception. For an integer $k \geq 2$, in the **maximum $k$-cut problem**, the input is an undirected graph $G = (V,E)$. The feasible solutions are the $k$-cuts of the graph, meaning partitions of the vertex set $V$ into $k$ non-empty groups $S_1, S_2, \dots,S_k$. The objective is to maximize the number of edges with endpoints in different groups. For example, in the graph.
+
+For a $k$-cut $(S_1, S_2, \dots,S_k)$, each local move corresponds to a reassignment of a single vertex from one group to another, subject to the constraint that none of the $k$ groups can become empty.
+
+* **a)** Prove that, for every initial $k$-cut and selection rule for choosing improving local moves, the generic local search algorithm halts within $|E|$ iterations.
+
+  **ANSWER**
+
+  Each local move is about moving a vertex from one group to another and the objective is to maximize the number of edges with endpoints in different groups.
+
+  So the objective function value will be an integer between 0 and $|E|$, increasing by at least 1 in each interaction.
+
+  Therefore, for each edge a local move will be done, resulting in at most $|E|$ iterations.
+
+* **b)** Prove that, for every initial $k$-cut and selection rule for choosing improving local moves, the generic local search algorithm halts with a $k$-cut with an objective function value of at least $(k - 1)/k$ times the maximum possible.
+
+  **ANSWER**
+
+  Consider a local maximum. In that case for each vertex $v \in S_i$ and a group $S_j$ with $j \neq i$, the number of edges between $v$ and the vertices of $S_i$ is at most that between $v$ and the vertices of $S_j$. That happens because otherwise that would not be a local maximum, as it can be improved by a local move.
+
+  So when the algorithm halts, we got at least $|V| \cdot (k - 1)$ inequalities and the best possible total value is $|V|k$.
+
+  Therefore the result is at least $(k-1)/k$ times the maximum possible.
 
 ## Programming Problems
 
 ### Problem 20.15
+
+### Problem 20.16
