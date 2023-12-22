@@ -650,4 +650,163 @@ For a $k$-cut $(S_1, S_2, \dots,S_k)$, each local move corresponds to a reassign
 
 ### Problem 20.15
 
+Implement in your favorite programming language the nearest neighbor algorithm for the TSP (as seen in Quiz 20.7). Try out your implementation on instances with edge costs chosen independently and uniformly at random from the set $\{1, 2,\dots, 100\}$ or, alternatively, for vertices that correspond to points chosen independently and uniformly at random from the unit square. How large an input size (that is, how many vertices) can your program reliably process in under a minute? What about in under an hour?
+
+**ANSWER**
+
+#### Code
+
+##### Graph class
+
+```ruby
+class Graph
+  def initialize
+    @edges = {}
+    @vertices = {}
+  end
+
+  def addEdge(firstVertex, secondVertex, value)
+    @vertices[firstVertex.to_s] = nil unless @vertices.has_key?(firstVertex.to_s)
+    @vertices[secondVertex.to_s] = nil unless @vertices.has_key?(secondVertex.to_s)
+    @edges["#{firstVertex}:#{secondVertex}"] = value
+    @edges["#{secondVertex}:#{firstVertex}"] = value
+  end
+
+  def nearestNeighborTSPFirst
+    nearestNeighborTSPHelper(@vertices.first[0])
+  end
+
+  def nearestNeighborTSP
+    result = [nil, Float::INFINITY]
+    @vertices.keys.sample(4).each do |vertice|
+      newResult = nearestNeighborTSPHelper(vertice)
+      result = newResult if newResult[1] < result[1]
+    end
+    result
+  end
+
+  private
+
+  def nearestNeighborTSPHelper(currentVertice)
+    tour = [currentVertice]
+    tourValue = 0
+    @unvisitedVertices = @vertices.clone
+    @unvisitedVertices.delete(currentVertice)
+
+    until @unvisitedVertices.empty?
+      nearestUnvisitedNeighbor = getNearestUnvisitedNeighbor(currentVertice)
+      tourValue += nearestUnvisitedNeighbor[1]
+      tour.push(nearestUnvisitedNeighbor[0])
+      @unvisitedVertices.delete(nearestUnvisitedNeighbor[0])
+      currentVertice = nearestUnvisitedNeighbor[0]
+    end
+    tourValue += getEdgeValue(tour[0], tour[-1])
+    [tour, tourValue]
+  end
+
+  def getNearestUnvisitedNeighbor(vertice)
+    result = [nil, Float::INFINITY]
+
+    @unvisitedVertices.keys.each do |neighbor|
+      distance = getEdgeValue(vertice, neighbor)
+      result = [neighbor, distance] if (distance < result[1])
+    end
+    result
+  end
+
+  def getEdgeValue(firstVertex, secondVertex)
+    @edges["#{firstVertex}:#{secondVertex}"]
+  end
+end
+```
+
+##### Test Code
+
+```ruby
+STDOUT.sync = true
+require_relative "./Graph"
+require "benchmark"
+require "test/unit"
+extend Test::Unit::Assertions
+
+def getGraphFromFile(file)
+  currentFolder = File.absolute_path(File.dirname(__FILE__))
+  inputPath = currentFolder + "/test_files/#{file}.txt"
+  graph = Graph.new
+  File.open(inputPath).each_line do |line|
+    values = line.split(" ").map(&:to_i)
+    next if values.size < 3
+    graph.addEdge(values[0], values[1], values[2].to_i)
+  end
+  graph
+end
+
+def testFirst(file, expected, name)
+  result = getGraphFromFile(file).nearestNeighborTSPFirst
+  puts "#{name} tour: #{result}"
+  assert_equal(expected, result[1], name)
+
+  puts "Test passed! #{name}"
+end
+
+def runTestFilesFirst
+  testFirst("tsptest1", 13, "quiz 19.2")
+  testFirst("tsptest2", 29, "quiz 20.7")
+end
+
+def testRandom(file, expected, name)
+  result = getGraphFromFile(file).nearestNeighborTSP
+  puts "#{name} tour - best: #{expected} - current: #{result}"
+
+  puts "Test passed! #{name}"
+end
+
+def runTestFilesRandom
+  testRandom("tsptest1", 13, "quiz 19.2")
+  testRandom("tsptest2", 23, "quiz 20.7")
+end
+
+def generateGraphWithNVertices(n)
+  total = n * n
+  per1 = total / 100
+  current = 1
+  graph = Graph.new
+  (1..n).each do |i|
+    (1..n).each do |j|
+      puts " #{Time.now.strftime("%d/%m/%Y %H:%M:%S")} - #{current}/#{total} = #{current / per1} %" if (current % per1) == 0
+      current += 1
+      next if i == j
+      graph.addEdge(i, j, rand(0..100))
+    end
+  end
+  graph
+end
+
+def testToVerifyPerformance(n)
+  puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  puts "creating graph with #{n} vertices"
+  graph = generateGraphWithNVertices(n)
+  puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  time = Benchmark.measure { graph.nearestNeighborTSPFirst }
+
+  puts "for n: #{n} - time keys: #{time.real}"
+end
+```
+
+#### Code Analysis
+
+My program can reliably process a graph with **4500 vertices** in under a minute, when running it to get the smallest value between 4 random runs:
+
+| Run  | Time |
+| ---- | ---- |
+| 1    | 23 s |
+| 2    | 50 s |
+| 3    | 58 s |
+| 4    | 56 s |
+| 5    | 53 s |
+
+When running for the first vertex only, 
+
+What about in under an hour?
+
 ### Problem 20.16

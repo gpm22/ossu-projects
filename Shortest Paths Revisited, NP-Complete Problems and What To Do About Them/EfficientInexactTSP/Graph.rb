@@ -5,8 +5,8 @@ class Graph
   end
 
   def addEdge(firstVertex, secondVertex, value)
-    @vertices[firstVertex.to_s] = nil
-    @vertices[secondVertex.to_s] = nil
+    @vertices[firstVertex.to_s] = nil unless @vertices.has_key?(firstVertex.to_s)
+    @vertices[secondVertex.to_s] = nil unless @vertices.has_key?(secondVertex.to_s)
     @edges["#{firstVertex}:#{secondVertex}"] = value
     @edges["#{secondVertex}:#{firstVertex}"] = value
   end
@@ -33,7 +33,7 @@ class Graph
     @unvisitedVertices.delete(currentVertice)
 
     until @unvisitedVertices.empty?
-      nearestUnvisitedNeighbor = getNearestUnvisitedNeighborClone(currentVertice)
+      nearestUnvisitedNeighbor = getNearestUnvisitedNeighbor(currentVertice)
       tourValue += nearestUnvisitedNeighbor[1]
       tour.push(nearestUnvisitedNeighbor[0])
       @unvisitedVertices.delete(nearestUnvisitedNeighbor[0])

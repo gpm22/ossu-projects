@@ -42,9 +42,14 @@ def runTestFilesRandom
 end
 
 def generateGraphWithNVertices(n)
+  total = n * n
+  per1 = total / 100
+  current = 1
   graph = Graph.new
   (1..n).each do |i|
     (1..n).each do |j|
+      puts " #{Time.now.strftime("%d/%m/%Y %H:%M:%S")} - #{current}/#{total} = #{current / per1} %" if (current % per1) == 0
+      current += 1
       next if i == j
       graph.addEdge(i, j, rand(0..100))
     end
@@ -56,13 +61,10 @@ def testToVerifyPerformance(n)
   puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   puts "creating graph with #{n} vertices"
   graph = generateGraphWithNVertices(n)
-  puts "running tsp"
+  puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   time = Benchmark.measure { graph.nearestNeighborTSPFirst }
 
   puts "for n: #{n} - time keys: #{time.real}"
 end
 
-#5.times { testToVerifyPerformance(1000) }
-
-#runTestFilesFirst
-5.times { testToVerifyPerformance(2000) }
+testToVerifyPerformance(12500)
