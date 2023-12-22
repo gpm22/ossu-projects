@@ -1,5 +1,5 @@
 STDOUT.sync = true
-require_relative "./ExhaustiveSearchTSP"
+require_relative "./Graph"
 require "benchmark"
 require "test/unit"
 extend Test::Unit::Assertions
@@ -16,17 +16,29 @@ def getGraphFromFile(file)
   graph
 end
 
-def test(file, expected, name)
-  result = getGraphFromFile(file).tsp
+def testFirst(file, expected, name)
+  result = getGraphFromFile(file).nearestNeighborTSPFirst
   puts "#{name} tour: #{result}"
-  assert_equal(expected, result[2], name)
+  assert_equal(expected, result[1], name)
 
   puts "Test passed! #{name}"
 end
 
-def runTestFiles
-  test("tsptest1", 13, "quiz 19.2")
-  test("tsptest2", 23, "quiz 20.7")
+def runTestFilesFirst
+  testFirst("tsptest1", 13, "quiz 19.2")
+  testFirst("tsptest2", 29, "quiz 20.7")
+end
+
+def testRandom(file, expected, name)
+  result = getGraphFromFile(file).nearestNeighborTSP
+  puts "#{name} tour - best: #{expected} - current: #{result}"
+
+  puts "Test passed! #{name}"
+end
+
+def runTestFilesRandom
+  testRandom("tsptest1", 13, "quiz 19.2")
+  testRandom("tsptest2", 23, "quiz 20.7")
 end
 
 def generateGraphWithNVertices(n)
@@ -44,13 +56,13 @@ def testToVerifyPerformance(n)
   puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   puts "creating graph with #{n} vertices"
   graph = generateGraphWithNVertices(n)
-  #timeNaive = Benchmark.measure { graph.tspNaive }
   puts "running tsp"
-  timeOptimized = Benchmark.measure { graph.tsp }
+  time = Benchmark.measure { graph.nearestNeighborTSPFirst }
 
-  #puts "for n: #{n} - time naive: #{timeNaive.real} - time optimized: #{timeOptimized.real}"
-  puts "for n: #{n} - time optimized: #{timeOptimized.real}"
+  puts "for n: #{n} - time keys: #{time.real}"
 end
 
-#5.times { testToVerifyPerformance(17) }
-runTestFiles
+#5.times { testToVerifyPerformance(1000) }
+
+#runTestFilesFirst
+5.times { testToVerifyPerformance(2000) }
