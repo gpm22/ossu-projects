@@ -7,13 +7,7 @@ extend Test::Unit::Assertions
 def getGraphFromFile(file)
   currentFolder = File.absolute_path(File.dirname(__FILE__))
   inputPath = currentFolder + "/test_files/#{file}.txt"
-  graph = Graph.new
-  File.open(inputPath).each_line do |line|
-    values = line.split(" ").map(&:to_i)
-    next if values.size < 3
-    graph.addEdge(values[0], values[1], values[2].to_i)
-  end
-  graph
+  Graph.createGraphFromFile(inputPath)
 end
 
 def testFirst(file, expected, name)
@@ -67,4 +61,5 @@ def testToVerifyPerformance(n)
   puts "for n: #{n} - time keys: #{time.real}"
 end
 
-testToVerifyPerformance(12500)
+
+runTestFilesRandom

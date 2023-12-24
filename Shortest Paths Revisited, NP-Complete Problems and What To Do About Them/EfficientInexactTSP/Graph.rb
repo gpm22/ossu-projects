@@ -1,7 +1,19 @@
-class Graph
+require_relative "./BaseGraph"
+
+class Graph < BaseGraph
   def initialize
     @edges = {}
     @vertices = {}
+  end
+
+  def self.createGraphFromFile(filePath)
+   graph = Graph.new
+    File.open(filePath).each_line do |line|
+      values = line.split(" ").map(&:to_i)
+      next if values.size < 3
+      graph.addEdge(values[0], values[1], values[2].to_i)
+    end
+    graph
   end
 
   def addEdge(firstVertex, secondVertex, value)
@@ -11,49 +23,8 @@ class Graph
     @edges["#{secondVertex}:#{firstVertex}"] = value
   end
 
-  def nearestNeighborTSPFirst
-    nearestNeighborTSPHelper(@vertices.first[0])
-  end
-
-  def nearestNeighborTSP
-    result = [nil, Float::INFINITY]
-    @vertices.keys.sample(4).each do |vertice|
-      newResult = nearestNeighborTSPHelper(vertice)
-      result = newResult if newResult[1] < result[1]
-    end
-    result
-  end
-
-  private
-
-  def nearestNeighborTSPHelper(currentVertice)
-    tour = [currentVertice]
-    tourValue = 0
-    @unvisitedVertices = @vertices.clone
-    @unvisitedVertices.delete(currentVertice)
-
-    until @unvisitedVertices.empty?
-      nearestUnvisitedNeighbor = getNearestUnvisitedNeighbor(currentVertice)
-      tourValue += nearestUnvisitedNeighbor[1]
-      tour.push(nearestUnvisitedNeighbor[0])
-      @unvisitedVertices.delete(nearestUnvisitedNeighbor[0])
-      currentVertice = nearestUnvisitedNeighbor[0]
-    end
-    tourValue += getEdgeValue(tour[0], tour[-1])
-    [tour, tourValue]
-  end
-
-  def getNearestUnvisitedNeighbor(vertice)
-    result = [nil, Float::INFINITY]
-
-    @unvisitedVertices.keys.each do |neighbor|
-      distance = getEdgeValue(vertice, neighbor)
-      result = [neighbor, distance] if (distance < result[1])
-    end
-    result
-  end
-
   def getEdgeValue(firstVertex, secondVertex)
     @edges["#{firstVertex}:#{secondVertex}"]
   end
+
 end
