@@ -805,7 +805,15 @@ My program can reliably process a graph with **4500 vertices** in under a minute
 | 4    | 56 s |
 | 5    | 53 s |
 
-When running for the first vertex only, 
+When running for the first vertex only, it can reliably process a graph with **15500 vertices** in under a minute:
+
+| Run  | Time |
+| ---- | ---- |
+| 1    | 59 s |
+| 2    | 59 s |
+| 3    | 56 s |
+| 4    | 56 s |
+| 5    | 56 s |
 
 What about in under an hour?
 

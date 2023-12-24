@@ -1,5 +1,4 @@
 class BaseGraph
-
   def nearestNeighborTSPFirst
     @counter = 0
     nearestNeighborTSPHelper(@vertices.first[0])
@@ -25,7 +24,7 @@ class BaseGraph
 
     until @unvisitedVertices.empty?
       @counter += 1
-      puts "#{Time.now.strftime("%d/%m/%Y %H:%M")} vertice #{@counter} of #{@vertices.size} = #{@counter*100.0/@vertices.size} %" if @counter % 100 == 0
+      puts "#{Time.now.strftime("%d/%m/%Y %H:%M:%S")} vertice #{@counter} of #{@vertices.size} = #{@counter * 100.0 / @vertices.size} %" if @counter % 1000 == 0
       nearestUnvisitedNeighbor = getNearestUnvisitedNeighbor(currentVertice)
       tourValue += nearestUnvisitedNeighbor[1]
       tour.push(nearestUnvisitedNeighbor[0])
@@ -45,5 +44,4 @@ class BaseGraph
     end
     result
   end
-
 end

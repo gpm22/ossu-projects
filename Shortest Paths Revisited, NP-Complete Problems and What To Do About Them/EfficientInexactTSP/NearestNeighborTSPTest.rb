@@ -8,7 +8,7 @@ extend Test::Unit::Assertions
 def getGraphFromFile(file, type)
   currentFolder = File.absolute_path(File.dirname(__FILE__))
   inputPath = currentFolder + "/test_files/#{file}.txt"
-  
+
   return CartesianGraph.createGraphFromFile(inputPath) if type == :CARTESIAN
 
   Graph.createGraphFromFile(inputPath)
@@ -40,16 +40,14 @@ def runTestFilesRandom
   testRandom("tsptest2", 24, "quiz 20.7", nil)
 end
 
-
-
 def testToVerifyPerformance(n, type)
   puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   puts "creating graph with #{n} vertices"
-  graph =  type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
+  graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
   puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   time = Benchmark.measure { graph.nearestNeighborTSPFirst }
 
   puts "for n: #{n} - time: #{time.real}"
 end
 
-testToVerifyPerformance(12000, :CARTESIAN)
+5.times { testToVerifyPerformance(15500, :CARTESIAN) }
