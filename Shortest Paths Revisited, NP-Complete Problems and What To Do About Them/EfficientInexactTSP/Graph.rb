@@ -16,6 +16,22 @@ class Graph < BaseGraph
     graph
   end
 
+  def self.generateGraphWithNVertices(n)
+    total = n * n
+    per1 = total / 100
+    current = 1
+    graph = Graph.new
+    (1..n).each do |i|
+      (1..n).each do |j|
+        puts " #{Time.now.strftime("%d/%m/%Y %H:%M:%S")} - #{current}/#{total} = #{current / per1} %" if (current % per1) == 0
+        current += 1
+        next if i == j
+        graph.addEdge(i, j, rand(0..100))
+      end
+    end
+    graph
+  end
+
   def addEdge(firstVertex, secondVertex, value)
     @vertices[firstVertex.to_s] = nil unless @vertices.has_key?(firstVertex.to_s)
     @vertices[secondVertex.to_s] = nil unless @vertices.has_key?(secondVertex.to_s)

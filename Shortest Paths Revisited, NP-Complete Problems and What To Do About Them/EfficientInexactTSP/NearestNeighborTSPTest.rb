@@ -1,17 +1,21 @@
 STDOUT.sync = true
 require_relative "./Graph"
+require_relative "./CartesianGraph"
 require "benchmark"
 require "test/unit"
 extend Test::Unit::Assertions
 
-def getGraphFromFile(file)
+def getGraphFromFile(file, type)
   currentFolder = File.absolute_path(File.dirname(__FILE__))
   inputPath = currentFolder + "/test_files/#{file}.txt"
+  
+  return CartesianGraph.createGraphFromFile(inputPath) if type == :CARTESIAN
+
   Graph.createGraphFromFile(inputPath)
 end
 
-def testFirst(file, expected, name)
-  result = getGraphFromFile(file).nearestNeighborTSPFirst
+def testFirst(file, expected, name, type)
+  result = getGraphFromFile(file, type).nearestNeighborTSPFirst
   puts "#{name} tour: #{result}"
   assert_equal(expected, result[1], name)
 
@@ -19,47 +23,33 @@ def testFirst(file, expected, name)
 end
 
 def runTestFilesFirst
-  testFirst("tsptest1", 13, "quiz 19.2")
-  testFirst("tsptest2", 29, "quiz 20.7")
+  testFirst("tsptest1", 13, "quiz 19.2", nil)
+  testFirst("tsptest2", 29, "quiz 20.7", nil)
 end
 
-def testRandom(file, expected, name)
-  result = getGraphFromFile(file).nearestNeighborTSP
+def testRandom(file, expected, name, type)
+  result = getGraphFromFile(file, type).nearestNeighborTSP
   puts "#{name} tour - best: #{expected} - current: #{result}"
 
+  assert_equal(expected, result[1].round(2), name)
   puts "Test passed! #{name}"
 end
 
 def runTestFilesRandom
-  testRandom("tsptest1", 13, "quiz 19.2")
-  testRandom("tsptest2", 23, "quiz 20.7")
+  testRandom("tsptest1", 13, "quiz 19.2", nil)
+  testRandom("tsptest2", 24, "quiz 20.7", nil)
 end
 
-def generateGraphWithNVertices(n)
-  total = n * n
-  per1 = total / 100
-  current = 1
-  graph = Graph.new
-  (1..n).each do |i|
-    (1..n).each do |j|
-      puts " #{Time.now.strftime("%d/%m/%Y %H:%M:%S")} - #{current}/#{total} = #{current / per1} %" if (current % per1) == 0
-      current += 1
-      next if i == j
-      graph.addEdge(i, j, rand(0..100))
-    end
-  end
-  graph
-end
 
-def testToVerifyPerformance(n)
+
+def testToVerifyPerformance(n, type)
   puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   puts "creating graph with #{n} vertices"
-  graph = generateGraphWithNVertices(n)
+  graph =  type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
   puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   time = Benchmark.measure { graph.nearestNeighborTSPFirst }
 
-  puts "for n: #{n} - time keys: #{time.real}"
+  puts "for n: #{n} - time: #{time.real}"
 end
 
-
-runTestFilesRandom
+testToVerifyPerformance(12000, :CARTESIAN)

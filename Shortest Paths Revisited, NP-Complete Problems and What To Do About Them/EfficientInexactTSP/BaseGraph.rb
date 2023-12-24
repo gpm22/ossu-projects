@@ -1,11 +1,13 @@
 class BaseGraph
 
   def nearestNeighborTSPFirst
+    @counter = 0
     nearestNeighborTSPHelper(@vertices.first[0])
   end
 
   def nearestNeighborTSP
     result = [nil, Float::INFINITY]
+    @counter = 0
     @vertices.keys.sample(4).each do |vertice|
       newResult = nearestNeighborTSPHelper(vertice)
       result = newResult if newResult[1] < result[1]
@@ -22,6 +24,8 @@ class BaseGraph
     @unvisitedVertices.delete(currentVertice)
 
     until @unvisitedVertices.empty?
+      @counter += 1
+      puts "#{Time.now.strftime("%d/%m/%Y %H:%M")} vertice #{@counter} of #{@vertices.size} = #{@counter*100.0/@vertices.size} %" if @counter % 100 == 0
       nearestUnvisitedNeighbor = getNearestUnvisitedNeighbor(currentVertice)
       tourValue += nearestUnvisitedNeighbor[1]
       tour.push(nearestUnvisitedNeighbor[0])
