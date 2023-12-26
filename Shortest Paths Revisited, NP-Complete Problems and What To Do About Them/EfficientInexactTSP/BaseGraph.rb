@@ -24,7 +24,7 @@ class BaseGraph
 
     until @unvisitedVertices.empty?
       @counter += 1
-      puts "#{Time.now.strftime("%d/%m/%Y %H:%M:%S")} vertice #{@counter} of #{@vertices.size} = #{@counter * 100.0 / @vertices.size} %" if @counter % 1000 == 0
+      puts "#{Time.now.strftime("%d/%m/%Y %H:%M:%S")} vertice #{@counter} of #{@vertices.size} = #{@counter * 100.0 / @vertices.size} %" if @counter % 5000 == 0
       nearestUnvisitedNeighbor = getNearestUnvisitedNeighbor(currentVertice)
       tourValue += nearestUnvisitedNeighbor[1]
       tour.push(nearestUnvisitedNeighbor[0])

@@ -17,7 +17,7 @@ end
 def testFirst(file, expected, name, type)
   result = getGraphFromFile(file, type).nearestNeighborTSPFirst
   puts "#{name} tour: #{result}"
-  assert_equal(expected, result[1], name)
+  assert_equal(expected, result[1].round(2), name)
 
   puts "Test passed! #{name}"
 end
@@ -25,6 +25,7 @@ end
 def runTestFilesFirst
   testFirst("tsptest1", 13, "quiz 19.2", nil)
   testFirst("tsptest2", 29, "quiz 20.7", nil)
+  testFirst("tsptest3", 13.30, "", :CARTESIAN)
 end
 
 def testRandom(file, expected, name, type)
@@ -38,6 +39,7 @@ end
 def runTestFilesRandom
   testRandom("tsptest1", 13, "quiz 19.2", nil)
   testRandom("tsptest2", 24, "quiz 20.7", nil)
+  testRandom("tsptest3", 13.30, "", :CARTESIAN)
 end
 
 def testToVerifyPerformance(n, type)
@@ -50,4 +52,5 @@ def testToVerifyPerformance(n, type)
   puts "for n: #{n} - time: #{time.real}"
 end
 
-5.times { testToVerifyPerformance(15500, :CARTESIAN) }
+#testToVerifyPerformance(110_000, :CARTESIAN)
+testToVerifyPerformance(15_500, :CARTESIAN)

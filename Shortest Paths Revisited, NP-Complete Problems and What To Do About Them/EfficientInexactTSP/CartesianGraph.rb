@@ -1,13 +1,12 @@
 require_relative "./BaseGraph"
 
 class CartesianGraph < BaseGraph
-
   def initialize
-        @vertices = {}
+    @vertices = {}
   end
 
   def self.createGraphFromFile(filePath)
-   graph = CartesianGraph.new
+    graph = CartesianGraph.new
     File.open(filePath).each_line.with_index do |line, index|
       next if index == 0
       values = line.split(" ").map(&:to_i)
@@ -24,6 +23,11 @@ class CartesianGraph < BaseGraph
     graph
   end
 
+  def nearestNeighborTSPHelper(currentVertice)
+    tour = super(currentVertice)[0]
+    [tour, getTourValue(tour)]
+  end
+
   def addVertex(value, x, y)
     @vertices[value.to_s] = CartesianNode.new(value, x, y)
   end
@@ -31,10 +35,22 @@ class CartesianGraph < BaseGraph
   def getEdgeValue(firstVertex, secondVertex)
     @vertices[firstVertex].distanceTo(@vertices[secondVertex])
   end
+
+  private
+
+  def getTourValue(tour)
+    previousElement = tour.first
+    tourValue = tour.reduce(0) do |result, element|
+      currentResult = result + Math.sqrt(getEdgeValue(previousElement, element))
+      previousElement = element
+      currentResult
+    end
+
+    tourValue + Math.sqrt(getEdgeValue(tour[0], tour[-1]))
+  end
 end
 
 class CartesianNode
-
   attr_reader :x, :y
 
   def initialize(value, x, y)
@@ -44,6 +60,7 @@ class CartesianNode
   end
 
   def distanceTo(otherNode)
-    Math.sqrt((@x-otherNode.x)**2 + (@y-otherNode.y)**2)
+    #it's not squared as it does not make a difference in the comparison
+    (@x - otherNode.x) ** 2 + (@y - otherNode.y) ** 2
   end
 end
