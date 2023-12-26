@@ -38,4 +38,21 @@ def testToVerifyPerformance(n, type)
   puts "for n: #{n} - time: #{time.real}"
 end
 
-runTestFilesRandom
+def comparing2OPTWithNearestNeighbor(n, type)
+  puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  puts "creating graph with #{n} vertices"
+  graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
+
+  result2OPT = 0
+  resultNearest = 0
+  puts "running tsp nearest neighbor-  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  timeNearest = Benchmark.measure { resultNearest = graph.nearestNeighborTSP }
+  puts "running tsp 2opt -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  time2OPT = Benchmark.measure { result2OPT = graph.TSP2OPT }
+
+  puts "for n: #{n}"
+  puts "Nearest - result: #{resultNearest[1]} -  time: #{timeNearest.real}"
+  puts "2OPT    - result: #{result2OPT[1]} -  time: #{time2OPT.real}"
+end
+
+comparing2OPTWithNearestNeighbor(1000, :CARTESIAN)

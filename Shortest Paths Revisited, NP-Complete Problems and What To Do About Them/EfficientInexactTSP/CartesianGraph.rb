@@ -28,6 +28,11 @@ class CartesianGraph < BaseGraph
     [tour, getTourValue(tour)]
   end
 
+  def TSP2OPT
+    tour = super[0]
+    [tour, getTourValue(tour)]
+  end
+
   def addVertex(value, x, y)
     @vertices[value.to_s] = CartesianNode.new(value, x, y)
   end

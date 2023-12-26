@@ -15,20 +15,24 @@ class BaseGraph
   end
 
   def TSP2OPT
-    tour, distance = nearestNeighborTSP
+    @tour2OPT, distance = nearestNeighborTSPFirst
     foundImprovement = true
-    tour.pop
-    n = tour.size
+    @tour2OPT.pop
+    n = @tour2OPT.size
 
-    while foundImprovement
+    maxImprovements = n # so the algorithm is n^3
+    counter = 0
+    while foundImprovement && counter < maxImprovements
       foundImprovement = false
+      counter += 1
+      puts "counter: #{counter} / #{maxImprovements} - #{counter * 100 / maxImprovements} % - current distance = #{distance}" if counter % 100 == 0
 
       (0..(n - 2)).each do |i|
         ((i + 1)..(n - 1)).each do |j|
-          delta = -getEdgeValue(tour[i], tour[(i + 1) % n]) - getEdgeValue(tour[j], tour[(j + 1) % n]) + getEdgeValue(tour[(i + 1) % n], tour[(j + 1) % n]) + getEdgeValue(tour[i], tour[j])
-
-          if delta < 0
-            tour = change2(tour, i, j)
+          delta = calculateDeltaLength(i, j).round(2)
+          hasImprovement = delta < 0
+          if hasImprovement
+            change2(i, j)
             distance += delta
             foundImprovement = true
           end
@@ -36,14 +40,22 @@ class BaseGraph
       end
     end
 
-    tour.push(tour[0])
-    [tour, distance]
+    @tour2OPT.push(@tour2OPT[0])
+    [@tour2OPT, distance]
   end
 
   private
 
-  def change2(tour, positionOfFirstVertexOfFirstEdge, positionOfFirstVertexOfSecondEdge)
-    tour[0..positionOfFirstVertexOfFirstEdge] + tour[(positionOfFirstVertexOfFirstEdge + 1)..positionOfFirstVertexOfSecondEdge].reverse + tour[(positionOfFirstVertexOfSecondEdge + 1)..-1]
+  def calculateDeltaLength(positionOfFirstVertexOfFirstEdge, positionOfFirstVertexOfSecondEdge)
+    n = @tour2OPT.size
+    delta = -getEdgeValue(@tour2OPT[positionOfFirstVertexOfFirstEdge], @tour2OPT[(positionOfFirstVertexOfFirstEdge + 1) % n])
+    delta -= getEdgeValue(@tour2OPT[positionOfFirstVertexOfSecondEdge], @tour2OPT[(positionOfFirstVertexOfSecondEdge + 1) % n])
+    delta += getEdgeValue(@tour2OPT[(positionOfFirstVertexOfFirstEdge + 1) % n], @tour2OPT[(positionOfFirstVertexOfSecondEdge + 1) % n])
+    delta + getEdgeValue(@tour2OPT[positionOfFirstVertexOfFirstEdge], @tour2OPT[positionOfFirstVertexOfSecondEdge])
+  end
+
+  def change2(positionOfFirstVertexOfFirstEdge, positionOfFirstVertexOfSecondEdge)
+    @tour2OPT = @tour2OPT[0..positionOfFirstVertexOfFirstEdge] + @tour2OPT[(positionOfFirstVertexOfFirstEdge + 1)..positionOfFirstVertexOfSecondEdge].reverse + @tour2OPT[(positionOfFirstVertexOfSecondEdge + 1)..-1]
   end
 
   def nearestNeighborTSPHelper(currentVertice)
