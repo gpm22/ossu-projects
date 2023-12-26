@@ -55,4 +55,4 @@ def comparing2OPTWithNearestNeighbor(n, type)
   puts "2OPT    - result: #{result2OPT[1]} -  time: #{time2OPT.real}"
 end
 
-comparing2OPTWithNearestNeighbor(1000, :CARTESIAN)
+10.times { comparing2OPTWithNearestNeighbor(500, :CARTESIAN) }

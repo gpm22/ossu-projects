@@ -15,6 +15,7 @@ class BaseGraph
   end
 
   def TSP2OPT
+    puts "#{Time.now.strftime("%d/%m/%Y %H:%M:%S")} creating first tour using nearest neighbor"
     @tour2OPT, distance = nearestNeighborTSPFirst
     foundImprovement = true
     @tour2OPT.pop
@@ -22,10 +23,13 @@ class BaseGraph
 
     maxImprovements = n # so the algorithm is n^3
     counter = 0
+
+    puts "#{Time.now.strftime("%d/%m/%Y %H:%M:%S")} Starting improvements"
+
     while foundImprovement && counter < maxImprovements
       foundImprovement = false
       counter += 1
-      puts "counter: #{counter} / #{maxImprovements} - #{counter * 100 / maxImprovements} % - current distance = #{distance}" if counter % 100 == 0
+      puts "#{Time.now.strftime("%d/%m/%Y %H:%M:%S")} - improvement: #{counter} / #{maxImprovements} - #{counter * 100 / maxImprovements} % - current distance = #{distance}"
 
       (0..(n - 2)).each do |i|
         ((i + 1)..(n - 1)).each do |j|

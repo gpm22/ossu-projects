@@ -656,22 +656,10 @@ Implement in your favorite programming language the nearest neighbor algorithm f
 
 #### Code
 
-##### Graph class
+##### `BaseGraph` class
 
 ```ruby
-class Graph
-  def initialize
-    @edges = {}
-    @vertices = {}
-  end
-
-  def addEdge(firstVertex, secondVertex, value)
-    @vertices[firstVertex.to_s] = nil unless @vertices.has_key?(firstVertex.to_s)
-    @vertices[secondVertex.to_s] = nil unless @vertices.has_key?(secondVertex.to_s)
-    @edges["#{firstVertex}:#{secondVertex}"] = value
-    @edges["#{secondVertex}:#{firstVertex}"] = value
-  end
-
+class BaseGraph
   def nearestNeighborTSPFirst
     nearestNeighborTSPHelper(@vertices.first[0])
   end
@@ -701,6 +689,7 @@ class Graph
       currentVertice = nearestUnvisitedNeighbor[0]
     end
     tourValue += getEdgeValue(tour[0], tour[-1])
+    tour.push(tour[0])
     [tour, tourValue]
   end
 
@@ -713,10 +702,103 @@ class Graph
     end
     result
   end
+end
+```
+
+##### Graph Class
+
+```ruby
+require_relative "./BaseGraph"
+
+class Graph < BaseGraph
+  def initialize
+    @edges = {}
+    @vertices = {}
+  end
+
+  def self.createGraphFromFile(filePath)
+   graph = Graph.new
+    File.open(filePath).each_line do |line|
+      values = line.split(" ").map(&:to_i)
+      next if values.size < 3
+      graph.addEdge(values[0], values[1], values[2].to_i)
+    end
+    graph
+  end
+
+  def self.generateGraphWithNVertices(n)
+    total = n * n
+    per1 = total / 100
+    current = 1
+    graph = Graph.new
+    (1..n).each do |i|
+      (1..n).each do |j|
+        current += 1
+        next if i == j
+        graph.addEdge(i, j, rand(0..100))
+      end
+    end
+    graph
+  end
+
+  def addEdge(firstVertex, secondVertex, value)
+    @vertices[firstVertex.to_s] = nil unless @vertices.has_key?(firstVertex.to_s)
+    @vertices[secondVertex.to_s] = nil unless @vertices.has_key?(secondVertex.to_s)
+    @edges["#{firstVertex}:#{secondVertex}"] = value
+    @edges["#{secondVertex}:#{firstVertex}"] = value
+  end
 
   def getEdgeValue(firstVertex, secondVertex)
     @edges["#{firstVertex}:#{secondVertex}"]
   end
+
+end
+
+```
+
+##### `CartesianGraph`Class
+
+```ruby
+require_relative "./BaseGraph"
+
+class Graph < BaseGraph
+  def initialize
+    @edges = {}
+    @vertices = {}
+  end
+
+  def self.createGraphFromFile(filePath)
+   graph = Graph.new
+    File.open(filePath).each_line do |line|
+      values = line.split(" ").map(&:to_i)
+      next if values.size < 3
+      graph.addEdge(values[0], values[1], values[2].to_i)
+    end
+    graph
+  end
+
+  def self.generateGraphWithNVertices(n)
+    graph = Graph.new
+    (1..n).each do |i|
+      (1..n).each do |j|
+        next if i == j
+        graph.addEdge(i, j, rand(0..100))
+      end
+    end
+    graph
+  end
+
+  def addEdge(firstVertex, secondVertex, value)
+    @vertices[firstVertex.to_s] = nil unless @vertices.has_key?(firstVertex.to_s)
+    @vertices[secondVertex.to_s] = nil unless @vertices.has_key?(secondVertex.to_s)
+    @edges["#{firstVertex}:#{secondVertex}"] = value
+    @edges["#{secondVertex}:#{firstVertex}"] = value
+  end
+
+  def getEdgeValue(firstVertex, secondVertex)
+    @edges["#{firstVertex}:#{secondVertex}"]
+  end
+
 end
 ```
 
@@ -725,71 +807,56 @@ end
 ```ruby
 STDOUT.sync = true
 require_relative "./Graph"
+require_relative "./CartesianGraph"
 require "benchmark"
 require "test/unit"
 extend Test::Unit::Assertions
 
-def getGraphFromFile(file)
+def getGraphFromFile(file, type)
   currentFolder = File.absolute_path(File.dirname(__FILE__))
   inputPath = currentFolder + "/test_files/#{file}.txt"
-  graph = Graph.new
-  File.open(inputPath).each_line do |line|
-    values = line.split(" ").map(&:to_i)
-    next if values.size < 3
-    graph.addEdge(values[0], values[1], values[2].to_i)
-  end
-  graph
+
+  return CartesianGraph.createGraphFromFile(inputPath) if type == :CARTESIAN
+
+  Graph.createGraphFromFile(inputPath)
 end
 
-def testFirst(file, expected, name)
-  result = getGraphFromFile(file).nearestNeighborTSPFirst
+def testFirst(file, expected, name, type)
+  result = getGraphFromFile(file, type).nearestNeighborTSPFirst
   puts "#{name} tour: #{result}"
-  assert_equal(expected, result[1], name)
+  assert_equal(expected, result[1].round(2), name)
 
   puts "Test passed! #{name}"
 end
 
 def runTestFilesFirst
-  testFirst("tsptest1", 13, "quiz 19.2")
-  testFirst("tsptest2", 29, "quiz 20.7")
+  testFirst("tsptest1", 13, "quiz 19.2", nil)
+  testFirst("tsptest2", 29, "quiz 20.7", nil)
+  testFirst("tsptest3", 13.30, "", :CARTESIAN)
 end
 
-def testRandom(file, expected, name)
-  result = getGraphFromFile(file).nearestNeighborTSP
+def testRandom(file, expected, name, type)
+  result = getGraphFromFile(file, type).nearestNeighborTSP
   puts "#{name} tour - best: #{expected} - current: #{result}"
 
+  assert_equal(expected, result[1].round(2), name)
   puts "Test passed! #{name}"
 end
 
 def runTestFilesRandom
-  testRandom("tsptest1", 13, "quiz 19.2")
-  testRandom("tsptest2", 23, "quiz 20.7")
+  testRandom("tsptest1", 13, "quiz 19.2", nil)
+  testRandom("tsptest2", 24, "quiz 20.7", nil)
+  testRandom("tsptest3", 13.30, "", :CARTESIAN)
 end
 
-def generateGraphWithNVertices(n)
-  total = n * n
-  per1 = total / 100
-  current = 1
-  graph = Graph.new
-  (1..n).each do |i|
-    (1..n).each do |j|
-      puts " #{Time.now.strftime("%d/%m/%Y %H:%M:%S")} - #{current}/#{total} = #{current / per1} %" if (current % per1) == 0
-      current += 1
-      next if i == j
-      graph.addEdge(i, j, rand(0..100))
-    end
-  end
-  graph
-end
-
-def testToVerifyPerformance(n)
+def testToVerifyPerformance(n, type)
   puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   puts "creating graph with #{n} vertices"
-  graph = generateGraphWithNVertices(n)
+  graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
   puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   time = Benchmark.measure { graph.nearestNeighborTSPFirst }
 
-  puts "for n: #{n} - time keys: #{time.real}"
+  puts "for n: #{n} - time: #{time.real}"
 end
 ```
 
@@ -818,3 +885,291 @@ When running for the first vertex only, it can reliably process a graph with **1
 What about in under an hour?
 
 ### Problem 20.16
+
+Problem 20.16 Implement in your favorite programming language the `2OPT` algorithm from Section 20.4.3. Use your implementation of the nearest neighbor algorithm from Problem 20.15 to compute the initial tour. Implement each iteration of the main loop so that it runs in quadratic time (see Problem 20.13) and experiment with different ways of selecting an improving local move. Try out your implementation on the same instances you used for Problem 20.15. By how much does local search improve the total cost of the initial tour? 
+
+**ANSWER**
+
+#### Code
+
+##### `BaseGraph` class
+
+```ruby
+class BaseGraph
+  def nearestNeighborTSPFirst
+    nearestNeighborTSPHelper(@vertices.first[0])
+  end
+
+  def nearestNeighborTSP
+    result = [nil, Float::INFINITY]
+    @vertices.keys.sample(4).each do |vertice|
+      newResult = nearestNeighborTSPHelper(vertice)
+      result = newResult if newResult[1] < result[1]
+    end
+    result
+  end
+
+  def TSP2OPT
+    @tour2OPT, distance = nearestNeighborTSPFirst
+    foundImprovement = true
+    @tour2OPT.pop
+    n = @tour2OPT.size
+
+    maxImprovements = n # so the algorithm is n^3
+    counter = 0
+
+    while foundImprovement && counter < maxImprovements
+      foundImprovement = false
+      counter += 1
+
+      (0..(n - 2)).each do |i|
+        ((i + 1)..(n - 1)).each do |j|
+          delta = calculateDeltaLength(i, j).round(2)
+          hasImprovement = delta < 0
+          if hasImprovement
+            change2(i, j)
+            distance += delta
+            foundImprovement = true
+          end
+        end
+      end
+    end
+
+    @tour2OPT.push(@tour2OPT[0])
+    [@tour2OPT, distance]
+  end
+
+  private
+
+  def calculateDeltaLength(positionOfFirstVertexOfFirstEdge, positionOfFirstVertexOfSecondEdge)
+    n = @tour2OPT.size
+    delta = -getEdgeValue(@tour2OPT[positionOfFirstVertexOfFirstEdge], @tour2OPT[(positionOfFirstVertexOfFirstEdge + 1) % n])
+    delta -= getEdgeValue(@tour2OPT[positionOfFirstVertexOfSecondEdge], @tour2OPT[(positionOfFirstVertexOfSecondEdge + 1) % n])
+    delta += getEdgeValue(@tour2OPT[(positionOfFirstVertexOfFirstEdge + 1) % n], @tour2OPT[(positionOfFirstVertexOfSecondEdge + 1) % n])
+    delta + getEdgeValue(@tour2OPT[positionOfFirstVertexOfFirstEdge], @tour2OPT[positionOfFirstVertexOfSecondEdge])
+  end
+
+  def change2(positionOfFirstVertexOfFirstEdge, positionOfFirstVertexOfSecondEdge)
+    @tour2OPT = @tour2OPT[0..positionOfFirstVertexOfFirstEdge] + @tour2OPT[(positionOfFirstVertexOfFirstEdge + 1)..positionOfFirstVertexOfSecondEdge].reverse + @tour2OPT[(positionOfFirstVertexOfSecondEdge + 1)..-1]
+  end
+
+  def nearestNeighborTSPHelper(currentVertice)
+    tour = [currentVertice]
+    tourValue = 0
+    @unvisitedVertices = @vertices.clone
+    @unvisitedVertices.delete(currentVertice)
+
+    until @unvisitedVertices.empty?
+      nearestUnvisitedNeighbor = getNearestUnvisitedNeighbor(currentVertice)
+      tourValue += nearestUnvisitedNeighbor[1]
+      tour.push(nearestUnvisitedNeighbor[0])
+      @unvisitedVertices.delete(nearestUnvisitedNeighbor[0])
+      currentVertice = nearestUnvisitedNeighbor[0]
+    end
+    tourValue += getEdgeValue(tour[0], tour[-1])
+    tour.push(tour[0])
+    [tour, tourValue]
+  end
+
+  def getNearestUnvisitedNeighbor(vertice)
+    result = [nil, Float::INFINITY]
+
+    @unvisitedVertices.keys.each do |neighbor|
+      distance = getEdgeValue(vertice, neighbor)
+      result = [neighbor, distance] if (distance < result[1])
+    end
+    result
+  end
+end
+```
+
+##### Graph Class
+
+```ruby
+require_relative "./BaseGraph"
+
+class Graph < BaseGraph
+  def initialize
+    @edges = {}
+    @vertices = {}
+  end
+
+  def self.createGraphFromFile(filePath)
+   graph = Graph.new
+    File.open(filePath).each_line do |line|
+      values = line.split(" ").map(&:to_i)
+      next if values.size < 3
+      graph.addEdge(values[0], values[1], values[2].to_i)
+    end
+    graph
+  end
+
+  def self.generateGraphWithNVertices(n)
+    graph = Graph.new
+    (1..n).each do |i|
+      (1..n).each do |j|
+        next if i == j
+        graph.addEdge(i, j, rand(0..100))
+      end
+    end
+    graph
+  end
+
+  def addEdge(firstVertex, secondVertex, value)
+    @vertices[firstVertex.to_s] = nil unless @vertices.has_key?(firstVertex.to_s)
+    @vertices[secondVertex.to_s] = nil unless @vertices.has_key?(secondVertex.to_s)
+    @edges["#{firstVertex}:#{secondVertex}"] = value
+    @edges["#{secondVertex}:#{firstVertex}"] = value
+  end
+
+  def getEdgeValue(firstVertex, secondVertex)
+    @edges["#{firstVertex}:#{secondVertex}"]
+  end
+
+end
+
+```
+
+##### `CartesianGraph`Class
+
+```ruby
+require_relative "./BaseGraph"
+
+class Graph < BaseGraph
+  def initialize
+    @edges = {}
+    @vertices = {}
+  end
+
+  def self.createGraphFromFile(filePath)
+   graph = Graph.new
+    File.open(filePath).each_line do |line|
+      values = line.split(" ").map(&:to_i)
+      next if values.size < 3
+      graph.addEdge(values[0], values[1], values[2].to_i)
+    end
+    graph
+  end
+
+  def self.generateGraphWithNVertices(n)
+    total = n * n
+    per1 = total / 100
+    current = 1
+    graph = Graph.new
+    (1..n).each do |i|
+      (1..n).each do |j|
+        current += 1
+        next if i == j
+        graph.addEdge(i, j, rand(0..100))
+      end
+    end
+    graph
+  end
+
+  def addEdge(firstVertex, secondVertex, value)
+    @vertices[firstVertex.to_s] = nil unless @vertices.has_key?(firstVertex.to_s)
+    @vertices[secondVertex.to_s] = nil unless @vertices.has_key?(secondVertex.to_s)
+    @edges["#{firstVertex}:#{secondVertex}"] = value
+    @edges["#{secondVertex}:#{firstVertex}"] = value
+  end
+
+  def getEdgeValue(firstVertex, secondVertex)
+    @edges["#{firstVertex}:#{secondVertex}"]
+  end
+
+end
+```
+
+##### Test class
+
+```ruby
+STDOUT.sync = true
+require_relative "./Graph"
+require_relative "./CartesianGraph"
+require "benchmark"
+require "test/unit"
+extend Test::Unit::Assertions
+
+def getGraphFromFile(file, type)
+  currentFolder = File.absolute_path(File.dirname(__FILE__))
+  inputPath = currentFolder + "/test_files/#{file}.txt"
+
+  return CartesianGraph.createGraphFromFile(inputPath) if type == :CARTESIAN
+
+  Graph.createGraphFromFile(inputPath)
+end
+
+def testRandom(file, expected, name, type)
+  result = getGraphFromFile(file, type).TSP2OPT
+  puts "#{name} tour - best: #{expected} - current: #{result}"
+
+  assert_equal(expected, result[1].round(2), name)
+  puts "Test passed! #{name}"
+end
+
+def runTestFilesRandom
+  testRandom("tsptest1", 13, "quiz 19.2", nil)
+  testRandom("tsptest2", 23, "quiz 20.7", nil)
+  testRandom("tsptest3", 13.30, "", :CARTESIAN)
+end
+
+def testToVerifyPerformance(n, type)
+  puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  puts "creating graph with #{n} vertices"
+  graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
+  puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  time = Benchmark.measure { graph.TSP2OPT }
+
+  puts "for n: #{n} - time: #{time.real}"
+end
+
+def comparing2OPTWithNearestNeighbor(n, type)
+  puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  puts "creating graph with #{n} vertices"
+  graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
+
+  result2OPT = 0
+  resultNearest = 0
+  puts "running tsp nearest neighbor-  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  timeNearest = Benchmark.measure { resultNearest = graph.nearestNeighborTSP }
+  puts "running tsp 2opt -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
+  time2OPT = Benchmark.measure { result2OPT = graph.TSP2OPT }
+
+  puts "for n: #{n}"
+  puts "Nearest - result: #{resultNearest[1]} -  time: #{timeNearest.real}"
+  puts "2OPT    - result: #{result2OPT[1]} -  time: #{time2OPT.real}"
+end
+```
+
+
+
+#### Code Analysis
+
+It was run both algorithms for 10 different random generated graphs with 500 vertices.
+
+|            | Run  | Nearest Neighbor | `2OPT`  |
+| ---------- | ---- | ---------------- | ------- |
+| Result     | 1    | 3959.26          | 3612.64 |
+| Time Spent | 1    | 0.29             | 3.75    |
+| Result     | 2    | 4093.33          | 3683.97 |
+| Time Spent | 2    | 0.29             | 3.15    |
+| Result     | 3    | 4282.26          | 3767.70 |
+| Time Spent | 3    | 0.32             | 2.52    |
+| Result     | 4    | 4111.96          | 3702.84 |
+| Time Spent | 4    | 0.30             | 2.10    |
+| Result     | 5    | 4242.14          | 3689.49 |
+| Time Spent | 5    | 0.33             | 2.58    |
+| Result     | 6    | 4063.95          | 3562.86 |
+| Time Spent | 6    | 0.29             | 2.55    |
+| Result     | 7    | 4033.78          | 3687.79 |
+| Time Spent | 7    | 0.35             | 3.27    |
+| Result     | 8    | 3989.36          | 3625.68 |
+| Time Spent | 8    | 0.31             | 2.42    |
+| Result     | 9    | 4239.44          | 3654.37 |
+| Time Spent | 9    | 0.32             | 2.80    |
+| Result     | 10   | 3833.10          | 3710.66 |
+| Time Spent | 10   | 0.29             | 2.39    |
+
+It was observed an improvement in `2OPT` runs over the nearest neighbor runs, but with a great increment in the running time. The average improvement is 415.048, which is $\approx 10\%$ of improvement, and the average running time increasing is 2.44s, which is $\approx 9$ times bigger.
+
+The improvement cost is increasing the time complexity from $O(n^2)$ to $O(n^3)$, in the present case.
