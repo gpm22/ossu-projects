@@ -14,22 +14,8 @@ def getGraphFromFile(file, type)
   Graph.createGraphFromFile(inputPath)
 end
 
-def testFirst(file, expected, name, type)
-  result = getGraphFromFile(file, type).nearestNeighborTSPFirst
-  puts "#{name} tour: #{result}"
-  assert_equal(expected, result[1].round(2), name)
-
-  puts "Test passed! #{name}"
-end
-
-def runTestFilesFirst
-  testFirst("tsptest1", 13, "quiz 19.2", nil)
-  testFirst("tsptest2", 29, "quiz 20.7", nil)
-  testFirst("tsptest3", 13.30, "", :CARTESIAN)
-end
-
 def testRandom(file, expected, name, type)
-  result = getGraphFromFile(file, type).nearestNeighborTSP
+  result = getGraphFromFile(file, type).TSP2OPT
   puts "#{name} tour - best: #{expected} - current: #{result}"
 
   assert_equal(expected, result[1].round(2), name)
@@ -38,7 +24,7 @@ end
 
 def runTestFilesRandom
   testRandom("tsptest1", 13, "quiz 19.2", nil)
-  testRandom("tsptest2", 24, "quiz 20.7", nil)
+  testRandom("tsptest2", 23, "quiz 20.7", nil)
   testRandom("tsptest3", 13.30, "", :CARTESIAN)
 end
 
@@ -47,14 +33,9 @@ def testToVerifyPerformance(n, type)
   puts "creating graph with #{n} vertices"
   graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
   puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
-  time = Benchmark.measure { graph.nearestNeighborTSPFirst }
+  time = Benchmark.measure { graph.TSP2OPT }
 
   puts "for n: #{n} - time: #{time.real}"
 end
-
-#testToVerifyPerformance(110_000, :CARTESIAN)
-#testToVerifyPerformance(15_500, :CARTESIAN)
-
-runTestFilesFirst
 
 runTestFilesRandom
