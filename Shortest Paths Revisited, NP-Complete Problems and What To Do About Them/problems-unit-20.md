@@ -882,7 +882,7 @@ When running for the first vertex only, it can reliably process a graph with **1
 | 4    | 56 s |
 | 5    | 56 s |
 
-What about in under an hour?
+It can reliable process a graph with **117 000** vertices under a hour. I ran it twice and one was in 3566 s, which is 59 min and 26 s, and the other 3452 s, which is 57 min and 32 s.
 
 ### Problem 20.16
 

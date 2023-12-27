@@ -52,9 +52,4 @@ def testToVerifyPerformance(n, type)
   puts "for n: #{n} - time: #{time.real}"
 end
 
-#testToVerifyPerformance(110_000, :CARTESIAN)
-#testToVerifyPerformance(15_500, :CARTESIAN)
-
-runTestFilesFirst
-
-runTestFilesRandom
+testToVerifyPerformance(117_000, :CARTESIAN)
