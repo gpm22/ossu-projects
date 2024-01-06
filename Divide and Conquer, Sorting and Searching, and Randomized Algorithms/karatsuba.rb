@@ -4,29 +4,20 @@ def karatsuba(n_1, n_2)
     
     n = [n_1_s.length, n_2_s.length].max 
 
-    if(n == 1)
-        return n_1*n_2
-    end 
-
-    if (n%2 != 0)
-        n = n + 1
-    end
+    return n_1*n_2 if n == 1 
+	
+    n = n + 1 if n.odd?
 
     n_half = n/2 
 
-    if n_1_s.length < n 
-        n_1_s = ("0" * (n-n_1_s.length)) + n_1_s
-    end
+    n_1_s = ("0" * (n-n_1_s.length)) + n_1_s if n_1_s.length < n 
 
-    if n_2_s.length < n 
-        n_2_s = ("0" * (n-n_2_s.length)) + n_2_s
-    end
+    n_2_s = ("0" * (n-n_2_s.length)) + n_2_s if n_2_s.length < n 
 
-    a = (n_1_s.slice(0, n_half)).to_i
-    b = (n_1_s.slice(n_half, n_half)).to_i
-
-    c = (n_2_s.slice(0, n_half)).to_i
-    d = (n_2_s.slice(n_half, n_half)).to_i
+    a = n_1_s[0, n_half].to_i
+    b = n_1_s[n_half, n].to_i
+    c = n_2_s[0, n_half].to_i
+    d = n_2_s[n_half, n].to_i
 
     p = a + b
     q = c + d
