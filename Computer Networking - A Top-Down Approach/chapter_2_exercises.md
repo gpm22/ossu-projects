@@ -117,6 +117,10 @@ ETag: "286-4f1aadb3105c0"
 
 **R18. What is the HOL blocking issue in HTTP/1.1? How does HTTP/2 attempt to solve it?**
 
+The HOL (Head of Line) blocking happens when a bigger object blocks the smaller objects to be sent.
+
+To solve it, HTTP/2 uses frame interleaving, which consists in breaking each message into small frames, and interleaving the request and response messages on the same TCP connection.
+
 **R19. Is it possible for an organization’s Web server and mail server to have exactly the same alias for a hostname (for example, foo.com)? What would be the type for the RR that contains the hostname of the mail server?**
 
 **R20. Look over your received e-mails, and examine the header of a message sent from a user with a .edu e-mail address. Is it possible to determine from the header the IP address of the host from which the message was sent? Do the same for a message sent from a Gmail account.**
