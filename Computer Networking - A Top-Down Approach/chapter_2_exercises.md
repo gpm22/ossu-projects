@@ -87,12 +87,24 @@ Web caching reduce the delay for only some of the objects, as not all objects ar
 
 **R14. Telnet into a Web server and send a multiline request message. Include in the request message the If-modified-since: header line to force a response message with the 304 Not Modified status code.**
 
-```bash
-telnet gaia.cs.umass.edu 80
+Sending
 
-GET /kurose_ross/interactive/index.php HTTP/1.1
-Host: gaia.cs.umass.edu
-If-modified-since: Wed, 9 Jan 2024 02:23:24
+```bash
+telnet info.cern.ch 80
+
+GET / HTTP/1.1
+Host: info.cern.ch
+If-modified-since: Wed, 05 Feb 2014 16:00:31 GMT
+```
+
+generated
+
+```http
+HTTP/1.1 304 Not Modified
+Date: Tue, 09 Jan 2024 15:21:47 GMT
+Server: Apache
+Connection: close
+ETag: "286-4f1aadb3105c0"
 ```
 
 
