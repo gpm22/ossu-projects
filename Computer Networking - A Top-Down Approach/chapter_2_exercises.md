@@ -69,6 +69,46 @@ If an application wants to use the services of TLS, it needs to **include TLS co
 
 #### SECTIONS 2.2–2.5
 
+**R10. What is meant by a handshaking protocol?**
+
+It is a protocol to initiate something, like a connection.
+
+**R11. Why do HTTP, SMTP, and IMAP run on top of TCP rather than on UDP?**
+
+**R12. Consider an e-commerce site that wants to keep a purchase record for each of its customers. Describe how this can be done with cookies.**
+
+By keeping this list info in a database table where the key is the user cookie.
+
+**R13. Describe how Web caching can reduce the delay in receiving a requested object. Will Web caching reduce the delay for all objects requested by a user or for only some of the objects? Why?**
+
+Web caching reduces the delay in receiving a requested object by avoiding the necessity of creating/retrieving the object from the original server. As way from the client is larger and possibly slower. Also is possible to need sometime to create the object itself, so caching can avoid the need for it.
+
+Web caching reduce the delay for only some of the objects, as not all objects are cacheable, like something that must be generated in every request.
+
+**R14. Telnet into a Web server and send a multiline request message. Include in the request message the If-modified-since: header line to force a response message with the 304 Not Modified status code.**
+
+```bash
+telnet gaia.cs.umass.edu 80
+
+GET /kurose_ross/interactive/index.php HTTP/1.1
+Host: gaia.cs.umass.edu
+If-modified-since: Wed, 9 Jan 2024 02:23:24
+```
+
+
+
+**R15. List several popular messaging apps. Do they use the same protocols as SMS?**
+
+**R16. Suppose Alice, with a Web-based e-mail account (such as Hotmail or Gmail), sends a message to Bob, who accesses his mail from his mail server using IMAP. Discuss how the message gets from Alice’s host to Bob’s host. Be sure to list the series of application-layer protocols that are used to move the message between the two hosts.**
+
+**R17. Print out the header of an e-mail message you have recently received. How many Received: header lines are there? Analyze each of the header lines in the message.**
+
+**R18. What is the HOL blocking issue in HTTP/1.1? How does HTTP/2 attempt to solve it?**
+
+**R19. Is it possible for an organization’s Web server and mail server to have exactly the same alias for a hostname (for example, foo.com)? What would be the type for the RR that contains the hostname of the mail server?**
+
+**R20. Look over your received e-mails, and examine the header of a message sent from a user with a .edu e-mail address. Is it possible to determine from the header the IP address of the host from which the message was sent? Do the same for a message sent from a Gmail account.**
+
 ## Problems
 
 ## Socket Programming Assignments
