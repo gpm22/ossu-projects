@@ -19,7 +19,7 @@ class JackTokenizer
   end
 
   def hasMoreTokens
-    return false if @currentTokens.nil? && !self.TokenizeCurrentLike
+    return false if @currentTokens.nil? && !self.tokenizeCurrentLine
 
     begin
       @currentTokens.peek
@@ -109,7 +109,7 @@ class JackTokenizer
     @currentToken[0] == '"' && @currentToken[-1] = '"'
   end
 
-  def TokenizeCurrentLike
+  def tokenizeCurrentLine
     return false unless hasMoreLines
 
     advanceLine
