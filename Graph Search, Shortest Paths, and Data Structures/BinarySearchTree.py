@@ -1,5 +1,7 @@
+from typing import Any
+
 class Node:
-    def __init__(self, key, value):
+    def __init__(self, key: float, value: Any):
         self.key = key
         self.value = value
         self.left = None
@@ -13,7 +15,7 @@ class BinarySearchTree:
     def __init__(self):
         self.root = None
 
-    def insert(self, key, value):
+    def insert(self, key: float, value: Any) -> None:
         if self.root is None:
             self.root = Node(key, value)
             return
@@ -38,14 +40,14 @@ class BinarySearchTree:
                 node.value = value
                 return
 
-    def search(self, key):
+    def search(self, key: float) -> Any | None:
         result = self.__search(key)
         if result is None:
             return None
         
         return result.value        
 
-    def in_order(self):
+    def in_order(self) -> None:
         if self.root is None:
             return
 
@@ -57,7 +59,7 @@ class BinarySearchTree:
 
         traverse(self.root)
 
-    def pre_order(self):
+    def pre_order(self) -> None:
         if self.root is None:
             return
 
@@ -69,7 +71,7 @@ class BinarySearchTree:
 
         traverse(self.root)
 
-    def post_order(self):
+    def post_order(self) -> None:
         if self.root is None:
             return
 
@@ -81,7 +83,7 @@ class BinarySearchTree:
 
         traverse(self.root)
 
-    def remove(self, key):
+    def remove(self, key: float) -> Any | None:
         node = self.__search(key)
         if node is None:
             return None
@@ -98,7 +100,7 @@ class BinarySearchTree:
 
         return node.value
         
-    def __search(self, key):
+    def __search(self, key: float) -> Any | None:
         if self.root is None:
             return None
 
@@ -112,7 +114,7 @@ class BinarySearchTree:
                 return node
         return None
 
-    def _remove_leaf_node(self, node):
+    def _remove_leaf_node(self, node: Node) -> None:
         if node.parent is None:  # node is root
             self.root = None
         else:
@@ -121,7 +123,7 @@ class BinarySearchTree:
             else:
                 node.parent.right = None
 
-    def _remove_right_child_node(self, node):
+    def _remove_right_child_node(self, node: Node) -> None:
         if node.parent is None:  # node is root
             self.root = node.right
         else:
@@ -131,7 +133,7 @@ class BinarySearchTree:
                 node.parent.right = node.right
             node.right.parent = node.parent
 
-    def _remove_left_child_node(self, node):
+    def _remove_left_child_node(self, node: Node) -> None:
         if node.parent is None:  # node is root
             self.root = node.left
         else:
@@ -141,13 +143,13 @@ class BinarySearchTree:
                 node.parent.right = node.left
             node.left.parent = node.parent
 
-    def _find_successor(self, node):
+    def _find_successor(self, node: None) -> Node:
         successor = node.right
         while successor.left is not None:
             successor = successor.left
         return successor
 
-    def _replace_node_with_successor(self, node, successor):
+    def _replace_node_with_successor(self, node: Node, successor: Node) -> None:
         
         
         if successor.parent.left == successor:
@@ -168,9 +170,11 @@ class BinarySearchTree:
             successor.parent = node.parent
 
         successor.left = node.left
+        node.left.parent = successor
         
         if node.right != successor:
             successor.right = node.right
+            node.right.parent = successor
         
 
 if __name__ == '__main__':
