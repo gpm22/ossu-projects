@@ -151,22 +151,26 @@ class BinarySearchTree:
         
         
         if successor.parent.left == successor:
-            successor.parent.left = None
-        else:
-            successor.parent.right = None
-            
+            if successor.right:
+                successor.parent.left = successor.right
+            else:
+                successor.parent.left = None
+        
         if node.parent is None:  # node is root
             self.root = successor
             successor.parent = None
         else:
-            successor.parent = node.parent
+            
             if node.parent.left == node:
                 node.parent.left = successor
             else:
                 node.parent.right = successor
+            successor.parent = node.parent
 
         successor.left = node.left
-        successor.right = node.right
+        
+        if node.right != successor:
+            successor.right = node.right
         
 
 if __name__ == '__main__':
@@ -195,9 +199,21 @@ if __name__ == '__main__':
     print('Searching for 20:', tree.search(20))
     
     print('Removing 10:', tree.remove(10))
+    print('Pre-order traversal:')
+    tree.pre_order()
+    print()
     print('Removing 20:', tree.remove(20))
+    print('Pre-order traversal:')
+    tree.pre_order()
+    print()
     print('Removing 12:', tree.remove(12))
+    print('Pre-order traversal:')
+    tree.pre_order()
+    print()
     print('Removing 8:', tree.remove(8))
+    print('Pre-order traversal:')
+    tree.pre_order()
+    print()
     
     print('In-order traversal:')
     tree.in_order()
