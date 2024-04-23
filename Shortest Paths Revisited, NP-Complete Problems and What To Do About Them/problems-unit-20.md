@@ -1,5 +1,4 @@
-# 20 - Compromising on Correctness:
-Efficient Inexact Algorithms
+# 20 - Compromising on Correctness: Efficient Inexact Algorithms
 
 Questions available in the book **Algorithms Illuminated Part 4: Algorithms For NP-Hard Problems** by **Tim Roughgarden**.
 
