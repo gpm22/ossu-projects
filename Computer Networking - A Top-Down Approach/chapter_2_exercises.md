@@ -75,6 +75,8 @@ It is a protocol to initiate something, like a connection.
 
 **R11. Why do HTTP, SMTP, and IMAP run on top of TCP rather than on UDP?**
 
+Because they need the guarantee that the request and the response will be sent complete, that is, the integrity of the content is guaranteed.
+
 **R12. Consider an e-commerce site that wants to keep a purchase record for each of its customers. Describe how this can be done with cookies.**
 
 By keeping this list info in a database table where the key is the user cookie.
@@ -113,7 +115,131 @@ ETag: "286-4f1aadb3105c0"
 
 **R16. Suppose Alice, with a Web-based e-mail account (such as Hotmail or Gmail), sends a message to Bob, who accesses his mail from his mail server using IMAP. Discuss how the message gets from Alice’s host to Bob’s host. Be sure to list the series of application-layer protocols that are used to move the message between the two hosts.**
 
-**R17. Print out the header of an e-mail message you have recently received. How many Received: header lines are there? Analyze each of the header lines in the message.**
+1. Alice invokes her user agent for e-mail, provides Bob’s e-mail address, composes a message, and instructs the user agent to send the message.
+  2.  Alice’s user agent sends the message to her mail server, where it is placed in a message queue.
+  3. The client side of SMTP, running on Alice’s mail server, sees the message in the message queue. It opens a TCP connection to an SMTP server, running on Bob’s mail server.
+  4. After some initial SMTP handshaking, the SMTP client sends Alice’s message into the TCP connection.
+  5. At Bob’s mail server, the server side of SMTP receives the message. Bob’s mail server then places the message in Bob’s mailbox.
+  6. Bob invokes his user agent to read the message at his convenience by accessing the email through IMAP.
+
+**R17. Print out the header of an e-mail message you have recently received. How many `Received:` header lines are there? Analyze each of the header lines in the message.**
+
+```
+Received: from PH0PR16MB4899.namprd16.prod.outlook.com (2603:10b6:510:116::5)
+ by MN6PR16MB5305.namprd16.prod.outlook.com with HTTPS; Thu, 18 Apr 2024
+ 16:29:22 +0000
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ul.com;
+Received: from BLAPR16MB3875.namprd16.prod.outlook.com (2603:10b6:208:27c::13)
+ by PH0PR16MB4899.namprd16.prod.outlook.com (2603:10b6:510:116::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.39; Thu, 18 Apr
+ 2024 16:29:19 +0000
+Received: from BLAPR16MB3875.namprd16.prod.outlook.com
+ ([fe80::421c:8611:afcd:6d2b]) by BLAPR16MB3875.namprd16.prod.outlook.com
+ ([fe80::421c:8611:afcd:6d2b%5]) with mapi id 15.20.7452.049; Thu, 18 Apr 2024
+ 16:29:19 +0000
+Content-Type: application/ms-tnef; name="winmail.dat"
+Content-Transfer-Encoding: binary
+From: secret0@secret.com
+To: secret1@secret.com
+CC: secret2@secret.com
+Subject: Secret
+Thread-Topic: Secret
+Thread-Index: AQHaka2QyQS5tn6eEUuXmGDjr3BHQA==
+Date: Thu, 18 Apr 2024 16:29:19 +0000
+Message-ID:
+ <BLAPR16MB387583235FD166A6EAF9933C8B0E2@BLAPR16MB3875.namprd16.prod.outlook.com>
+References:
+ <DM5PR16MB1849CD4AE20EEE045BBF6DD29D4E9@DM5PR16MB1849.namprd16.prod.outlook.com>
+ <DM5PR16MB18495279467B251B5EE0CC669D5C9@DM5PR16MB1849.namprd16.prod.outlook.com>
+ <BN8PR16MB30107A0CAE10646B588FBC6E8B2A9@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <BN8PR16MB3010F786FC8CF49935A4B43A8B389@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <BN8PR16MB3010DDEE765D98BC265B2C0B8B069@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <BN8PR16MB30103138E12DF59409024ED18B149@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <BN8PR16MB30109BDF558E0CD7408AF8138BE19@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <DM6PR16MB30208206957DEC440D1C03928BFD9@DM6PR16MB3020.namprd16.prod.outlook.com>
+ <DM6PR16MB30208D57CA537EBEF07F5A778BCF9@DM6PR16MB3020.namprd16.prod.outlook.com>
+ <DM6PR16MB3020DB5D2D9451469BEFDC3A8BD99@DM6PR16MB3020.namprd16.prod.outlook.com>
+ <BN8PR16MB30101934A0F274F4067FF5A48BAB9@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <BN8PR16MB30102BE4EFCB6AB1FADA94B18BB59@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <BN8PR16MB30108CA3137258FE70208E6B8B879@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <BN8PR16MB3010874C37935F98870BBC528B919@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <BN8PR16MB301082CF46A8C655F88DB3158B639@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <CH3PR16MB5249A1E72F09CA2D6AD9FB33FE6D9@CH3PR16MB5249.namprd16.prod.outlook.com>
+ <DM6PR16MB309778A111FBAC8C5C4CF84F977F9@DM6PR16MB3097.namprd16.prod.outlook.com>
+ <BN8PR16MB3010A4CC04754382AE21A5A18B499@BN8PR16MB3010.namprd16.prod.outlook.com>
+ <DM6PR16MB3020A2F387B0DC8350373E678B5BA@DM6PR16MB3020.namprd16.prod.outlook.com>
+ <DM6PR16MB3097E4E87C4FBF72D5C8797E9725A@DM6PR16MB3097.namprd16.prod.outlook.com>
+ <DM8PR16MB45499E46554B58738C53DD138B37A@DM8PR16MB4549.namprd16.prod.outlook.com>
+ <BLAPR16MB38751246AB875322EAE0ACD18B01A@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38752A3144355E484A76764D8B13A@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38753FDCBC391EB8C03D97D18B1DA@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38752B7294B937189C3EBB8D8BEEA@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38752BA42A89124B60F4AD838BF8A@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB387552D338536BF13DDF31458BCAA@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38756076F9F476E570EF1BDF8BD4A@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB387552895D05BCE55C6266638BA6A@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB3875C95B2C5284C15B0F88268BB0A@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38754B804F7C214E6A93AC3D8B82A@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38758810143D7803A57AECFB8B8CA@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB3875CFFBB783B1CF2102C9EC8B7A2@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38753564A3D5CDD546FDE5128B442@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38759F8DE1194A3DEE01DC298B562@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB387576B4C8D6E9C08411983A8B202@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38750D339C637145AFF56C898B322@BLAPR16MB3875.namprd16.prod.outlook.com>
+ <BLAPR16MB38755280CF9B43E6454B9B2A8B3C2@BLAPR16MB3875.namprd16.prod.outlook.com>
+In-Reply-To:
+ <BLAPR16MB38755280CF9B43E6454B9B2A8B3C2@BLAPR16MB3875.namprd16.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-Exchange-Organization-SCL: 1
+X-MS-TNEF-Correlator:
+ <BLAPR16MB387583235FD166A6EAF9933C8B0E2@BLAPR16MB3875.namprd16.prod.outlook.com>
+msip_labels:
+MIME-Version: 1.0
+X-MS-Exchange-Organization-MessageDirectionality: Originating
+X-MS-Exchange-Organization-AuthSource: BLAPR16MB3875.namprd16.prod.outlook.com
+X-MS-Exchange-Organization-AuthAs: Internal
+X-MS-Exchange-Organization-AuthMechanism: 04
+X-MS-Exchange-Organization-Network-Message-Id:
+ 57ad5d29-1f29-4d07-0d67-08dc5fc4b28a
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic:
+ BLAPR16MB3875:EE_|PH0PR16MB4899:EE_|MN6PR16MB5305:EE_
+Return-Path: secret0@secret.com
+X-MS-Exchange-Organization-ExpirationStartTime: 18 Apr 2024 16:29:20.0527
+ (UTC)
+X-MS-Exchange-Organization-ExpirationStartTimeReason: OriginalSubmit
+X-MS-Exchange-Organization-ExpirationInterval: 1:00:00:00.0000000
+X-MS-Exchange-Organization-ExpirationIntervalReason: OriginalSubmit
+X-MS-Office365-Filtering-Correlation-Id: 57ad5d29-1f29-4d07-0d67-08dc5fc4b28a
+X-MS-Exchange-AtpMessageProperties: SA
+X-Microsoft-Antispam: BCL:0;
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BLAPR16MB3875.namprd16.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(41050700001);DIR:INT;
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-MS-Exchange-Organization-Recipient-P2-Type: Cc
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2024 16:29:19.3236
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 70115954-0ccd-45f0-87bd-03b2a3587569
+X-MS-Exchange-CrossTenant-AuthSource: BLAPR16MB3875.namprd16.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57ad5d29-1f29-4d07-0d67-08dc5fc4b28a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7wjSibAuEufTbYjsF7yI4E2eN32cxo3JR5GXL0Ir0y09HatCBN0MgUc7T172VSQDi+04LQ5zTTibEw7saJ3GKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR16MB4899
+X-MS-Exchange-Transport-EndToEndLatency: 00:00:03.6460729
+X-MS-Exchange-Processed-By-BccFoldering: 15.20.7472.035
+X-Microsoft-Antispam-Mailbox-Delivery:
+	ucf:0;jmr:0;auth:0;dest:I;ENG:(910001)(944506478)(944626604)(920097)(425001)(930097)(140003);
+X-Microsoft-Antispam-Message-Info:
+	9iAshsPsNrRkdTLcsOGvF0Zw8Xek7kbpG+uug6PY+vqSuWnyDoSIErVahQNCz9ualREmXQIkMcmTpezsxU3u/+wv/iPqe2iibe/VloXSG40cYZfogNRNN8OSYvgRyuRx/Te1mKmIDkYHRZEgCexBDXhsz15l+KRSR3ZvxAQa/FqOocaYGx2qncsj/mD3CsuiwEaIUCVK59MTsMTuGD5Rks4Dt7zUTab9BeqvPFEUr0V1d7YG+i3pG6rsDtT6xonY6Sq8N3zqraVuCODYr5aNq1/AxpGFAEQidhg4Vsf8RkZ+c15r+I35qWHfnmXZYMegtYemeEPvESYzO8rC5zqyFo7/87ASHNU5B2h7OyWFJmqednZCVa36XZmtfNYH+OHhIfMElOp0JBU3KdYXFdBGNJvB/posEYpkgX7XKBiJzHbpV63OzZXiXISBP0GCjvubtqL+cJmEW3Er1PW+xliAbqxHeQm6FUYetjmOZ3Srv/C3kI/zjz7eGsTRfcHjNtAtLv48jACdZ+Fb1T9+yYMZqWdh0stK0uYR81MPLqxMg7Fzd2vJMmrVE6frVBoW4ZQuxhM8VeQEcQiI0qt6UaiD8WvtAnszH4OmQFhlvdLCnc9QEYcSAiv7c9mYgcUfP8GU8O0Dk3VqBoTHCgLoFBRingy9pHnl+eXT9bDpdL65C9w455XgcwphkMjB4iOA+ssWXlvh4HKpRdVG2MC7WoIkRLw8j8Pw9b7UKVZOjq5zvloBEvDG42zOlx/6GRiKXSW7Js2sp4XFqrlvS542bGGsLH/xOQPpM4Z2cbt8kRWA5TQIp7LEtJJq/fhMhXk9M8JZXZeoTT6E/Aij1Os6Pz8SSQ==
+```
+
+There are 3 `Received:` header lines.
 
 **R18. What is the HOL blocking issue in HTTP/1.1? How does HTTP/2 attempt to solve it?**
 
@@ -123,7 +249,11 @@ To solve it, HTTP/2 uses frame interleaving, which consists in breaking each mes
 
 **R19. Is it possible for an organization’s Web server and mail server to have exactly the same alias for a hostname (for example, foo.com)? What would be the type for the RR that contains the hostname of the mail server?**
 
+Yes, it is possible. The RR type for the email server is `MX`.
+
 **R20. Look over your received e-mails, and examine the header of a message sent from a user with a .edu e-mail address. Is it possible to determine from the header the IP address of the host from which the message was sent? Do the same for a message sent from a Gmail account.**
+
+Using gmail was possible to see ips for both .edu and other kind of emails.
 
 ## Problems
 
