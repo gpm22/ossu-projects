@@ -143,13 +143,258 @@ Propose an implementation of a postprocessing step that reconstructs a minimum-c
 
 **ANSWER**
 
+I suggest first creating an map $M$ that relates a subset $S$​ with the last vertex of the path, that will be the one that creates the minimum path.
+
+Next the map will be traversed first with $S = V$, then $S = V - \{v_n\}, S = V - \{v_n, v_{n-1}\}, \dots, S = \{v_1, v_2\}$.
+
+Then we add the vertices from this map to the path and finally we add the first vertex to the path, concluding it.
+
+The new `BellmanHeldKarp` algorithm will be:
+
+```ruby
+def BellmanHeldKarp(V, E)
+    # subproblems (1 in S, |S| >= 2, j in V - {1})
+    # (only subproblems with j in S are ever used)
+    A := (2^(n-1) - 1) * (n - 1) two-dimensional array
+
+    # Hash map to relate subproblems to last vertex
+    M := {} 
+    # base cases (|S| = 2)
+    for j = 2 to n do
+        A[{1, j}][j] := c_1j
+        M[{1, j}] = j
+    end
+
+    # systematically solve all subproblems
+    for s = 3 to n do # s=subproblem size
+        for S with |S| = s and 1 in S do
+            for j in S - {1} do
+            # use recurrence from Corollary 21.2
+                A[S][j], M[S] := getMinAndVertex(j, S, A)
+            end
+        end
+    end
+
+	# use (21.6) to compute the optimal tour cost
+    tour_cost, last_vertex = getMinAndVertex(nil, n, A)
+    M[n] = last_vertex
+	return tour_cost, createPath(M, n)
+end
+
+
+def getMinAndVertex(j, S, A)
+	value = MAX
+    vertex = nil
+    
+    for k in S
+        next if k == 1
+		
+        new_value = j ? A[S - {j}][k] + c_kj : A[S][k] + c_kj
+        
+        if new_value < value
+            value = new_value
+            vertex = k
+        end
+    end
+    
+    return value, vertex
+end
+
+def createPath(M, S)
+    path = [S[0]] # initiates with v_1
+    S = S - S[0]
+    while |S| > 0
+        new_vertex = M[S]
+        path.push(new_vertex)
+        S = S-new_vertex
+    end
+    return path
+end
+```
+
 ### Problem 21.7
+
+Propose an implementation of a postprocessing step that reconstructs a minimum-cost panchromatic path from the subproblem array computed by the `PanchromaticPath` algorithm. Can you achieve a linear (in the number of colors) running time, perhaps after adding some extra bookkeeping to the `PanchromaticPath` algorithm?
+
+**ANSWER**
+
+I suggest first creating an array $M$ of the same size as A that relates a colors subset $S$​ and a vertex with the previous vertex of the selected minimum path.
+
+Next $M$ will be traversed first with $S = C$ and the last select vertex, then $S = C - \{c_n\}, S = C - \{c_n, c_{n-1}\}, \dots, S = \{c_1\}$.
+
+Then we add the vertices from this map to the path and return it at the end.
+
+The new `PanchromaticPath` algorithm will be:
+
+```ruby
+def PanchromaticPath(V, color, E)
+    # subproblems (indexed by S, a subset of {1,...,k}, v in V )
+    A := (2^k - 1) x |V| two-dimensional array
+    M := (2^k - 1) x |V| two-dimensional array
+    # base cases (|S| = 1)
+    for i = 1 to k do #colors
+        for v in V do
+            if color(v) = i then
+                A[{i}][v] := 0 # via the empty path
+            else
+                A[{i}][v] := +inf # no such path
+            end
+        end
+    end
+    # systematically solve all subproblems
+    for s = 2 to k do # s=subproblem size
+        for S with |S| = s do
+            for v in V do
+                # use recurrence from Lemma 21.4
+                A[S][v], M[S][v] := getMinAndVertex(v, color, E, A)
+            end
+        end
+    end		
+    # best of solutions to largest subproblems
+    
+    min_path, last_vertex = getTotalMinAndLastVertex(V, A, k)
+    return min_path, createPath(last_vertex, M)
+end    
+    
+def getMinAndVertex(v, color, E, A)
+	value = MAX
+    vertex = nil
+
+    for (w, v) in E
+        next if not color(v)
+		
+        new_value = A[S - {color(v)}][w] + cwv
+        
+        if new_value < value
+            value = new_value
+            vertex = w
+        end
+    end
+    
+    return value, vertex
+end
+    
+def getTotalMinAndLastVertex(V, A, k)
+    min_path = MAX
+    vertex = nil
+    
+    for v in V
+        new_min = A[{1, 2,...,k}][v])
+        if new_min < min_path
+            new_min = min_path
+            vertex = v
+        end
+	end
+    
+    return min_path, vertex
+end
+
+def createPath(last_vertex, M, S, color)
+    path = [last_vertex]
+    current_vertex = M[S][last_vertex]
+    S = S - color(last_vertex)
+    while current_vertex
+        path.push(current_vertex)
+        new_vertex = M[S][current_vertex]
+        break if !new_vertex
+        S = S-color(current_vertex)
+        current_vertex = new_vertex
+    end
+    return path
+end
+```
+
+
 
 ## Challenge Problems
 
 ### Problem 21.8
 
+Optimize the `BellmanHeldKarp` algorithm for the TSP (Section 21.1.6) so that its memory requirement drops from $O(n \cdot 2 ^n )$ to $O( \sqrt n \cdot 2 ^ n )$ for $n$​-vertex instances. (You are responsible only for computing the minimum cost of a tour, not an optimal tour itself.)
+
+**ANSWER**
+
+A idea would be to keep only the values of the vertices that appears in the subproblem.
+
+So if the subproblem is $\{a, b\}$, only have the value $A[\{a, b\}][b]$​.
+
+But for this case the number of subproblems will be $\sum_{i=1}^{n} i \cdot \binom ni = n \cdot 2 ^ {n-1}$, which is just half of the current subproblems.
+
+To really decrease the use of memory we need to keep just the strict necessary values of the array, that way after calculating for $|S| = i$, remove the records for $|S| = i -1$, as they are not necessary any longer.
+
+As for a level $|S| = i$ the number of necessary space is $f(i) = i \cdot \binom n i$, the biggest needed memory will happen where $\frac {df}{di} = 0$, with $ 1 \leq i \leq n$.
+
+Using the assistance of wolfram alpha:
+$$
+\frac {df}{di} = \binom n i \left( i \psi^{(0)}(n-i+1)-i\psi^{(0)}(i+1)+1 \right)
+$$
+Where $\psi^{(0)}$​​ is 0th derivative of the digamma function.
+
+It roots will be a function of $n$, so let's take its values for $n$ from $10, 20, \dots, 50$:
+
+| $n$  | root |
+| ---- | ---- |
+| 10   | 5.5  |
+| 20   | 10.5 |
+| 30   | 15.5 |
+| 40   | 20.5 |
+| 50   | 25.5 |
+
+We can observe that the root is at $\frac {n+1} 2$​.
+
+So the maximum value needed is 
+$$
+\frac {n+1} 2 \binom {n}{\frac {n+1}2} & = & \frac{n+1} 2 \frac {n!}{(\frac {n-1}2)!(\frac {n+1}2)!} \\ 
+& \approx & \frac n2 \frac {n!}{(n/2)!^2}
+$$
+Using Stirling's approximation:
+$$
+n! \approx \sqrt {2 \pi n} \left(\frac n e \right)^n
+$$
+
+We get:
+$$
+\frac n2 \frac {\sqrt {2 \pi n} \left(\frac n e \right)^n}{\left(\sqrt {\pi n} \left(\frac n {2e} \right)^{n/2}\right)^2} & = & \frac n2 \frac {\sqrt {2 \pi n} \left(\frac n e \right)^n}{\pi n \left(\frac n {2e} \right)^{n}} \\
+& = & \frac 12 \frac {\sqrt {2 \pi n}}{\pi \left(\frac 1 {2} \right)^{n}} \\
+& = & \frac {\sqrt {2 \pi n} 2^n}{2\pi} \\ 
+& = & \frac {\sqrt n 2^n}{\sqrt {2 \pi}} 
+$$
+Which is $O(\sqrt n \cdot 2^n)$.
+
 ### Problem 21.9
+
+Show how to encode instances of the following problems as mixed integer programs:
+
+* **a)** Maximum-weight independent set (Section 19.4.2).
+* **b)** Makespan minimization (Section 20.1.1).
+* **c)** Maximum coverage (Section 20.2.1).
+
+**ANSWER**
+
+* **a)** Maximum-weight independent set (Section 19.4.2).
+  * Decision variables $x_j$​ is 1 or 0.
+    * With 1 is present in the solution and 0 is not.
+  * The constraints is that vertex cannot be adjacent:
+    * For each edge $(u, v)$ we have $x_u + x_v \leq 1$.
+  * Objective function $\sum_{v \in S} w_v$ is $\sum_{j=1}^n x_j w_j$.
+* **b)** Makespan minimization (Section 20.1.1).
+  * Decision variables $x_{ij}$​ is 1 or 0.
+    * 1 represents that the job $j$ is assigned to machine $i$.
+  * The constraints
+    * For every job $j$ we have $\sum_{i=1}^m x_{ij} =1$.
+    * For every machine $i$ we have $\sum_{j=1}^n \ell_jx_{ij} \leq M$.
+  * Objective function $M$ (makespan) to be minimized.
+* **c)** Maximum coverage (Section 20.2.1).
+  * Decision variables:
+    * $x_i$​ is 1 or 0.
+      * 1 represents that the subset is part of the final solution.
+    * $y_e$ is 1 or 0.
+      * 1 represents that element $e$ belongs to a chosen subset.
+  * The constraints
+    * Choice $K \subset \{ 1, 2, \dots, m\}$ size must be $k$, which means $\sum_{i=1}^m x_i = k$.
+    * For every element $e \in U$, $y_e \leq \sum_{i: e \in A_i}x_i$.
+  * Objective function $f_\text{cov}(K) = \left|\cup_{i \in K} A_i\right|$​ to be maximized.
+    * Which results in maximizing $\sum_{e \in U}y_e$.
 
 ### Problem 21.10
 
