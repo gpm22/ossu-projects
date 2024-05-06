@@ -255,6 +255,46 @@ Yes, it is possible. The RR type for the email server is `MX`.
 
 Using gmail was possible to see ips for both .edu and other kind of emails.
 
+#### SECTION 2.5
+
+**R21. In BitTorrent, suppose Alice provides chunks to Bob throughout a 30-second interval. Will Bob necessarily return the favor and provide chunks to Alice in this same interval? Why or why not?**
+
+Not necessarily, as Alice must be in the top 4 neighbors of Bob for Bob to send out chunks to her. 
+
+Even with Alice providing chunks to Bob throughout a 30-second interval, this might not occur.
+
+**R22. Consider a new peer Alice that joins BitTorrent without possessing any chunks. Without any chunks, she cannot become a top-four uploader for any of the other peers, since she has nothing to upload. How then will Alice get her first chunk?**
+
+She will get her first chunk when selected to be the optimistically unchoked neighbor of someone.
+
+**R23. What is an overlay network? Does it include routers? What are the edges in the overlay network?**
+
+It is a computer network which is logically layered on top of another network.
+
+In the case of P2P networks, it consists of the nodes participating in the file sharing system and the logical links between them.
+
+The edges are the logical links between nodes.
+
+A logical link is a semi-permanent TCP connection between two nodes.
+
+It does not include routers.
+
+#### SECTION 2.6
+
+**R24. CDNs typically adopt one of two different server placement philosophies. Name and briefly describe them.**
+
+* **Enter Deep** is about deploying server clusters in access ISPs all over the world.
+* **Bring Home** is about building large clusters at a smaller number (for example, tens) of sites, placing them in Internet Exchange Points (IXPs).
+
+**R25. Besides network-related considerations such as delay, loss, and bandwidth performance, there are other important factors that go into designing a CDN server selection strategy. What are they?**
+
+* Geographic location, so the cluster is close to the client.
+* Real-time measurements of delay and loss performance between CDN's clusters and clients.
+* Load-balancing.
+* Limited availability of rarely accessed content.
+* Alleviate hot-spots that may arise due to popular video content.
+* ISP costs.
+
 ## Problems
 
 ## Socket Programming Assignments
