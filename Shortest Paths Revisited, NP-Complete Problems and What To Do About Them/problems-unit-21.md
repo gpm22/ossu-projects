@@ -1,4 +1,4 @@
-# 20 - Compromising on Speed: Exact Inefficient Algorithms
+# 21 - Compromising on Speed: Exact Inefficient Algorithms
 
 Questions available in the book **Algorithms Illuminated Part 4: Algorithms For NP-Hard Problems** by **Tim Roughgarden**.
 
@@ -398,9 +398,105 @@ Show how to encode instances of the following problems as mixed integer programs
 
 ### Problem 21.10
 
+Given a TSP instance $G$ with vertex set $V = \{1, 2,\dots,n\}$ and edge costs $c$, consider the MIP:
+
+* Minimize $\sum_{i=1}^n \sum_{j \neq i} c_{ij}x_{ij} \ (21.21)$.
+
+* Subject to:
+  $$
+  \sum_{j \neq i} x_{ij } = 1 & \text{|for every vertex $i$| (21.22)} \\
+  \sum_{j \neq i} x_{ji} = 1  & \text{|for every vertex $i$| (21.23)} \\
+  x_{ij} \in \{0, 1\}         & \text{|for every $i \neq j$| (21.24)}
+  $$
+
+The intent is to encode a traveling salesman tour (oriented in one of the two possible directions) with x$_{ij}$ equal to 1 if and only if the tour visits $j$ immediately after $i$.The constraints (21.22)–(21.23) enforce that each vertex has exactly one immediate predecessor and one immediate successor on the tour.
+
+* **a)** Prove that, for every TSP instance $G$ and traveling salesman tour of $G$, there is a feasible solution of the corresponding MIP (21.21)–(21.24) with the same objective function value.
+
+* **b)** Prove that there is a TSP instance $G$ and a feasible solution of the corresponding MIP (21.21)–(21.24) with objective function value strictly less than the minimum total cost of a traveling salesman tour of $G$. (Thus, this MIP has spurious feasible solutions, above and beyond the traveling salesman tours, and does not correctly encode the TSP.)
+
+* **c)** Suppose we throw in the following additional constraints:
+  $$
+  y_{ij} = (n-1)x_{1j} & \text{|for all $j \in V - \{1\}$|} & \text{(21.25)} \\
+  y_{ij} \leq (n-1)x_{ij} & \text{|for all $i \neq j$|} & \text{(21.26)} \\
+  \sum_{j\neq i} y_{ji} - \sum_{j\neq i} y_{ij} = 1 & \text{|for all $j \in V - \{1\}$|} & \text{(21.27)} \\
+  y_{ij} \in \{0, 1, \dots, n-1\} & \text{|for all $i \neq j$|} & \text{(21.28)}
+  $$
+  where the $y_{ij}$’s are additional decision variables. Reprove **a)** for the expanded MIP (21.21)–(21.28).
+
+* **d)** Prove that, for every TSP instance $G$, every feasible solution of the corresponding expanded MIP (21.21)–(21.28) translates to a traveling salesman tour of $G$ with the same objective function value. (As a consequence, the expanded MIP correctly encodes the TSP.)
+
+**ANSWER**
+
+* **a)**
+
+  $x_{ij}$ is 1 only when the tour visits $j$ immediately after $i$, therefore, for a given TSP tour of $G$, let all $x_{ij} = 0$ but the ones in the tour.
+
+  The objective function value will be the same as the tour, as the only edges values summed will be the ones in the tour.
+
+* **b)**
+
+  The constraints do not guarantee that it will be tour, can be a disconnected set of edges.
+
+* **c)**
+
+  For a TSP tour of $G$ all the $y_{ij}$ will be 0 but the ones in the tour.
+
+  So there is only one positive $y_{1j}$, with value $(n-1)$.
+
+  It will have just 2 values positive in the sum of the constraint $\sum_{j \neq i} y_{ji} - y_{ij} = 1$, as the others will be 0.
+
+  Thus for each $i$, $y_{ki} - y{ij} = 1$, where $k$ is the vertex before $i$ in the tour and $j$ is the vertex after $i$.
+
+  As $y_{1j}$ will be $n-1$, $y_{jk}$ will be $n-2$, until $y_{w1} = 0$, which means that if the edge $(i, j)$ is the $m$th hop of the tour, then $y_{ij} = n - m$. This guarantees the constraint $y_{ij} \leq (n-1)x_{ij}$.
+
+  Joining this with **a)**, we proved that a tsp tour will respect all these constraints.
+
+* **d)**
+
+  To minimize $\sum_{i=1}^n \sum_{j \neq i} c_{ij}x_{ij}$ (21.21), we have the following constraints:
+  $$
+  \sum_{j \neq i} x_{ij } = 1 & \text{|for every vertex $i$|} & \text{(21.22)} \\
+  \sum_{j \neq i} x_{ji} = 1  & \text{|for every vertex $i$|} & \text{(21.23)} \\
+  x_{ij} \in \{0, 1\}         & \text{|for every $i \neq j$|} & \text{(21.24)}  \\
+  y_{ij} = (n-1)x_{1j} & \text{|for all $j \in V - \{1\}$|} & \text{(21.25)} \\
+  y_{ij} \leq (n-1)x_{ij} & \text{|for all $i \neq j$|} & \text{(21.26)} \\
+  \sum_{j\neq i} y_{ji} - \sum_{j\neq i} y_{ij} = 1 & \text{|for all $j \in V - \{1\}$|} & \text{(21.27)} \\
+  y_{ij} \in \{0, 1, \dots, n-1\} & \text{|for all $i \neq j$|} & \text{(21.28)}
+  $$
+  
+
+  A MIP solver guarantees to return the minimum objective function possible respecting the constraints.
+
+  The constraints 21.22-21.23 guarantee that for each vertex there is only one edge entering and one edge leaving, which results in $n$ positive values for $x_{ij}$.
+
+  The constraints 21.22-21.26 guarantees that the positive values of $y_{ij}$ will be one entering and other leaving each vertex, therefore the constraint 21.27 will become just $y_{ji}-y_{ij}=1$. This guarantees that the result will be connected, as an unconnected set will result in an unsolvable system.
+
+  This is the same characteristics of a TSP tour, as shown in **c)**, therefore proving that this configuration solves the TSP.
+
 ### Problem 21.11
 
+Show how to encode an instance of the satisfiability problem as a mixed integer program.
+
+**ANSWER**
+
+MIP is about a system of linear equations, while SAT is about a system of boolean equations, more specific disjunction of literals, which uses only or and not.
+
+We can translate disjunction of literals to linear equations by using:
+
+* the variable $x_i \in \{0, 1\}$, where 0 is false and 1 is true;
+* considering or to be sum and not to be the subtraction $(1-x)$.
+* the equation is satisfied if the result is $\geq 1$.
+
+Thus, as an example, $x_1 \vee \neg x_2 \vee x_3$ would be $x_1 + (1 - x_2) + x_3$.
+
+The objective function will be just a placeholder, as it is not really needed, therefore we use 0.
+
 ### Problem 21.12
+
+For a positive integer $k$, the $k$-SAT problem is the special case of the SAT problem in which every constraint has at most $k$ literals. Show that the 2-SAT problem can be solved in $O(m+n)$ time, where $m$ and $n$​ denote the number of constraints and variables, respectively. (You can assume that the input is represented as an array of literals and an array of constraints, with pointers from each constraint to its literals and from each literal to the constraints that contain it.)
+
+**ANSWER**
 
 ### Problem 21.13
 
