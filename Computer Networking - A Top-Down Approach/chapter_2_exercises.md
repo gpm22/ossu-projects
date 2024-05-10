@@ -2,7 +2,7 @@
 
 ## Homework Problems and Questions
 
-### Chapter 2 Review Questions
+### Chapter 2 - Review Questions
 
 #### SECTION 2.1
 
@@ -294,6 +294,20 @@ It does not include routers.
 * Limited availability of rarely accessed content.
 * Alleviate hot-spots that may arise due to popular video content.
 * ISP costs.
+
+#### SECTION 2.7
+
+**R26. In Section 2.7, the UDP server described needed only one socket, whereas the TCP server needed two sockets. Why? If the TCP server were to support $n$ simultaneous connections, each from a different client host, how many sockets would the TCP server need?**
+
+Because UDP is connectionless, so it only needs a socket to receive stuff.
+
+The TCP server would need $n+1$ sockets.
+
+**R27. For the client-server application over TCP described in Section 2.7, why must the server program be executed before the client program? For the client-server application over UDP, why may the client program be executed before the server program?**
+
+Because in TCP weed to the handshake, so the server must be ready for it.
+
+Because the UDP is connectionless, so it is possible to start the server socket while the messing is traveling through the network.
 
 ## Problems
 
