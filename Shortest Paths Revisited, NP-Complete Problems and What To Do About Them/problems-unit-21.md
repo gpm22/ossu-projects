@@ -498,7 +498,114 @@ For a positive integer $k$, the $k$-SAT problem is the special case of the SAT p
 
 **ANSWER**
 
+First we need to guarantee that each constraint has exactly two literals, to do so we can eliminate single-literal constraints, as they will not affect the variables in other constraints.
+
+So will have now $m^*$ constraints and $n^*$ variables.
+
+We then create a graph which have $2n^*$ vertex, one per variable possible value, and $2m^* $ direct edges, which represents the possible disjunctions, which the direction is from the false to the true.
+
+So if we have the literal disjunction $v_1 \vee v_2$, we will have the edges $ \neg v_1 \to v_2$ and $\neg v_2 \to v_1$.
+
+In the case we have $\neg v_1 \vee v_2$, we will have the edges $v_1 \to v_2$ and $\neg v_2 \to v_1$.
+
+Finally, we have $\neg v_1 \vee \neg v_2$, we will have the edges $v_1 \to \neg v_2$ and $v_2 \to \neg v_1$.
+
+Then we calculate the strongly connected components of this graph, which can be done in $O(m+n)$ by using the Kosaraju algorithm.
+
+The given 2-SAT instance will be feasible if and only if every literal resides in a different component than its opposite.
+
 ### Problem 21.13
+
+Meanwhile, the 3-SAT problem is NP-hard (Theorem 22.1). But can we at least improve over exhaustive search, which enumerates all the $2^n$ possible truth assignments to the $n$ decision variables? Here’s a randomized algorithm, parameterized by a number of trials $T$:
+
+**`Schöning`**
+
+* **Input**: an $n$-variable instance of 3-SAT and a failure probability $\delta \in (0, 1)$.
+
+* **Output**: with probability at least $1 - \delta$, either a truth assignment that satisfies all the constraints or a correct declaration that none exist.
+
+* **Algorithm:**
+
+  ```ruby
+  ta := length-n Boolean array # truth assignment
+  for t = 1 to T do # T independent trials
+      for i = 1 to n do # random initial assignment
+      	ta[i] := “true” or “false” # 50% chance each
+      end
+      for k = 1 to n do # n local modifications
+          if ta satisfies all constraints then # done!
+          	return ta
+          else # fix a violated constraint
+              choose an arbitrary violated constraint C
+              choose variable x_i in C, uniformly at random
+              ta[i] := !ta[i] # flip its value
+          end
+  	end
+  return “no solution” # give up on the search
+  ```
+
+* **a)** Prove that whenever there is no truth assignment that satisfies all the constraints of the given 3-SAT instance, the `Schöning` algorithm returns “no solution.”
+* **b)** For this and the next three parts, restrict attention to inputs with a satisfying truth assignment (that is, a truth assignment that satisfies all the constraints). Let $p$ denote the probability, over the coin flips of the `Schöning` algorithm, that an iteration of the outermost for loop discovers a satisfying assignment. Prove that, with $T = \frac 1 p \ln \frac 1 \delta$ independent random trials, the Schöning algorithm finds a satisfying assignment with probability at least $1 -\delta$.
+* **c)** In this and the next part, let $ta^*$ denote a satisfying assignment of the given 3-SAT instance. Prove that every variable flip made by the Schöning algorithm in its inner loop has at least a 1 in 3 chance of increasing the number of variables with the same value in both $ta$ and $ta^*$ .
+* **d)** Prove that the probability that a uniformly random truth assignment agrees with $ta^*$ on at least $n/2$ variables is at least 50%.
+* **e)** Prove that the probability $p$ defined in **b)** is at least $1/(2 \cdot 3 ^ {n/2} )$; hence, with $T = 2 \cdot 3^{n/2} \ln \frac 1 \delta$ trials, the Schöning algorithm returns a satisfying assignment with probability at least $1 - \delta$.
+* **f)** Conclude that there is a randomized algorithm that solves the 3-SAT problem (with failure probability at most $\delta$ ) in $O((1.74)^n \ln \frac 1 \delta )$ time—exponentially faster than exhaustive search.
+
+**ANSWER**
+
+* **a)**
+
+  This is trivial, as the line 
+
+  ```ruby
+  if ta satisfies all constraints then # done!
+  	return ta
+  ```
+
+  will never return.
+
+* **b)**
+
+  Let's $p_T$ be the probability that $T$ trials will return a satisfying assignment.
+
+  For each trial the probability of returning a satisfying assignment is $p$, therefore $p_T$ is:
+  $$
+  p_T = 1-(1-p)^T
+  $$
+  $(1-p)$ can be bound from above by $e^{-p}$:
+  $$
+  p_T \leq 1-e^{-pT}
+  $$
+  Setting $p_T$ as $\delta$:
+  $$
+  T \geq \frac 1 p \ln \frac 1 \delta
+  $$
+
+* **c)**
+
+  The $C$ constraint will have at least 1 different variable from $ta^*$ which can be selected with probability $1/3$.
+
+* **d)**
+
+  This probability is $2^{-n}\sum_{i=0}^{\lfloor n/2 \rfloor} \binom n i$.
+
+  As $\sum_{i=0}^{n} \binom n i = 2^n$ we got $\sum_{i=0}^{\lfloor n/2 \rfloor} \binom n i = 2^{n-1}$
+
+  Thus the probability is at least $1/2$.
+
+* **e)**
+
+  The probability to have at least $n/2$ correct values is $1/2$ and at each iteration we have $1/3$ of increasing the values.
+
+  As we need to improve $n/2$ variables, the probability $p$ is $ 1/2 \cdot (1/3)^{n/2} = 1/(2 \cdot 3^{n/2})$.
+
+* **f)**
+
+  We need to run $T = 2 \cdot 3^{n/2} \ln \frac 1 \delta$ trials.
+
+  For each trial we $O(n)$, so the algorithm runs in $O(n \cdot \sqrt{3}^2 \ln \frac 1 \delta)$.
+
+  As $\sqrt 3 < 1.74$ and exponential function always grows faster than any polynomial function, than we got $O(1.74^n \ln \frac 1 \delta)$.
 
 ## Programming Problems
 
