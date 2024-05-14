@@ -311,6 +311,100 @@ Because the UDP is connectionless, so it is possible to start the server socket 
 
 ## Problems
 
+**P1. True or false?**
+
+* **a) A user requests a Web page that consists of some text and three images. For this page, the client will send one request message and receive four response messages.**
+
+  False.
+
+* **b) Two distinct Web pages (for example, www.mit.edu/research.html and www.mit.edu/students.html) can be sent over the same persistent connection.**
+
+  True.
+
+* **c) With nonpersistent connections between browser and origin server, it is possible for a single TCP segment to carry two distinct HTTP request messages.**
+
+  False.
+
+* **d) The `Date:` header in the HTTP response message indicates when the object in the response was last modified.**
+
+  False.
+
+* **e) HTTP response messages never have an empty message body.**
+
+  False
+
+**P2. SMS, iMessage, WeChat, and WhatsApp are all smartphone real-time messaging systems. After doing some research on the Internet, for each of these systems write one paragraph about the protocols they use. Then write a paragraph explaining how they differ.**
+
+SMS uses the SMPP (Short Message Peer-to-Peer) protocol so mobile devices can exchange short text messages over cellular networks. The SMPP uses the client-server model, where a bind command is sent before message exchanging, which can be synchronous or asynchronous.
+
+iMessage is an instant messaging service developed by Apple Inc. You can use it to send text messages, images, videos, and documents, which all are end-to-end encrypted. The iMessage protocol is based on the Apple Push Notification service (APNs)—a proprietary, binary protocol. It first sets up a Keep-Alive connection with the Apple servers, where every connection has its own unique code to be use as an id for the route. The connection is encrypted with TLS using a client-side certificate, that is requested by the device on the activation of iMessage.
+
+WeChat  is a Chinese instant messaging, social media, and mobile payment app developed by Tencent. It uses the WeChat Protocol, which is asynchronous and uses TLS but not end-to-end encryption.
+
+WhatsApp  is an instant messaging (IM) and voice-over-IP (VoIP) service owned by technology conglomerate Meta. It uses a customized version of the open standard Extensible Messaging and Presence Protocol (XMPP). It has end-to-end encryption and P2P payment.
+
+WhatsApp, WeChat, and IMessage are different from SMS, as they use the internet while the later uses the cellular network. Also these internet apps also support sending other media types, while SMS only text.
+
+**P3. Consider an HTTP client that wants to retrieve a Web document at a given URL. The IP address of the HTTP server is initially unknown. What transport and application-layer protocols besides HTTP are needed in this scenario?**
+
+The App protocol is DNS, the transport protocols are TCP for HTTP and UDP for DNS.
+
+**P4. Consider the following string of ASCII characters that were captured by Wireshark when the browser sent an HTTP `GET` message (i.e., this is the actual content of an HTTP `GET` message). The characters  are carriage return and line-feed characters (that is, the italized character string in the text below represents the single carriage-return character that was contained at that point in the HTTP header). Answer the following questions, indicating where in the HTTP `GET` message below you find the answer.**
+
+* **a) What is the URL of the document requested by the browser?**
+
+  gaia.cs.umass.edu/cs453/index.html, found after `GET` and `Host`.
+
+* **b) What version of HTTP is the browser running?**
+
+  1.1, found before `Host`.
+
+* **c) Does the browser request a non-persistent or a persistent connection?**
+
+  Persistent, after `Connection`.
+
+* **d) What is the IP address of the host on which the browser is running?**
+
+  Not shown.
+
+* **e) What type of browser initiates this message? Why is the browser type needed in an HTTP request message?**
+
+  Mozilla/5.0. So the server can send different versions of the same object to different browsers types, using the same URL.
+
+**P5. The text below shows the reply sent from the server in response to the HTTP `GET` message in the question above. Answer the following questions, indicating where in the message below you find the answer.**
+
+* **a) Was the server able to successfully find the document or not? What time was the document reply provided?**
+
+  It was able, as 200 indicates that.
+
+  It was provided at 12:39:45GMT on Mar 7th of 2008, as indicated in the `Date:` field.
+
+* **b) When was the document last modified?**
+
+  At 18:27:46 on Dec 10th 2005, as indicated in the `Last-Modified:` field.
+
+* **c) How many bytes are there in the document being returned?**
+
+  3874, as indicated in the `Content-Length:` field.
+
+* **d) What are the first 5 bytes of the document being returned? Did the server agree to a persistent connection?**
+
+  The first 5 bytes are `3c 21 64 6f 63`, which means `<!doc`. It is shown after the double `<cr><lf>`.
+
+  Yes, the server agreed with a persistent connection, as shown in the field `Connection:`.
+
+**P6. Obtain the HTTP/1.1 specification (RFC 2616). Answer the following questions:**
+
+* **a) Explain the mechanism used for signaling between the client and server to indicate that a persistent connection is being closed. Can the client, the server, or both signal the close of a connection?**
+
+  
+
+* **b) What encryption services are provided by HTTP?**
+
+* **c) Can a client open three or more simultaneous connections with a given server?**
+
+* **d) Either a server or a client may close a transport connection between them if either one detects the connection has been idle for some time. Is it possible that one side starts closing a connection while the other side is transmitting data via this connection? Explain.**
+
 ## Socket Programming Assignments
 
 ## Wireshark Lab: HTTP
