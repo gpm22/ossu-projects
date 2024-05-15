@@ -26,6 +26,10 @@ class BaseGraph
 
   private
 
+  def generateSubProblems(subproblemSize)
+    [] #TODO
+  end
+
   def getMinimal(vertex, subproblem, subproblems)
     subproblemClean = subproblem - vertex
     subproblemClean2 = subproblemClean - @vertices[0]
