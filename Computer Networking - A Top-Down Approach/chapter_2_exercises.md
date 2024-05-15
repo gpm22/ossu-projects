@@ -397,13 +397,47 @@ The App protocol is DNS, the transport protocols are TCP for HTTP and UDP for DN
 
 * **a) Explain the mechanism used for signaling between the client and server to indicate that a persistent connection is being closed. Can the client, the server, or both signal the close of a connection?**
 
-  
+  The mechanism is to send `Connection: close` in the header. Both can signal the close of a connection.
 
 * **b) What encryption services are provided by HTTP?**
 
+  None.
+
 * **c) Can a client open three or more simultaneous connections with a given server?**
 
+  Yes, but they shouldn't.
+
 * **d) Either a server or a client may close a transport connection between them if either one detects the connection has been idle for some time. Is it possible that one side starts closing a connection while the other side is transmitting data via this connection? Explain.**
+
+  Yes, it is possible, anyone can close a connection anytime. Both sides must be prepared to resend messages and recover from asynchronous close events.
+
+
+**P7. Suppose within your Web browser you click on a link to obtain a Web page. The IP address for the associated URL is not cached in your local host, so a DNS lookup is necessary to obtain the IP address. Suppose that $n$ DNS servers are visited before your host receives the IP address from DNS; the successive visits incur an RTT of RTT$_1$, $\dots$, RTT$_n$. Further suppose that the Web page associated with the link contains exactly one object, consisting of a small amount of HTML text. Let RTT$_0$ denote the RTT between the local host and the server containing the object. Assuming zero transmission time of the object, how much time elapses from when the client clicks on the link until the client receives the object?**
+
+The time to get the IP is $\sum_{i=1}^n \text{RTT}_i$, while the time to create the TCP connection is $\text{RTT}_0$, and the time to send the request is also $\text{RTT}_0$, therefore:
+$$
+2\text{RTT}_0 + \sum_{i=1}^n \text{RTT}_i
+$$
+**P8. Referring to Problem P7, suppose the HTML file references eight very small objects on the same server. Neglecting transmission times, how much time elapses with**
+
+* **a) Non-persistent HTTP with no parallel TCP connections?**
+
+  $18\text{RTT}_0 + \sum_{i=1}^n \text{RTT}_i$
+
+* **b) Non-persistent HTTP with the browser configured for 6 parallel connections?**
+
+  $6\text{RTT}_0 + \sum_{i=1}^n \text{RTT}_i$
+
+* **c) Persistent HTTP?**
+
+  Without pipelining and no parallel connections: $10\text{RTT}_0+ \sum_{i=1}^n \text{RTT}_i$
+
+  With pipelining and no parallel connections: $3\text{RTT}_0+ \sum_{i=1}^n \text{RTT}_i$
+
+**P9. Consider Figure 2.12, for which there is an institutional network connected to the Internet. Suppose that the average object size is 1,000,000 bits and that the average request rate from the institution’s browsers to the origin servers is 16 requests per second. Also suppose that the amount of time it takes from when the router on the Internet side of the access link forwards an HTTP request until it receives the response is three seconds on average (see Section 2.2.5). Model the total average response time as the sum of the average access delay (that is, the delay from Internet router to institution router) and the average Internet delay. For the average access delay, use $\Delta/(1 - \Delta \beta)$, where $\Delta$ is the average time required to send an object over the access link and $\beta$ is the arrival rate of objects to the access link.**
+
+* **a) Find the total average response time.**
+* **b) Now suppose a cache is installed in the institutional LAN. Suppose the miss rate is 0.4. Find the total response time.**
 
 ## Socket Programming Assignments
 
