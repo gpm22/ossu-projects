@@ -26,13 +26,24 @@ class BaseGraph
       end
     end
 
-    getMinimal(@firstVertex, @vertices.to_set)
+    getTourValue()
   end
 
   private
 
   def generateSubProblems(subproblemSize)
-    [] #TODO
+    raise "subproblem size must be larger than 2" if subproblemSize < 3
+    raise "subproblem size must be at most the number of vertices" if subproblemSize > @vertices.size
+
+    return [@vertices.to_set] if subproblemSize == @vertices.size
+
+    vertexToShuffle = @vertices.keys.drop(1)
+    subproblems = []
+
+    vertexToShuffle.combination(subproblemSize).each do |combination|
+      subproblems.push((combination.push(@firstVertex)).to_set)
+    end
+    subproblems
   end
 
   def getMinimal(vertex, subproblem)
@@ -41,6 +52,17 @@ class BaseGraph
     minimal = Float::INFINITY
     subproblemClean2.each do |neighbor|
       newMinimal = @subproblems[subproblemClean][neighbor] + getEdgeValue(neighbor, vertex)
+
+      minimal = newMinimal if newMinimal < minimal
+    end
+    minimal
+  end
+
+  def getTourValue
+    minimal = Float::INFINITY
+    vertexSet = @vertex.keys.to_set
+    @vertex.keys.drop(1).each do |vertex|
+      newMinimal = @subproblems[vertexSet][vertex] + getEdgeValue(neighbor, @firstVertex)
 
       minimal = newMinimal if newMinimal < minimal
     end
