@@ -1,12 +1,15 @@
+require "set"
+
 class BaseGraph
   #TODO version optimized
   def BellmanHeldKarp
     subproblems = {}
     # base cases (|S| = 2)
     firstVertex = @vertices.keys[0]
-    @vertices.keys.drop(1).each do |j|
-      subproblems[[firstVertex, @vertices[j]]] = {}
-      subproblems[[firstVertex, @vertices[j]]][@vertices[j]] = getEdgeValue(firstVertex, @vertices[j])
+    @vertices.keys.drop(1).each do |vertex|
+      setSubproblem = Set[firstVertex, vertex]
+      subproblems[setSubproblem] = {}
+      subproblems[setSubproblem][vertex] = getEdgeValue(firstVertex, vertex)
     end
 
     # systematically solve all subproblems
@@ -15,7 +18,7 @@ class BaseGraph
       currentSubproblems = generateSubProblems(subproblemSize)
       currentSubproblems.each do |subproblem|
         subproblems[subproblem] = {}
-        subproblemClean = subproblem - firstVertex
+        subproblemClean = subproblem - Set[firstVertex]
 
         subproblemClean.each do |j|
           subproblems[subproblem][j] = getMinimal(j, subproblem, subproblems)
@@ -33,9 +36,9 @@ class BaseGraph
   end
 
   def getMinimal(vertex, subproblem, subproblems)
-    subproblemClean = subproblem - vertex
+    subproblemClean = subproblem - Set[vertex]
     firstVertex = @vertices.keys[0]
-    subproblemClean2 = subproblemClean - firstVertex
+    subproblemClean2 = subproblemClean - Set[firstVertex]
     minimal = Float::INFINITY
     subproblemClean2.each do |neighbor|
       newMinimal = subproblems[subproblemClean][neighbor] + getEdgeValue(neighbor, vertex)
