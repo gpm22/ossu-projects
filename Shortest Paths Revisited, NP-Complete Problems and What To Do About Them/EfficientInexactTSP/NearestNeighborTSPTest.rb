@@ -7,7 +7,7 @@ extend Test::Unit::Assertions
 
 def getGraphFromFile(file, type)
   currentFolder = File.absolute_path(File.dirname(__FILE__))
-  inputPath = currentFolder + "/test_files/#{file}.txt"
+  inputPath = currentFolder + "../TSP_test_files/#{file}.txt"
 
   return CartesianGraph.createGraphFromFile(inputPath) if type == :CARTESIAN
 
