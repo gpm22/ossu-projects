@@ -1,13 +1,19 @@
 require "set"
 
-class BaseGraph
+class BellmanHeldKarp
+  def initialize(graph)
+    @graph = graph
+  end
+
   #TODO version optimized
   def BellmanHeldKarp
-    BellmanHeldKarpHelper(false)
+    result = BellmanHeldKarpHelper(false)
+    @graph.type == :CARTESIAN ? Math.sqrt(result) : result
   end
 
   def BellmanHeldKarpOptimized
-    BellmanHeldKarpHelper(true)
+    result = BellmanHeldKarpHelper(true)
+    @graph.type == :CARTESIAN ? Math.sqrt(result) : result
   end
 
   private
@@ -15,17 +21,17 @@ class BaseGraph
   def BellmanHeldKarpHelper(optimized)
     @subproblems = {}
     # base cases (|S| = 2)
-    @firstVertex = @vertices.keys[0]
-    @nonFirstVertices = @vertices.keys.drop(1)
+    @firstVertex = @graph.vertices.keys[0]
+    @nonFirstVertices = @graph.vertices.keys.drop(1)
     @nonFirstVertices.each do |vertex|
       setSubproblem = Set[@firstVertex, vertex]
       @subproblems[setSubproblem] = {}
-      @subproblems[setSubproblem][vertex] = getEdgeValue(@firstVertex, vertex)
+      @subproblems[setSubproblem][vertex] = @graph.getEdgeValue(@firstVertex, vertex)
     end
 
     # systematically solve all subproblems
 
-    (3..@vertices.size).each do |subproblemSize|
+    (3..@graph.vertices.size).each do |subproblemSize|
       currentSubproblems = generateSubProblems(subproblemSize)
 
       cleaner = [] if optimized
@@ -49,9 +55,9 @@ class BaseGraph
 
   def generateSubProblems(subproblemSize)
     raise "subproblem size must be larger than 2" if subproblemSize < 3
-    raise "subproblem size must be at most the number of vertices" if subproblemSize > @vertices.size
+    raise "subproblem size must be at most the number of vertices" if subproblemSize > @graph.vertices.size
 
-    return [@vertices.keys.to_set] if subproblemSize == @vertices.size
+    return [@graph.vertices.keys.to_set] if subproblemSize == @graph.vertices.size
 
     subproblems = []
 
@@ -67,7 +73,7 @@ class BaseGraph
     minimal = Float::INFINITY
 
     subproblemClean2.each do |neighbor|
-      newMinimal = @subproblems[subproblemClean][neighbor] + getEdgeValue(neighbor, vertex)
+      newMinimal = @subproblems[subproblemClean][neighbor] + @graph.getEdgeValue(neighbor, vertex)
 
       minimal = newMinimal if newMinimal < minimal
     end
@@ -76,10 +82,10 @@ class BaseGraph
 
   def getTourValue
     minimal = Float::INFINITY
-    vertexSet = @vertices.keys.to_set
+    vertexSet = @graph.vertices.keys.to_set
 
     @nonFirstVertices.each do |vertex|
-      newMinimal = @subproblems[vertexSet][vertex] + getEdgeValue(vertex, @firstVertex)
+      newMinimal = @subproblems[vertexSet][vertex] + @graph.getEdgeValue(vertex, @firstVertex)
 
       minimal = newMinimal if newMinimal < minimal
     end

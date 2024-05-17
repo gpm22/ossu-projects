@@ -1,16 +1,8 @@
-require_relative "./BaseGraph"
+class CartesianGraph
+  attr_reader :vertices
 
-class CartesianGraph < BaseGraph
   def initialize
     @vertices = {}
-  end
-
-  def BellmanHeldKarp
-    Math.sqrt(super)
-  end
-
-  def BellmanHeldKarpOptimized
-    Math.sqrt(super)
   end
 
   def self.createGraphFromFile(filePath)
@@ -37,6 +29,10 @@ class CartesianGraph < BaseGraph
 
   def getEdgeValue(firstVertex, secondVertex)
     @vertices[firstVertex].distanceTo(@vertices[secondVertex])
+  end
+
+  def type
+    :CARTESIAN
   end
 end
 

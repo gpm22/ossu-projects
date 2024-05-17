@@ -1,13 +1,13 @@
-require_relative "./BaseGraph"
+class Graph
+  attr_reader :vertices
 
-class Graph < BaseGraph
   def initialize
     @edges = {}
     @vertices = {}
   end
 
   def self.createGraphFromFile(filePath)
-   graph = Graph.new
+    graph = Graph.new
     File.open(filePath).each_line do |line|
       values = line.split(" ").map(&:to_i)
       next if values.size < 3
@@ -43,4 +43,7 @@ class Graph < BaseGraph
     @edges["#{firstVertex}:#{secondVertex}"]
   end
 
+  def type
+    :ORDINARY
+  end
 end

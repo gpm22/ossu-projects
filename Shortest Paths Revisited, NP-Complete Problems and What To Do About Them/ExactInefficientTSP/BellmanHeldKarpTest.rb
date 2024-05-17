@@ -1,6 +1,7 @@
 STDOUT.sync = true
-require_relative "./Graph"
-require_relative "./CartesianGraph"
+require_relative "../Graphs/Graph"
+require_relative "../Graphs/CartesianGraph"
+require_relative "./BellmanHeldKarp"
 require "benchmark"
 require "test/unit"
 extend Test::Unit::Assertions
@@ -16,7 +17,8 @@ end
 
 def testFile(file, expected, name, type, optimized)
   graph = getGraphFromFile(file, type)
-  result = optimized ? graph.BellmanHeldKarpOptimized : graph.BellmanHeldKarp
+  bhkInstance = BellmanHeldKarp.new(graph)
+  result = optimized ? bhkInstance.BellmanHeldKarpOptimized : bhkInstance.BellmanHeldKarp
   result = result.round(2) if type == :CARTESIAN
   puts "#{name} tour: #{result}"
   assert_equal(expected, result, name)
@@ -40,8 +42,9 @@ def testToVerifyPerformance(n, type, optimized)
   puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   puts "creating graph with #{n} vertices"
   graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
+  bhkInstance = BellmanHeldKarp.new(graph)
   puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
-  time = Benchmark.measure { optimized ? graph.BellmanHeldKarpOptimized : graph.BellmanHeldKarp }
+  time = Benchmark.measure { optimized ? bhkInstance.BellmanHeldKarpOptimized : bhkInstance.BellmanHeldKarp }
 
   puts "for n: #{n} - time: #{time.real}"
 end
