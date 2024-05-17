@@ -1,36 +1,29 @@
-class Graph
-  def initialize
-    @edges = {}
-    @vertices = {}
+class ExhaustiveSearchTSP
+  def initialize(graph)
+    @graph = graph
   end
 
   def tsp
-    tspBase { |s, currentResult| tspSearch(s, currentResult) }
+    result = tspBase { |s, currentResult| tspSearch(s, currentResult) }
+    result[2] = Math.sqrt(result[2]) if @graph.type == :CARTESIAN
+    result
   end
 
   def tspNaive
-    tspBase { |s, currentResult| tspSearch(s, currentResult, true) }
-  end
-
-  def addEdge(firstVertex, secondVertex, value)
-    @vertices[firstVertex.to_s] = nil
-    @vertices[secondVertex.to_s] = nil
-    @edges["#{firstVertex}:#{secondVertex}"] = value
-    @edges["#{secondVertex}:#{firstVertex}"] = value
+    result = tspBase { |s, currentResult| tspSearch(s, currentResult, true) }
+    result[2] = Math.sqrt(result[2]) if @graph.type == :CARTESIAN
+    result
   end
 
   private
 
   def tspBase
-    n = @vertices.size
-    w = (1..(n - 1)).inject { |sum, i| sum + getEdgeValue(i, i + 1) } + getEdgeValue(n, 1)
-    currentResult = [n, (1..n).to_a, w]
-    s = [1, [1], 0]
+    n = @graph.vertices.size
+    vertices = @graph.vertices.keys
+    w = (0..(n - 2)).inject { |sum, i| sum + @graph.getEdgeValue(vertices[i], vertices[i + 1]) } + @graph.getEdgeValue(vertices[n - 1], vertices[0])
+    currentResult = [n, vertices, w]
+    s = [1, [vertices[0]], 0]
     yield(s, currentResult)
-  end
-
-  def getEdgeValue(firstVertex, secondVertex)
-    @edges["#{firstVertex}:#{secondVertex}"]
   end
 
   def tspSearch(s, currentResult, naive = false)
@@ -38,12 +31,12 @@ class Graph
     n = currentResult[0]
     wB = currentResult[2]
     if k == n
-      new_w = w + getEdgeValue(arr[k - 1], arr[0])
+      new_w = w + @graph.getEdgeValue(arr[k - 1], arr[0])
       currentResult = [k, arr, new_w] if new_w < wB
     else
-      notInArr = (1..n).to_a - arr
+      notInArr = @graph.vertices.keys - arr
       notInArr.each do |j|
-        new_w = w + getEdgeValue(arr[k - 1], j)
+        new_w = w + @graph.getEdgeValue(arr[k - 1], j)
         if new_w < wB || naive
           new_S = [k + 1, arr + [j], new_w]
           currentResult = tspSearch(new_S, currentResult, naive)

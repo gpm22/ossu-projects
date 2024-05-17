@@ -1,52 +1,45 @@
 STDOUT.sync = true
+require_relative "../Graphs/Graph"
+require_relative "../Graphs/CartesianGraph"
 require_relative "./ExhaustiveSearchTSP"
 require "benchmark"
 require "test/unit"
 extend Test::Unit::Assertions
 
-def getGraphFromFile(file)
+def getGraphFromFile(file, type)
   parentFolder = File.expand_path("../.")
   inputPath = parentFolder + "/TSP_test_files/#{file}.txt"
-  graph = Graph.new
-  File.open(inputPath).each_line do |line|
-    values = line.split(" ").map(&:to_i)
-    next if values.size < 3
-    graph.addEdge(values[0], values[1], values[2].to_i)
-  end
-  graph
+
+  return CartesianGraph.createGraphFromFile(inputPath) if type == :CARTESIAN
+
+  Graph.createGraphFromFile(inputPath)
 end
 
-def test(file, expected, name)
-  result = getGraphFromFile(file).tsp
+def testFile(file, expected, name, type)
+  graph = getGraphFromFile(file, type)
+  tspInstance = ExhaustiveSearchTSP.new(graph)
+  result = tspInstance.tsp[2]
+  result = result.round(2) if type == :CARTESIAN
   puts "#{name} tour: #{result}"
-  assert_equal(expected, result[2], name)
+  assert_equal(expected, result, name)
 
   puts "Test passed! #{name}"
 end
 
 def runTestFiles
-  test("tsptest1", 13, "quiz 19.2")
-  test("tsptest2", 23, "quiz 20.7")
-end
-
-def generateGraphWithNVertices(n)
-  graph = Graph.new
-  (1..n).each do |i|
-    (1..n).each do |j|
-      next if i == j
-      graph.addEdge(i, j, rand(0..100))
-    end
-  end
-  graph
+  testFile("tsptest1", 13, "quiz 19.2", nil)
+  testFile("tsptest2", 23, "quiz 20.7", nil)
+  testFile("tsptest3", 4.90, "", :CARTESIAN)
 end
 
 def testToVerifyPerformance(n)
   puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   puts "creating graph with #{n} vertices"
-  graph = generateGraphWithNVertices(n)
+  graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
+  tspInstance = ExhaustiveSearchTSP.new(graph)
   #timeNaive = Benchmark.measure { graph.tspNaive }
   puts "running tsp"
-  timeOptimized = Benchmark.measure { graph.tsp }
+  timeOptimized = Benchmark.measure { tspInstance.tsp }
 
   #puts "for n: #{n} - time naive: #{timeNaive.real} - time optimized: #{timeOptimized.real}"
   puts "for n: #{n} - time optimized: #{timeOptimized.real}"
