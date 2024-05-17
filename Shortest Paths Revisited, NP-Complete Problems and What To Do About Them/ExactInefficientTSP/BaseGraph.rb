@@ -36,11 +36,11 @@ class BaseGraph
     raise "subproblem size must be larger than 2" if subproblemSize < 3
     raise "subproblem size must be at most the number of vertices" if subproblemSize > @vertices.size
 
-    return [@vertices.to_set] if subproblemSize == @vertices.size
+    return [@vertices.keys.to_set] if subproblemSize == @vertices.size
 
     subproblems = []
 
-    @nonFirstVertices.combination(subproblemSize-1).each do |combination| #subproblemSize counts the firstVertex that are added after
+    @nonFirstVertices.combination(subproblemSize - 1).each do |combination| #subproblemSize counts the firstVertex that are added after
       subproblems.push((combination.push(@firstVertex)).to_set)
     end
     subproblems
@@ -50,6 +50,7 @@ class BaseGraph
     subproblemClean = subproblem - Set[vertex]
     subproblemClean2 = subproblemClean - Set[@firstVertex]
     minimal = Float::INFINITY
+
     subproblemClean2.each do |neighbor|
       newMinimal = @subproblems[subproblemClean][neighbor] + getEdgeValue(neighbor, vertex)
 
@@ -60,9 +61,10 @@ class BaseGraph
 
   def getTourValue
     minimal = Float::INFINITY
-    vertexSet = @vertex.keys.to_set
+    vertexSet = @vertices.keys.to_set
+
     @nonFirstVertices.each do |vertex|
-      newMinimal = @subproblems[vertexSet][vertex] + getEdgeValue(neighbor, @firstVertex)
+      newMinimal = @subproblems[vertexSet][vertex] + getEdgeValue(vertex, @firstVertex)
 
       minimal = newMinimal if newMinimal < minimal
     end
