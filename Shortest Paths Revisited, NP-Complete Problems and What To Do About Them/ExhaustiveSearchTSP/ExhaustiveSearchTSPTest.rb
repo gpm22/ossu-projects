@@ -5,8 +5,8 @@ require "test/unit"
 extend Test::Unit::Assertions
 
 def getGraphFromFile(file)
-  currentFolder = File.absolute_path(File.dirname(__FILE__))
-  inputPath = currentFolder + "../TSP_test_files/#{file}.txt"
+  parentFolder = File.expand_path("../.")
+  inputPath = parentFolder + "/TSP_test_files/#{file}.txt"
   graph = Graph.new
   File.open(inputPath).each_line do |line|
     values = line.split(" ").map(&:to_i)
