@@ -1,6 +1,8 @@
 STDOUT.sync = true
-require_relative "./Graph"
-require_relative "./CartesianGraph"
+require_relative "../Graphs/Graph"
+require_relative "../Graphs/CartesianGraph"
+require_relative "./TSP2OPT"
+require_relative "./NearestNeighborTSP"
 require "benchmark"
 require "test/unit"
 extend Test::Unit::Assertions
@@ -15,7 +17,9 @@ def getGraphFromFile(file, type)
 end
 
 def testRandom(file, expected, name, type)
-  result = getGraphFromFile(file, type).TSP2OPT
+  graph = getGraphFromFile(file, type)
+  optInstance = TSP2OPT.new(graph)
+  result = optInstance.TSP2OPT
   puts "#{name} tour - best: #{expected} - current: #{result}"
 
   assert_equal(expected, result[1].round(2), name)
@@ -32,8 +36,9 @@ def testToVerifyPerformance(n, type)
   puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   puts "creating graph with #{n} vertices"
   graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
+  optInstance = TSP2OPT.new(graph)
   puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
-  time = Benchmark.measure { graph.TSP2OPT }
+  time = Benchmark.measure { optInstance.TSP2OPT }
 
   puts "for n: #{n} - time: #{time.real}"
 end
@@ -43,12 +48,14 @@ def comparing2OPTWithNearestNeighbor(n, type)
   puts "creating graph with #{n} vertices"
   graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
 
+  optInstance = TSP2OPT.new(graph)
+  nhtInstance = NearestNeighborTSP.new(graph)
   result2OPT = 0
   resultNearest = 0
   puts "running tsp nearest neighbor-  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
-  timeNearest = Benchmark.measure { resultNearest = graph.nearestNeighborTSP }
+  timeNearest = Benchmark.measure { resultNearest = nhtInstance.nearestNeighborTSP }
   puts "running tsp 2opt -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
-  time2OPT = Benchmark.measure { result2OPT = graph.TSP2OPT }
+  time2OPT = Benchmark.measure { result2OPT = optInstance.TSP2OPT }
 
   puts "for n: #{n}"
   puts "Nearest - result: #{resultNearest[1]} -  time: #{timeNearest.real}"

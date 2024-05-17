@@ -1,6 +1,7 @@
 STDOUT.sync = true
-require_relative "./Graph"
-require_relative "./CartesianGraph"
+require_relative "../Graphs/Graph"
+require_relative "../Graphs/CartesianGraph"
+require_relative "./NearestNeighborTSP"
 require "benchmark"
 require "test/unit"
 extend Test::Unit::Assertions
@@ -15,7 +16,9 @@ def getGraphFromFile(file, type)
 end
 
 def testFirst(file, expected, name, type)
-  result = getGraphFromFile(file, type).nearestNeighborTSPFirst
+  graph = getGraphFromFile(file, type)
+  nhtInstance = NearestNeighborTSP.new(graph)
+  result = nhtInstance.nearestNeighborTSPFirst
   puts "#{name} tour: #{result}"
   assert_equal(expected, result[1].round(2), name)
 
@@ -29,7 +32,9 @@ def runTestFilesFirst
 end
 
 def testRandom(file, expected, name, type)
-  result = getGraphFromFile(file, type).nearestNeighborTSP
+  graph = getGraphFromFile(file, type)
+  nhtInstance = NearestNeighborTSP.new(graph)
+  result = nhtInstance.nearestNeighborTSP
   puts "#{name} tour - best: #{expected} - current: #{result}"
 
   assert_equal(expected, result[1].round(2), name)
@@ -46,10 +51,14 @@ def testToVerifyPerformance(n, type)
   puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
   puts "creating graph with #{n} vertices"
   graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
+  nhtInstance = NearestNeighborTSP.new(graph)
+
   puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
-  time = Benchmark.measure { graph.nearestNeighborTSPFirst }
+  time = Benchmark.measure { nhtInstance.nearestNeighborTSPFirst }
 
   puts "for n: #{n} - time: #{time.real}"
 end
 
-testToVerifyPerformance(117_000, :CARTESIAN)
+#testToVerifyPerformance(117_000, :CARTESIAN)
+runTestFilesFirst
+runTestFilesRandom
