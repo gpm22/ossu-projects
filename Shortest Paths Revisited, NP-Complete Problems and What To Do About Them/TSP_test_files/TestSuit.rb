@@ -22,8 +22,7 @@ class TestSuit
 
   def testFile(file, expected, name, type)
     graph = getGraphFromFile(file, type)
-    tspInstance = @tspInstanceFactory.call(graph)
-    result = tspInstance.tsp[2]
+    result = @tspInstanceFactory.call(graph)
     result = result.round(2) if type == :CARTESIAN
     puts "#{name} tour: #{result}"
     TestSuit.assert_equal(expected, result, name)
@@ -41,9 +40,8 @@ class TestSuit
     puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
     puts "creating graph with #{n} vertices"
     graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
-    tspInstance = @tspInstanceFactory.call(graph)
     puts "running tsp"
-    time = Benchmark.measure { tspInstance.tsp }
+    time = Benchmark.measure { @tspInstanceFactory.call(graph) }
 
     puts "for n: #{n} - time: #{time.real}"
   end
