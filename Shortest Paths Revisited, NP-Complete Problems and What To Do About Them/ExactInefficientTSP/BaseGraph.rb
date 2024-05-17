@@ -6,7 +6,8 @@ class BaseGraph
     @subproblems = {}
     # base cases (|S| = 2)
     @firstVertex = @vertices.keys[0]
-    @vertices.keys.drop(1).each do |vertex|
+    @nonFirstVertex = @vertices.keys.drop(1)
+    @nonFirstVertex.each do |vertex|
       setSubproblem = Set[@firstVertex, vertex]
       @subproblems[setSubproblem] = {}
       @subproblems[setSubproblem][vertex] = getEdgeValue(@firstVertex, vertex)
@@ -37,10 +38,9 @@ class BaseGraph
 
     return [@vertices.to_set] if subproblemSize == @vertices.size
 
-    vertexToShuffle = @vertices.keys.drop(1)
     subproblems = []
 
-    vertexToShuffle.combination(subproblemSize).each do |combination|
+    @nonFirstVertex.combination(subproblemSize-1).each do |combination| #subproblemSize counts the firstVertex that are added after
       subproblems.push((combination.push(@firstVertex)).to_set)
     end
     subproblems
@@ -61,7 +61,7 @@ class BaseGraph
   def getTourValue
     minimal = Float::INFINITY
     vertexSet = @vertex.keys.to_set
-    @vertex.keys.drop(1).each do |vertex|
+    @nonFirstVertex.each do |vertex|
       newMinimal = @subproblems[vertexSet][vertex] + getEdgeValue(neighbor, @firstVertex)
 
       minimal = newMinimal if newMinimal < minimal
