@@ -9,6 +9,10 @@ class CartesianGraph < BaseGraph
     Math.sqrt(super)
   end
 
+  def BellmanHeldKarpOptimized
+    Math.sqrt(super)
+  end
+
   def self.createGraphFromFile(filePath)
     graph = CartesianGraph.new
     File.open(filePath).each_line.with_index do |line, index|

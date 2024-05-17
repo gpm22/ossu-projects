@@ -3,6 +3,16 @@ require "set"
 class BaseGraph
   #TODO version optimized
   def BellmanHeldKarp
+    BellmanHeldKarpHelper(false)
+  end
+
+  def BellmanHeldKarpOptimized
+    BellmanHeldKarpHelper(true)
+  end
+
+  private
+
+  def BellmanHeldKarpHelper(optimized)
     @subproblems = {}
     # base cases (|S| = 2)
     @firstVertex = @vertices.keys[0]
@@ -17,20 +27,25 @@ class BaseGraph
 
     (3..@vertices.size).each do |subproblemSize|
       currentSubproblems = generateSubProblems(subproblemSize)
+
+      cleaner = [] if optimized
+
       currentSubproblems.each do |subproblem|
         @subproblems[subproblem] = {}
         subproblemClean = subproblem - Set[@firstVertex]
 
         subproblemClean.each do |j|
+          cleaner.push(subproblem - Set[j]) if optimized
           @subproblems[subproblem][j] = getMinimal(j, subproblem)
         end
       end
+
+      #clean @subproblems
+      cleaner.each { |usedSubproblem| @subproblems.delete(usedSubproblem) } if optimized
     end
 
     getTourValue()
   end
-
-  private
 
   def generateSubProblems(subproblemSize)
     raise "subproblem size must be larger than 2" if subproblemSize < 3
