@@ -1,54 +1,8 @@
-STDOUT.sync = true
-require_relative "../Graphs/Graph"
-require_relative "../Graphs/CartesianGraph"
+require_relative "../TSP_test_files/TestSuit"
 require_relative "./BellmanHeldKarp"
-require "benchmark"
-require "test/unit"
-extend Test::Unit::Assertions
 
-def getGraphFromFile(file, type)
-  parentFolder = File.expand_path("../.")
-  inputPath = parentFolder + "/TSP_test_files/#{file}.txt"
+testSuit = TestSuit.new(Proc.new { |x| BellmanHeldKarp.new(x).BellmanHeldKarp })
+testSuitOptimized = TestSuit.new(Proc.new { |x| BellmanHeldKarp.new(x).BellmanHeldKarpOptimized })
 
-  return CartesianGraph.createGraphFromFile(inputPath) if type == :CARTESIAN
-
-  Graph.createGraphFromFile(inputPath)
-end
-
-def testFile(file, expected, name, type, optimized)
-  graph = getGraphFromFile(file, type)
-  bhkInstance = BellmanHeldKarp.new(graph)
-  result = optimized ? bhkInstance.BellmanHeldKarpOptimized : bhkInstance.BellmanHeldKarp
-  result = result.round(2) if type == :CARTESIAN
-  puts "#{name} tour: #{result}"
-  assert_equal(expected, result, name)
-
-  puts "Test passed! #{name}"
-end
-
-def runTestFiles
-  testFile("tsptest1", 13, "quiz 19.2", nil, false)
-  testFile("tsptest2", 23, "quiz 20.7", nil, false)
-  testFile("tsptest3", 4.90, "", :CARTESIAN, false)
-end
-
-def runTestFilesOptimized
-  testFile("tsptest1", 13, "quiz 19.2", nil, true)
-  testFile("tsptest2", 23, "quiz 20.7", nil, true)
-  testFile("tsptest3", 4.90, "", :CARTESIAN, true)
-end
-
-def testToVerifyPerformance(n, type, optimized)
-  puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
-  puts "creating graph with #{n} vertices"
-  graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
-  bhkInstance = BellmanHeldKarp.new(graph)
-  puts "running tsp -  #{Time.now.strftime("%d/%m/%Y %H:%M")}"
-  time = Benchmark.measure { optimized ? bhkInstance.BellmanHeldKarpOptimized : bhkInstance.BellmanHeldKarp }
-
-  puts "for n: #{n} - time: #{time.real}"
-end
-
-#testToVerifyPerformance(117_000, :CARTESIAN, true)
-runTestFiles
-runTestFilesOptimized
+testSuit.runTestFiles
+testSuitOptimized.runTestFiles
