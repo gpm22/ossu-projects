@@ -6,8 +6,8 @@ testSuitOptimized = TestSuit.new(Proc.new { |x| BellmanHeldKarp.new(x).BellmanHe
 
 # 18 under a minute
 # 23 under an hour
-#testSuit.testToVerifyPerformance(23, :CARTESIAN)
-#testSuitOptimized.testToVerifyPerformance(23, :CARTESIAN)
+#testSuit.testToVerifyPerformance(18, :CARTESIAN)
+testSuitOptimized.testToVerifyPerformance(22, :CARTESIAN)
 
-testSuit.runTestFiles
-testSuitOptimized.runTestFiles
+#testSuit.runTestFiles
+#testSuitOptimized.runTestFiles

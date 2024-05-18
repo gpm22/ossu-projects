@@ -710,8 +710,8 @@ Code:
   end
   ```
 Under a minute: 18 for both optimized and regular. They run in $\approx$ 38 s, both take more than a min for 19.
-Under an hour: lets try 25
-Time x Memory: Time is far more relevant than memory.
+Under an hour: 23 for regular and 22 for optimized (not really optimized). They both run in $\approx$ 30 min, adding one more vertex makes it runs more than an hour.
+Time x Memory: Time is far more relevant than memory, with the optimization creating more problems. I tried using list, set and hash tables to the optimization, but they have similar performances.
 The optimalization helps? No, the time used to remove the old entries was greater than the time to just keep it.
 
 ### Problem 21.15

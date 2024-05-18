@@ -38,18 +38,18 @@ class BellmanHeldKarp
     (3..verticesSize).each do |subproblemSize|
       currentSubproblems = generateSubProblems(subproblemSize)
 
-      cleaner = Set[] if optimized
+      cleaner = {} if optimized
       currentSubproblems.each do |subproblem|
         @subproblems[subproblem] = {}
         subproblemClean = subproblem - Set[@firstVertex]
 
         subproblemClean.each do |j|
-          cleaner.add(subproblem - Set[j]) if optimized
+          cleaner[(subproblem - Set[j])] = nil if optimized
           @subproblems[subproblem][j] = getMinimal(j, subproblem)
         end
       end
       #clean @subproblems
-      cleaner.each { |usedSubproblem| @subproblems.delete(usedSubproblem) } if optimized
+      cleaner.keys.each { |usedSubproblem| @subproblems.delete(usedSubproblem) } if optimized
     end
 
     getTourValue()
