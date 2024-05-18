@@ -5,14 +5,15 @@ class BellmanHeldKarp
     @graph = graph
   end
 
-  #TODO version optimized
   def BellmanHeldKarp
     result = BellmanHeldKarpHelper(false)
+    puts "counter: #{@counter}"
     @graph.type == :CARTESIAN ? Math.sqrt(result) : result
   end
 
   def BellmanHeldKarpOptimized
     result = BellmanHeldKarpHelper(true)
+    puts "counter: #{@counter}"
     @graph.type == :CARTESIAN ? Math.sqrt(result) : result
   end
 
@@ -31,21 +32,22 @@ class BellmanHeldKarp
 
     # systematically solve all subproblems
 
-    (3..@graph.vertices.size).each do |subproblemSize|
+    verticesSize = @graph.vertices.size
+    @totalNumberOfProblems = verticesSize * (2 ** (verticesSize + 1))
+    @counter = 0
+    (3..verticesSize).each do |subproblemSize|
       currentSubproblems = generateSubProblems(subproblemSize)
 
-      cleaner = [] if optimized
-
+      cleaner = Set[] if optimized
       currentSubproblems.each do |subproblem|
         @subproblems[subproblem] = {}
         subproblemClean = subproblem - Set[@firstVertex]
 
         subproblemClean.each do |j|
-          cleaner.push(subproblem - Set[j]) if optimized
+          cleaner.add(subproblem - Set[j]) if optimized
           @subproblems[subproblem][j] = getMinimal(j, subproblem)
         end
       end
-
       #clean @subproblems
       cleaner.each { |usedSubproblem| @subproblems.delete(usedSubproblem) } if optimized
     end
@@ -73,7 +75,9 @@ class BellmanHeldKarp
     minimal = Float::INFINITY
 
     subproblemClean2.each do |neighbor|
+      puts "#{Time.now.strftime("%d/%m/%Y %H:%M:%S")} - subproblems size: #{@subproblems.size} - iteration #{@counter} of #{@totalNumberOfProblems} = #{@counter * 100.0 / @totalNumberOfProblems} %" if @counter % 1_500_000 == 0
       newMinimal = @subproblems[subproblemClean][neighbor] + @graph.getEdgeValue(neighbor, vertex)
+      @counter += 1
 
       minimal = newMinimal if newMinimal < minimal
     end
@@ -85,7 +89,9 @@ class BellmanHeldKarp
     vertexSet = @graph.vertices.keys.to_set
 
     @nonFirstVertices.each do |vertex|
+      puts "#{Time.now.strftime("%d/%m/%Y %H:%M:%S")} - subproblems size: #{@subproblems.size} - iteration #{@counter} of #{@totalNumberOfProblems} = #{@counter * 100.0 / @totalNumberOfProblems} %" if @counter % 1_500_000 == 0
       newMinimal = @subproblems[vertexSet][vertex] + @graph.getEdgeValue(vertex, @firstVertex)
+      @counter += 1
 
       minimal = newMinimal if newMinimal < minimal
     end

@@ -611,4 +611,107 @@ Meanwhile, the 3-SAT problem is NP-hard (Theorem 22.1). But can we at least impr
 
 ### Problem 21.14
 
+Implement in your favorite programming language the `BellmanHeldKarp` algorithm for the TSP (Section 21.1.6). As in Problem 20.15, try out your implementation on instances with edge costs chosen independently and uniformly at random from the set $\{1, 2, \dots, 100 \}$ or, alternatively, for vertices that correspond to points chosen independently and uniformly at random from the unit square (with edge costs equal to Euclidean distances). How large an input size (that is, how many vertices) can your program reliably process in under a minute? What about in under an hour? Is the biggest bottleneck time or memory? Does it help if you implement the optimization in Problem 21.8? 
+
+**ANSWER**
+
+Code:
+  ```ruby
+  class BellmanHeldKarp
+    def initialize(graph)
+      @graph = graph
+    end
+
+    def BellmanHeldKarp
+      result = BellmanHeldKarpHelper(false)
+      @graph.type == :CARTESIAN ? Math.sqrt(result) : result
+    end
+
+    def BellmanHeldKarpOptimized
+      result = BellmanHeldKarpHelper(true)
+      @graph.type == :CARTESIAN ? Math.sqrt(result) : result
+    end
+
+    private
+
+    def BellmanHeldKarpHelper(optimized)
+      @subproblems = {}
+      # base cases (|S| = 2)
+      @firstVertex = @graph.vertices.keys[0]
+      @nonFirstVertices = @graph.vertices.keys.drop(1)
+      @nonFirstVertices.each do |vertex|
+        setSubproblem = Set[@firstVertex, vertex]
+        @subproblems[setSubproblem] = {}
+        @subproblems[setSubproblem][vertex] = @graph.getEdgeValue(@firstVertex, vertex)
+      end
+
+      # systematically solve all subproblems
+
+      (3..@graph.vertices.size).each do |subproblemSize|
+        currentSubproblems = generateSubProblems(subproblemSize)
+
+        cleaner = [] if optimized
+
+        currentSubproblems.each do |subproblem|
+          @subproblems[subproblem] = {}
+          subproblemClean = subproblem - Set[@firstVertex]
+
+          subproblemClean.each do |j|
+            cleaner.push(subproblem - Set[j]) if optimized
+            @subproblems[subproblem][j] = getMinimal(j, subproblem)
+          end
+        end
+
+        #clean @subproblems
+        cleaner.each { |usedSubproblem| @subproblems.delete(usedSubproblem) } if optimized
+      end
+
+      getTourValue()
+    end
+
+    def generateSubProblems(subproblemSize)
+      raise "subproblem size must be larger than 2" if subproblemSize < 3
+      raise "subproblem size must be at most the number of vertices" if subproblemSize > @graph.vertices.size
+
+      return [@graph.vertices.keys.to_set] if subproblemSize == @graph.vertices.size
+
+      subproblems = []
+
+      @nonFirstVertices.combination(subproblemSize - 1).each do |combination| #subproblemSize counts the firstVertex that are added after
+        subproblems.push((combination.push(@firstVertex)).to_set)
+      end
+      subproblems
+    end
+
+    def getMinimal(vertex, subproblem)
+      subproblemClean = subproblem - Set[vertex]
+      subproblemClean2 = subproblemClean - Set[@firstVertex]
+      minimal = Float::INFINITY
+
+      subproblemClean2.each do |neighbor|
+        newMinimal = @subproblems[subproblemClean][neighbor] + @graph.getEdgeValue(neighbor, vertex)
+
+        minimal = newMinimal if newMinimal < minimal
+      end
+      minimal
+    end
+
+    def getTourValue
+      minimal = Float::INFINITY
+      vertexSet = @graph.vertices.keys.to_set
+
+      @nonFirstVertices.each do |vertex|
+        newMinimal = @subproblems[vertexSet][vertex] + @graph.getEdgeValue(vertex, @firstVertex)
+
+        minimal = newMinimal if newMinimal < minimal
+      end
+      minimal
+    end
+  end
+  ```
+Under a minute: 18 for both optimized and regular. They run in $\approx$ 38 s, both take more than a min for 19.
+Under an hour: lets try 25
+Time x Memory: Time is far more relevant than memory.
+The optimalization helps? No, the time used to remove the old entries was greater than the time to just keep it.
+
 ### Problem 21.15
