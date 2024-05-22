@@ -592,6 +592,166 @@ Host: ipv6.msftconnecttest.com
 
 By these examples, I could not verify if the browsers generate conditional `GET` messages for objects that are locally cached.
 
+**P13. Consider sending over HTTP/2 a Web page that consists of one video clip, and five images. Suppose that the video clip is transported as 2000 frames, and each image has three frames.**
+
+* **a) If all the video frames are sent first without interleaving, how many “frame times” are needed until all five images are sent?**
+
+  It will be all the frames of video and the the image frames, resulting in 2015 frames.
+
+* **b) If frames are interleaved, how many frame times are needed until all five images are sent.**
+
+  It will be 3 frames per object, therefore 18 frames.
+
+**P14. Consider the Web page in problem 13. Now HTTP/2 prioritization is employed. Suppose all the images are given priority over the video clip, and that the first image is given priority over the second image, the second image over the third image, and so on. How many frame times will be needed until the second image is sent?**
+
+First the server will send first image and then the second one, therefore e frames to star sending the second image and 6 frames to send it completely.
+
+**P15. What is the difference between `MAIL FROM:` in SMTP and `From:` in the mail message itself?**
+
+`MAIL FROM:` is used in SMTP communication to indicate the sender email.
+
+`From:` indicates in the email message itself the sender email.
+
+So both have the same info, but used in different contexts.
+
+**P16. How does SMTP mark the end of a message body? How about HTTP? Can HTTP use the same method as SMTP to mark the end of a message body? Explain.**
+
+SMTP marks the end of a message body with ”.” on a line by itself.
+
+HTTP does not mark the end of a message body, instead it indicates in the header the length of the message by using the `Content-length:`.
+
+HTTP cannot use the SMTP's method, as HTTP message could be binary data, whereas the SMTP's message body must be in 7-bit ASCII format.
+
+**P17. Read RFC 5321 for SMTP. What does MTA stand for? Consider the following received spam e-mail (modified from a real spam e-mail). Assuming only the originator of this spam e-mail is malicious and all other hosts are honest, identify the malicious host that has generated this spam e-mail.**
+
+```
+From - Fri Nov 07 13:41:30 2008
+Return-Path: <tennis5@pp33head.com>
+Received: from barmail.cs.umass.edu (barmail.cs.umass.edu [128.119.240.3]) by cs.umass.edu (8.13.1/8.12.6) for <hg@cs.umass.edu>; Fri, 7 Nov 2008 13:27:10 -0500
+Received: from asusus-4b96 (localhost [127.0.0.1]) by barmail.cs.umass.edu (Spam Firewall) for <hg@cs.umass.edu>; Fri, 7 Nov 2008 13:27:07 -0500 (EST)
+Received: from asusus-4b96 ([58.88.21.177]) by barmail.cs.umass.edu for <hg@cs.umass.edu>; Fri, 07 Nov 2008 13:27:07 -0500 (EST)
+Received: from [58.88.21.177] by inbnd55.exchangeddd.com; Sat, 8 Nov 2008 01:27:07 +0700
+From: ”Jonny” <tennis5@pp33head.com>
+To: <hg@cs.umass.edu>
+Subject: How to secure your savings
+```
+
+MTA stands for Mail Transfer Agent.
+
+As an honest MTA should report from where it received the message, the malicious host is `asusus-4b96 ([58.88.21.177])`.
+
+**P18. **
+
+* **a) What is a `whois` database?**
+
+  It is a public database that houses the information collected when someone registers a domain name or updates their DNS settings.
+
+* **b) Use various `whois` databases on the Internet to obtain the names of two DNS servers. Indicate which `whois` databases you used.**
+
+  `ns1.google.com` from https://www.whois.com/whois/google.com and https://who.is/whois/google.com
+
+  `a.ns.facebook.com` from https://www.whois.com/whois/facebook.com and https://who.is/whois/facebook.com
+
+* **c) Use `nslookup` on your local host to send DNS queries to three DNS servers: your local DNS server and the two DNS servers you found in part (b). Try querying for Type A, NS, and MX reports. Summarize your findings.**
+
+  Local DNS Server
+
+  * Default server: ` b5d58402.virtua.com.br`
+  * Address:  181.213.132.2
+  * For `virtua.com.br`
+    * Type A
+      * Name: virtua.com.br
+      * Addresses: 
+        * 189.6.48.3
+        * 201.6.4.15
+        * 201.6.4.61
+    * Type NS
+      * virtua.com.br   nameserver = dns1.virtua.com.br
+      * virtua.com.br   nameserver = dns2.virtua.com.br
+      * virtua.com.br   nameserver = dns3.virtua.com.br
+    * Type MX
+      * virtua.com.br   MX preference = 10, mail exchanger = smtp.virtua.com.br
+
+  `google.com` 
+
+  * Name:    google.com
+  * Addresses:
+    * 2800:3f0:4004:800::200e
+    * 142.251.134.110
+  * Type A
+    * Name:    google.com
+    * Address: 142.251.134.110
+  * Type NS
+    * google.com      nameserver = ns1.google.com
+    * google.com      nameserver = ns2.google.com
+    * google.com      nameserver = ns3.google.com
+    * google.com      nameserver = ns4.google.com
+  * Type MX
+    * google.com      MX preference = 10, mail exchanger = smtp.google.com
+
+  `gmail.com`
+
+  * Name:    gmail.com
+  * Addresses:
+    * 2800:3f0:4004:806::2005
+    * 142.251.135.37
+  * Type A
+    * Name:    gmail.com
+    * Address:  142.251.135.37
+  * Type NS
+    * gmail.com       nameserver = ns1.google.com
+    * gmail.com       nameserver = ns2.google.com
+    * gmail.com       nameserver = ns3.google.com
+    * gmail.com       nameserver = ns4.google.com
+  * Type MX
+    * gmail.com       MX preference = 5, mail exchanger = gmail-smtp-in.l.google.com
+    * gmail.com       MX preference = 10, mail exchanger = alt1.gmail-smtp-in.l.google.com
+    * gmail.com       MX preference = 20, mail exchanger = alt2.gmail-smtp-in.l.google.com
+    * gmail.com       MX preference = 30, mail exchanger = alt3.gmail-smtp-in.l.google.com
+    * gmail.com       MX preference = 40, mail exchanger = alt4.gmail-smtp-in.l.google.com
+
+  `facebook.com` 
+
+  * Name:    facebook.com
+  * Addresses:
+    * 2a03:2880:f17c:186:face:b00c:0:25de
+    * 31.13.91.35
+  * Type A
+    * Name:    facebook.com
+    * Address:  31.13.91.35
+  * Type NS
+    * facebook.com    nameserver = a.ns.facebook.com
+    * facebook.com    nameserver = b.ns.facebook.com
+    * facebook.com    nameserver = c.ns.facebook.com
+    * facebook.com    nameserver = d.ns.facebook.com
+  * Type MX
+    * facebook.com    MX preference = 10, mail exchanger = smtpin.vvv.facebook.com
+
+* **d) Use `nslookup` to find a Web server that has multiple IP addresses. Does the Web server of your institution (school or company) have multiple IP addresses?**
+
+  ` facebook.com`, ` google.com`, and `gmail.com` have more than one IP.
+
+  My company and university only have one IP.
+
+* **e) Use the ARIN `whois` database to determine the IP address range used by your university.**
+
+  I could not found.
+
+* **f) Describe how an attacker can use `whois` databases and the `nslookup` tool to perform reconnaissance on an institution before launching an attack.**
+
+  It can uses them to identify specific ids to attack, so it avoids routing.
+
+* **g) Discuss why `whois` databases should be publicly available.**
+
+  To know the id of attackers.
+
+**P19. In this problem, we use the useful `dig` tool available on Unix and Linux hosts to explore the hierarchy of DNS servers. Recall that in Figure 2.19, a DNS server in the DNS hierarchy delegates a DNS query to a DNS server lower in the hierarchy, by sending back to the DNS client the name of that lower-level DNS server. First read the man page for `dig`, and then answer the following questions.**
+
+* **a) Starting with a root DNS server (from one of the root servers [a-m]. root-servers.net), initiate a sequence of queries for the IP address for your department’s Web server by using `dig`. Show the list of the names of DNS servers in the delegation chain in answering your query.**
+* **b) Repeat part (a) for several popular Web sites, such as google.com, yahoo.com, or amazon.com.**
+
+
+
 ## Socket Programming Assignments
 
 ## Wireshark Lab: HTTP
