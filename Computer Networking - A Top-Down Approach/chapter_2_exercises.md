@@ -513,17 +513,22 @@ I am using a modified version the programs provided in the book:
 
 ```py
 from socket import *
+
 serverPort = 12000
-serverSocket = socket(AF_INET,SOCK_STREAM)
-serverSocket.bind(('',serverPort))
+serverSocket = socket(AF_INET, SOCK_STREAM)
+serverSocket.bind(("", serverPort))
 serverSocket.listen(1)
-print('The server is ready to receive')
+print("The server is ready to receive")
 while True:
- connectionSocket, addr = serverSocket.accept()
- sentence = connectionSocket.recv(1024).decode()
- capitalizedSentence = sentence.upper()
- connectionSocket.send(capitalizedSentence.encode())
- connectionSocket.close()
+    connectionSocket, addr = serverSocket.accept()
+    sentence = connectionSocket.recv(1024).decode()
+    print("address of sender: ")
+    print(addr)
+    print("received sentence: " + sentence)
+    capitalizedSentence = sentence.upper()
+    print("captalized sentence: " + capitalizedSentence)
+    connectionSocket.send(capitalizedSentence.encode())
+    connectionSocket.close()
 ```
 
 `TCPClient.py`
@@ -534,14 +539,58 @@ serverIP = 'servername'
 serverPort = 12000
 clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect((serverIP,serverPort))
-sentence = input('Input lowercase sentence:'')
+sentence = input('Input lowercase sentence:')
 clientSocket.send(sentence.encode())
 modifiedSentence = clientSocket.recv(1024)
 print('From Server: ', modifiedSentence.decode())
 clientSocket.close()
 ```
 
+I used chrome and edge.
 
+Example of message from chrome:
+
+```http
+GET http://google.com/ HTTP/1.1
+Host: google.com
+Proxy-Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+X-Client-Data: CJO2yQEIpLbJAQipncoBCIiKywEIk6HLAQiFoM0BCN3szQEI4vXNAQj0iM4BCKOJzgEIporOAQi6i84BCPCPzgEI4ZPOAQjok84B
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+```
+
+```http
+GET http://google.com/ HTTP/1.1
+Host: google.com
+Proxy-Connection: keep-alive
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+```
+
+Example of messages from Edge:
+
+```http
+GET http://www.msftconnecttest.com/connecttest.txt HTTP/1.1
+Connection: Close
+User-Agent: Microsoft NCSI
+Host: www.msftconnecttest.com
+```
+
+```http
+GET http://ipv6.msftconnecttest.com/connecttest.txt HTTP/1.1
+Connection: Close
+User-Agent: Microsoft NCSI
+Host: ipv6.msftconnecttest.com
+```
+
+By these examples, I could not verify if the browsers generate conditional `GET` messages for objects that are locally cached.
 
 ## Socket Programming Assignments
 
