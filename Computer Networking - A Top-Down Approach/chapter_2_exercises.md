@@ -437,7 +437,75 @@ $$
 **P9. Consider Figure 2.12, for which there is an institutional network connected to the Internet. Suppose that the average object size is 1,000,000 bits and that the average request rate from the institution’s browsers to the origin servers is 16 requests per second. Also suppose that the amount of time it takes from when the router on the Internet side of the access link forwards an HTTP request until it receives the response is three seconds on average (see Section 2.2.5). Model the total average response time as the sum of the average access delay (that is, the delay from Internet router to institution router) and the average Internet delay. For the average access delay, use $\Delta/(1 - \Delta \beta)$, where $\Delta$ is the average time required to send an object over the access link and $\beta$ is the arrival rate of objects to the access link.**
 
 * **a) Find the total average response time.**
+
+  Object average size $1 \text{Mbit}$.
+
+  Average request $16 /s$
+
+  Access link velocity = $15 \text{ Mbit/s}$
+
+  Internet router average RTT $3s$
+
+  Total Average Response Time:.
+
+  * Average access delay:
+    $$
+    \frac \Delta {(1 - \Delta \beta)} = \frac {1/15 s}{1-16/15} = -1 s
+    $$
+    
+
+    * This means that each second the average delay increases by a second.
+    * This happens because the request are above what the transport link can bear, so the delay will keep increasing until the packages are dropped from the queue.
+
+  * Total delay is at least 4 s. 
+
 * **b) Now suppose a cache is installed in the institutional LAN. Suppose the miss rate is 0.4. Find the total response time.**
+
+  If the miss rate is 0.4, the traffic intensity to the access link is reduce by 60%. Thus the average access delay for cache miss is
+  $$
+  \frac \Delta {(1 - \Delta \beta)} = \frac {1/15 s}{1-0.4\cdot16/15} = 0.12 s
+  $$
+  So the average response time for missed ones is 3.12 s. For cached ones the average response time is $\approx 0$.
+
+  Therefore the average access delay is $3.12 \cdot 0.4 = 1.25 s$.
+
+  
+
+**P10. Consider a short, 10-meter link, over which a sender can transmit at a rate of 150 bits/sec in both directions. Suppose that packets containing data are 100,000 bits long, and packets containing only control (e.g., ACK or handshaking) are 200 bits long. Assume that $N$ parallel connections each get $1/N$ of the link bandwidth. Now consider the HTTP protocol, and suppose that each downloaded object is 100 Kbits long, and that the initial downloaded object contains 10 referenced objects from the same sender. Would parallel downloads via parallel instances of non-persistent HTTP make sense in this case? Now consider persistent HTTP. Do you expect significant gains over the non-persistent case? Justify and explain your answer**
+
+Assuming transmission in the speed of light, the delay transmission of the link is 0,03 $\micro s$, which is negligible.
+
+In this case, for non-persistent HTTP, parallel would not improve the response time, it will be the same.
+
+As for each object would use 100000 + 600 bits, without parallel connections the needed time would be
+$$
+\frac {11 \cdot(100000 + 600)}{150}= 7377 s
+$$
+ With parallel connections the needed time would be
+$$
+\frac {100000+600}{150}+\frac {100000 + 600}{150/10} = 7377 s
+$$
+The same time! This happens as the packages are too big to the transmission rate.
+
+Using persistent HTTP would do some small improvement, as it would open only a connection, so less data would be needed to be transported.  So the total time needed would be 7337 s, 
+$$
+\frac {100000 + 600}{150}+10\cdot \frac {100000+200}{150} = 7351s
+$$
+Which is just 26 s faster!
+
+**P11. Consider the scenario introduced in the previous problem. Now suppose that the link is shared by Bob with four other users. Bob uses parallel instances of non-persistent HTTP, and the other four users use non-persistent HTTP without parallel downloads.**
+
+* **a) Do Bob’s parallel connections help him get Web pages more quickly? Why or why not?**
+
+  Yes, as he can use more connections and thus get a larger share of the link bandwith.
+
+* **b) If all five users open five parallel instances of non-persistent HTTP, then would Bob’s parallel connections still be beneficial? Why or why not?**
+
+  They all would have the same share of the link bandwidth, so without the parallel instances Bob would be worse.
+
+  Thus, yes, it is still beneficial.
+
+**P12. Write a simple TCP program for a server that accepts lines of input from a client and prints the lines onto the server’s standard output. (You can do this by modifying the `TCPServer.py` program in the text.) Compile and execute your program. On any other machine that contains a Web browser, set the proxy server in the browser to the host that is running your server program; also configure the port number appropriately. Your browser should now send its `GET` request messages to your server, and your server should display the messages on its standard output. Use this platform to determine whether your browser generates conditional `GET` messages for objects that are locally cached.**
 
 ## Socket Programming Assignments
 
