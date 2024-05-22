@@ -507,6 +507,42 @@ Which is just 26 s faster!
 
 **P12. Write a simple TCP program for a server that accepts lines of input from a client and prints the lines onto the server’s standard output. (You can do this by modifying the `TCPServer.py` program in the text.) Compile and execute your program. On any other machine that contains a Web browser, set the proxy server in the browser to the host that is running your server program; also configure the port number appropriately. Your browser should now send its `GET` request messages to your server, and your server should display the messages on its standard output. Use this platform to determine whether your browser generates conditional `GET` messages for objects that are locally cached.**
 
+I am using a modified version the programs provided in the book:
+
+`TCPServer.py`
+
+```py
+from socket import *
+serverPort = 12000
+serverSocket = socket(AF_INET,SOCK_STREAM)
+serverSocket.bind(('',serverPort))
+serverSocket.listen(1)
+print('The server is ready to receive')
+while True:
+ connectionSocket, addr = serverSocket.accept()
+ sentence = connectionSocket.recv(1024).decode()
+ capitalizedSentence = sentence.upper()
+ connectionSocket.send(capitalizedSentence.encode())
+ connectionSocket.close()
+```
+
+`TCPClient.py`
+
+```py
+from socket import *
+serverIP = 'servername'
+serverPort = 12000
+clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket.connect((serverIP,serverPort))
+sentence = input('Input lowercase sentence:'')
+clientSocket.send(sentence.encode())
+modifiedSentence = clientSocket.recv(1024)
+print('From Server: ', modifiedSentence.decode())
+clientSocket.close()
+```
+
+
+
 ## Socket Programming Assignments
 
 ## Wireshark Lab: HTTP
