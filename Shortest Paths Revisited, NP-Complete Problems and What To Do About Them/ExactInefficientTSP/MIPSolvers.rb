@@ -23,29 +23,51 @@ require_relative "./LPMaker"
 require_relative "../TSP_test_files/TestSuit"
 
 @testNumber = 0
-def executeGLPK(graph, optimized=false)
-    @testNumber += 1
-    fileName = "test_#{@testNumber}"
-    LPMaker.new(graph, fileName, optimized).createFile
-    result = `glpsol --lp #{fileName}.lp`
-    File.delete("#{fileName}.lp")
-    resultValue = findValueGLPK(result)
-    graph.type == :CARTESIAN ? Math.sqrt(resultValue) : resultValue
-end
 
 def findValueGLPK(result)
     regex = /mip = (.*) >=     tree is empty/
     value = regex.match(result)
-    puts "result: #{value[1].to_f.to_i}"
+    puts "result GLPK: #{value[1].to_f.to_i}"
     value[1].to_f.to_i
 end
 
+def findValueSCIP(result)
+    regex = /objective value: (.*)/
+    value = regex.match(result)
+    puts "result SCIP: #{value[1].to_f.to_i}"
+    value[1].to_f.to_i
+end
 
-testSuit = TestSuit.new(Proc.new { |x| executeGLPK(x)})
-testSuitOptimized = TestSuit.new(Proc.new { |x| executeGLPK(x, true)})
+def executeExecuteSolver(graph, optimized=false, solver, findValue)
+    @testNumber += 1
+    fileName = "test_#{@testNumber}"
+    LPMaker.new(graph, fileName, optimized).createFile
+    result = solver.call(fileName)
+    File.delete("#{fileName}.lp")
+    resultValue = findValue.call(result)
+    graph.type == :CARTESIAN ? Math.sqrt(resultValue) : resultValue
+end
 
+def executeSCIP(graph, optimized=false)
+    solver = Proc.new {|fileName| `scip -f #{fileName}.lp`}
+    findValue = Proc.new {|result| findValueSCIP(result)}
+    executeExecuteSolver(graph, optimized, solver, findValue)
+end
 
-#testSuitOptimized.testToVerifyPerformance(22, :CARTESIAN)
+def executeGLPK(graph, optimized=false)
+    solver = Proc.new {|fileName| `glpsol --lp #{fileName}.lp`}
+    findValue = Proc.new {|result| findValueGLPK(result)}
+    executeExecuteSolver(graph, optimized, solver, findValue)
+end
 
-testSuit.runTestFiles
-testSuitOptimized.runTestFiles
+testSuitGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x)})
+testSuitOptimizedGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x, true)})
+
+testSuitSCIP = TestSuit.new(Proc.new { |x| executeSCIP(x)})
+testSuitOptimizedSCIP = TestSuit.new(Proc.new { |x| executeSCIP(x, true)})
+
+testSuitGLPK.runTestFiles
+testSuitOptimizedGLPK.runTestFiles
+
+testSuitSCIP.runTestFiles
+testSuitOptimizedSCIP.runTestFiles
