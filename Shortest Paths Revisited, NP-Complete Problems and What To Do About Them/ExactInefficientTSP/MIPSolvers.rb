@@ -64,7 +64,11 @@ end
 def findPerformance(n, type, optimized=false)
 
     graph = TestSuit.generateGraphWithNVertices(n, type)
+    resultGLPK = 1
+    resultSCIP = 2
+    puts "running GLPK"
     timeGLPK = Benchmark.measure { resultGLPK = executeGLPK(graph, optimized)}
+    puts "running SCIP"
     timeSCIP = Benchmark.measure { resultSCIP = executeSCIP(graph, optimized) }
 
     puts "results are the same? #{resultGLPK == resultSCIP}"
@@ -87,4 +91,4 @@ def runTestFiles
     testSuitOptimizedSCIP.runTestFiles
 end
 
-findPerformance(18, nil)
+findPerformance(18, nil, false)

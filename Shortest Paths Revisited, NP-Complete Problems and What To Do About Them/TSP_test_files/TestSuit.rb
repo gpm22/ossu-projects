@@ -20,7 +20,7 @@ class TestSuit
     Graph.createGraphFromFile(inputPath)
   end
 
-  def self.generateGraphWithNVertices(file, type)
+  def self.generateGraphWithNVertices(n, type)
     return type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
   end
 
