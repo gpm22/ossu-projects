@@ -34,7 +34,7 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x = "x_#{vertex_i}#{vertex_j}"
+                x = "x_#{vertex_i}_#{vertex_j}"
                 c = @graph.getEdgeValue(vertex_i, vertex_j)
                 value += "#{c} #{x} + "
             end
@@ -59,7 +59,7 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x = "x_#{vertex_i}#{vertex_j}"
+                x = "x_#{vertex_i}_#{vertex_j}"
                 value += "#{x} + "
             end
             value = value.chomp(" + ")
@@ -73,7 +73,7 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x = "x_#{vertex_j}#{vertex_i}"
+                x = "x_#{vertex_j}_#{vertex_i}"
                 value += "#{x} + "
             end
             value = value.chomp(" + ")
@@ -89,11 +89,11 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x_1 = "x_#{vertex_j}#{vertex_i}"
-                x_2 = "x_#{vertex_i}#{vertex_j}"
+                x_1 = "x_#{vertex_j}_#{vertex_i}"
+                x_2 = "x_#{vertex_i}_#{vertex_j}"
                 value = "#{x_1} + #{x_2} <= 1"
                 @outputFile.puts(value)
-                @outputFile.puts("x3_#{vertex_i}#{vertex_j}: #{value}")
+                @outputFile.puts("x3_#{vertex_i}_#{vertex_j}: #{value}")
             end
         end
     end
@@ -105,8 +105,8 @@ class LPMaker
         nonFirstVertices = @vertices.drop(1)
         
         nonFirstVertices.each do |vertex|
-            y = "y_#{firstVertex}#{vertex}"
-            x = "x_#{firstVertex}#{vertex}"
+            y = "y_#{firstVertex}_#{vertex}"
+            x = "x_#{firstVertex}_#{vertex}"
             value = "#{y} - #{nonFirstVertices.size} #{x} = 0"
             @outputFile.puts("y1_#{vertex}: #{value}")
         end 
@@ -116,10 +116,10 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                y = "y_#{vertex_i}#{vertex_j}"
-                x = "x_#{vertex_i}#{vertex_j}"
+                y = "y_#{vertex_i}_#{vertex_j}"
+                x = "x_#{vertex_i}_#{vertex_j}"
                 value = "#{y} - #{nonFirstVertices.size} #{x} <= 0"
-                @outputFile.puts("y2_#{vertex_i}#{vertex_j}: #{value}")
+                @outputFile.puts("y2_#{vertex_i}_#{vertex_j}: #{value}")
             end
         end
 
@@ -129,8 +129,8 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                y_1 = "y_#{vertex_j}#{vertex_i}"
-                y_2 = "y_#{vertex_i}#{vertex_j}"
+                y_1 = "y_#{vertex_j}_#{vertex_i}"
+                y_2 = "y_#{vertex_i}_#{vertex_j}"
                 value += "#{y_1} - #{y_2} + "
             end
 
@@ -152,7 +152,7 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x = "x_#{vertex_i}#{vertex_j}"
+                x = "x_#{vertex_i}_#{vertex_j}"
                 value = "0 <= #{x} <= 1"
                 @outputFile.puts(value)
             end
@@ -167,7 +167,7 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                y = "y_#{vertex_i}#{vertex_j}"
+                y = "y_#{vertex_i}_#{vertex_j}"
                 value = "0 <= #{y} <= #{yUpperBond}"
                 @outputFile.puts(value)
             end
@@ -184,9 +184,9 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x = "x_#{vertex_i}#{vertex_j}"
+                x = "x_#{vertex_i}_#{vertex_j}"
                 @outputFile.puts(x)
-                y = "y_#{vertex_i}#{vertex_j}"
+                y = "y_#{vertex_i}_#{vertex_j}"
                 @outputFile.puts(y)
             end
         end
