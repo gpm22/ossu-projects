@@ -11,7 +11,7 @@ class TestSuit
     @tspInstanceFactory = tspInstanceFactory
   end
 
-  def getGraphFromFile(file, type)
+  def self.getGraphFromFile(file, type)
     currentFolder = File.absolute_path(File.dirname(__FILE__))
     inputPath = currentFolder + "/#{file}.txt"
 
@@ -21,7 +21,7 @@ class TestSuit
   end
 
   def testFile(file, expected, name, type)
-    graph = getGraphFromFile(file, type)
+    graph = TestSuit.getGraphFromFile(file, type)
     result = @tspInstanceFactory.call(graph)
     result = result.round(2) if type == :CARTESIAN
     puts "#{name} tour: #{result}"
