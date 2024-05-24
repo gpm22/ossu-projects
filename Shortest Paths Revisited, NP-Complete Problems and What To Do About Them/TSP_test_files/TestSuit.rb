@@ -20,6 +20,10 @@ class TestSuit
     Graph.createGraphFromFile(inputPath)
   end
 
+  def self.generateGraphWithNVertices(file, type)
+    return type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
+  end
+
   def testFile(file, expected, name, type)
     graph = TestSuit.getGraphFromFile(file, type)
     result = @tspInstanceFactory.call(graph)
@@ -39,7 +43,7 @@ class TestSuit
   def testToVerifyPerformance(n, type)
     puts "starting test with #{n} vertices - #{Time.now.strftime("%d/%m/%Y %H:%M")}"
     puts "creating graph with #{n} vertices"
-    graph = type == :CARTESIAN ? CartesianGraph.generateGraphWithNVertices(n) : Graph.generateGraphWithNVertices(n)
+    graph = TestSuit.generateGraphWithNVertices(n, type)
     puts "running tsp"
     time = Benchmark.measure { @tspInstanceFactory.call(graph) }
 
