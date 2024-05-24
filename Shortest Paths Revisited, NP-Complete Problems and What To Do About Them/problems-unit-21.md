@@ -928,6 +928,7 @@ The script to solve the problem is:
 ```ruby
 require_relative "./LPMaker"
 require_relative "../TSP_test_files/TestSuit"
+require "benchmark"
 
 @testNumber = 0
 
@@ -945,7 +946,7 @@ def findValueSCIP(result)
     value[1].to_f.to_i
 end
 
-def executeExecuteSolver(graph, optimized=false, solver, findValue)
+def executeSolver(graph, optimized=false, solver, findValue)
     @testNumber += 1
     fileName = "test_#{@testNumber}"
     LPMaker.new(graph, fileName, optimized).createFile
@@ -958,26 +959,131 @@ end
 def executeSCIP(graph, optimized=false)
     solver = Proc.new {|fileName| `scip -f #{fileName}.lp`}
     findValue = Proc.new {|result| findValueSCIP(result)}
-    executeExecuteSolver(graph, optimized, solver, findValue)
+    executeSolver(graph, optimized, solver, findValue)
 end
 
 def executeGLPK(graph, optimized=false)
     solver = Proc.new {|fileName| `glpsol --lp #{fileName}.lp`}
     findValue = Proc.new {|result| findValueGLPK(result)}
-    executeExecuteSolver(graph, optimized, solver, findValue)
+    executeSolver(graph, optimized, solver, findValue)
 end
 
-testSuitGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x)})
-testSuitOptimizedGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x, true)})
+def findPerformance(n, type, optimized=false)
+    puts "find performance for #{n} vertices"
+    graph = TestSuit.generateGraphWithNVertices(n, type)
+    resultGLPK = 1
+    resultSCIP = 2
+    
+    puts "running GLPK"
+    timeGLPK = Benchmark.measure { resultGLPK = executeGLPK(graph, optimized)}
+    puts "GLPK: #{resultGLPK} - time: #{timeGLPK.real}"
+    
+    puts "running SCIP"
+    timeSCIP = Benchmark.measure { resultSCIP = executeSCIP(graph, optimized) }
+    puts "SCIP: #{resultSCIP} - time: #{timeSCIP.real}"
+    
+    puts "results are the same? #{resultGLPK == resultSCIP}"
+    [timeGLPK.real, timeSCIP.real]
+end
 
-testSuitSCIP = TestSuit.new(Proc.new { |x| executeSCIP(x)})
-testSuitOptimizedSCIP = TestSuit.new(Proc.new { |x| executeSCIP(x, true)})
+def findPerformanceSCIPOnly(n, type, option=:BOTH)
+    puts "find performance for #{n} vertices"
+    graph = TestSuit.generateGraphWithNVertices(n, type)
+    resultSCIP = 1
+    resultSCIPOpt = 2
+    
+    if(option == :BOTH or option == :DEFAULT)
+        puts "running SCIP"
+        timeSCIP = Benchmark.measure { resultSCIP = executeSCIP(graph)}
+        puts "SCIP: #{resultSCIP} - time: #{timeSCIP.real}"
+    end
+    
+    if(option == :BOTH or option == :OPTIMIZED)
+        puts "running SCIP Optimized"
+        timeSCIPOpt = Benchmark.measure { resultSCIPOpt = executeSCIP(graph, true) }
+        puts "SCIP Optimized: #{resultSCIPOpt} - time: #{timeSCIPOpt.real}"
+    end
+    
+    puts "results are the same? #{resultSCIPOpt == resultSCIP}" if option == :BOTH
+    
+    
+    if option == :BOTH
+        [timeSCIP.real, timeSCIPOpt.real] 
+    elsif option == :OPTIMIZED
+        [0, timeSCIPOpt.real]
+    else
+        [timeSCIP.real, 0]
+    end
+end
 
-testSuitGLPK.runTestFiles
-testSuitOptimizedGLPK.runTestFiles
+def runPerformanceNTimes(n, runNumber)
+    times = []
+    runNumber.times do
+        time = findPerformance(n, nil, true)
+        times.push(time)
+        break if time[0].real > 60 or time[1].real > 60
+    end
+    puts "results for #{n} vertices:"
+    times.each_with_index do |time, index|
+        puts "run number #{index} - GLPK: #{time[0]} - SCIP: #{time[1]}"
+    end
+    
+    avgGLPK = (times.reduce(0) { |sum, time| sum + time[0]})/times.size
+    avgSCIP = (times.reduce(0) { |sum, time| sum + time[1]})/times.size
+    
+    puts "average times - GLPK: #{avgGLPK} - SCIP: #{avgSCIP}"
+    
+    
+end
 
-testSuitSCIP.runTestFiles
-testSuitOptimizedSCIP.runTestFiles
+def runPerformanceSCIPOnlyNTimes(n, runNumber, option=:BOTH)
+    times = []
+    runNumber.times do
+        time = findPerformanceSCIPOnly(n, nil, option)
+        times.push(time)
+        break if time[0].real > 60 or time[1].real > 60
+    end
+    puts "results for #{n} vertices:"
+    times.each_with_index do |time, index|
+        puts "run number #{index} - SCIP: #{time[0]} - SCIP Opt: #{time[1]}"
+    end
+    
+    avgSCIP = (times.reduce(0) { |sum, time| sum + time[0]})/times.size
+    avgSCIPOpt = (times.reduce(0) { |sum, time| sum + time[1]})/times.size
+    
+    puts "average times - SCIP: #{avgSCIP} - SCIP Optimized: #{avgSCIPOpt}"
+    
+    
+end
+
+def runTestFiles
+    testSuitGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x)})
+    testSuitOptimizedGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x, true)})
+
+    testSuitSCIP = TestSuit.new(Proc.new { |x| executeSCIP(x)})
+    testSuitOptimizedSCIP = TestSuit.new(Proc.new { |x| executeSCIP(x, true)})
+
+    testSuitGLPK.runTestFiles
+    testSuitOptimizedGLPK.runTestFiles
+
+    testSuitSCIP.runTestFiles
+    testSuitOptimizedSCIP.runTestFiles
+end
+
+runPerformanceSCIPOnlyNTimes(58, 20, :OPTIMIZED)
 ```
 
 Both generated the correct result for the test cases.
+
+About running reliably under a minute, I have run 20 times for each situation to ensure the reliability. The results are:
+
+| Solver | Optimized? | Number of Vertices | Largest Time |
+| ------ | ---------- | ------------------ | ------------ |
+| GLPK   | no         | 31                 | 48 s         |
+| GLPK   | yes        | 49                 | 48 s         |
+| SCIP   | no         | 36                 | 53 s         |
+| SCIP   | yes        | 57                 | 48 s         |
+
+They always returned the right answer for both cases.
+
+We can observe that SCIP is faster and that the optimization improves a lot the calculation speed. But the complexity still is exponential, as the improvement is at most of 100%.

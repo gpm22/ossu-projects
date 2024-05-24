@@ -62,18 +62,90 @@ def executeGLPK(graph, optimized=false)
 end
 
 def findPerformance(n, type, optimized=false)
-
+    puts "find performance for #{n} vertices"
     graph = TestSuit.generateGraphWithNVertices(n, type)
     resultGLPK = 1
     resultSCIP = 2
+    
     puts "running GLPK"
     timeGLPK = Benchmark.measure { resultGLPK = executeGLPK(graph, optimized)}
+    puts "GLPK: #{resultGLPK} - time: #{timeGLPK.real}"
+    
     puts "running SCIP"
     timeSCIP = Benchmark.measure { resultSCIP = executeSCIP(graph, optimized) }
-
-    puts "results are the same? #{resultGLPK == resultSCIP}"
-    puts "GLPK: #{resultGLPK} - time: #{timeGLPK.real}"
     puts "SCIP: #{resultSCIP} - time: #{timeSCIP.real}"
+    
+    puts "results are the same? #{resultGLPK == resultSCIP}"
+    [timeGLPK.real, timeSCIP.real]
+end
+
+def findPerformanceSCIPOnly(n, type, option=:BOTH)
+    puts "find performance for #{n} vertices"
+    graph = TestSuit.generateGraphWithNVertices(n, type)
+    resultSCIP = 1
+    resultSCIPOpt = 2
+    
+    if(option == :BOTH or option == :DEFAULT)
+        puts "running SCIP"
+        timeSCIP = Benchmark.measure { resultSCIP = executeSCIP(graph)}
+        puts "SCIP: #{resultSCIP} - time: #{timeSCIP.real}"
+    end
+    
+    if(option == :BOTH or option == :OPTIMIZED)
+        puts "running SCIP Optimized"
+        timeSCIPOpt = Benchmark.measure { resultSCIPOpt = executeSCIP(graph, true) }
+        puts "SCIP Optimized: #{resultSCIPOpt} - time: #{timeSCIPOpt.real}"
+    end
+    
+    puts "results are the same? #{resultSCIPOpt == resultSCIP}" if option == :BOTH
+    
+    
+    if option == :BOTH
+        [timeSCIP.real, timeSCIPOpt.real] 
+    elsif option == :OPTIMIZED
+        [0, timeSCIPOpt.real]
+    else
+        [timeSCIP.real, 0]
+    end
+end
+
+def runPerformanceNTimes(n, runNumber)
+    times = []
+    runNumber.times do
+        time = findPerformance(n, nil, true)
+        times.push(time)
+        break if time[0].real > 60 or time[1].real > 60
+    end
+    puts "results for #{n} vertices:"
+    times.each_with_index do |time, index|
+        puts "run number #{index} - GLPK: #{time[0]} - SCIP: #{time[1]}"
+    end
+    
+    avgGLPK = (times.reduce(0) { |sum, time| sum + time[0]})/times.size
+    avgSCIP = (times.reduce(0) { |sum, time| sum + time[1]})/times.size
+    
+    puts "average times - GLPK: #{avgGLPK} - SCIP: #{avgSCIP}"
+    
+    
+end
+
+def runPerformanceSCIPOnlyNTimes(n, runNumber, option=:BOTH)
+    times = []
+    runNumber.times do
+        time = findPerformanceSCIPOnly(n, nil, option)
+        times.push(time)
+        break if time[0].real > 60 or time[1].real > 60
+    end
+    puts "results for #{n} vertices:"
+    times.each_with_index do |time, index|
+        puts "run number #{index} - SCIP: #{time[0]} - SCIP Opt: #{time[1]}"
+    end
+    
+    avgSCIP = (times.reduce(0) { |sum, time| sum + time[0]})/times.size
+    avgSCIPOpt = (times.reduce(0) { |sum, time| sum + time[1]})/times.size
+    
+    puts "average times - SCIP: #{avgSCIP} - SCIP Optimized: #{avgSCIPOpt}"
+    
     
 end
 
@@ -91,4 +163,4 @@ def runTestFiles
     testSuitOptimizedSCIP.runTestFiles
 end
 
-findPerformance(18, nil, false)
+runPerformanceSCIPOnlyNTimes(58, 20, :OPTIMIZED)
