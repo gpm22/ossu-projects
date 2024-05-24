@@ -21,6 +21,7 @@
 
 require_relative "./LPMaker"
 require_relative "../TSP_test_files/TestSuit"
+require "benchmark"
 
 @testNumber = 0
 
@@ -60,6 +61,18 @@ def executeGLPK(graph, optimized=false)
     executeSolver(graph, optimized, solver, findValue)
 end
 
+def findPerformance(n, type, optimized=false)
+
+    graph = TestSuit.generateGraphWithNVertices(n, type)
+    timeGLPK = Benchmark.measure { resultGLPK = executeGLPK(graph, optimized)}
+    timeSCIP = Benchmark.measure { resultSCIP = executeSCIP(graph, optimized) }
+
+    puts "results are the same? #{resultGLPK == resultSCIP}"
+    puts "GLPK: #{resultGLPK} - time: #{timeGLPK.real}"
+    puts "SCIP: #{resultSCIP} - time: #{timeSCIP.real}"
+    
+end
+
 def runTestFiles
     testSuitGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x)})
     testSuitOptimizedGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x, true)})
@@ -74,3 +87,4 @@ def runTestFiles
     testSuitOptimizedSCIP.runTestFiles
 end
 
+findPerformance(18, nil)
