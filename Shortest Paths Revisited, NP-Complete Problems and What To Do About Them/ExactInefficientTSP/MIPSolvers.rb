@@ -38,7 +38,7 @@ def findValueSCIP(result)
     value[1].to_f.to_i
 end
 
-def executeExecuteSolver(graph, optimized=false, solver, findValue)
+def executeSolver(graph, optimized=false, solver, findValue)
     @testNumber += 1
     fileName = "test_#{@testNumber}"
     LPMaker.new(graph, fileName, optimized).createFile
@@ -51,23 +51,26 @@ end
 def executeSCIP(graph, optimized=false)
     solver = Proc.new {|fileName| `scip -f #{fileName}.lp`}
     findValue = Proc.new {|result| findValueSCIP(result)}
-    executeExecuteSolver(graph, optimized, solver, findValue)
+    executeSolver(graph, optimized, solver, findValue)
 end
 
 def executeGLPK(graph, optimized=false)
     solver = Proc.new {|fileName| `glpsol --lp #{fileName}.lp`}
     findValue = Proc.new {|result| findValueGLPK(result)}
-    executeExecuteSolver(graph, optimized, solver, findValue)
+    executeSolver(graph, optimized, solver, findValue)
 end
 
-testSuitGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x)})
-testSuitOptimizedGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x, true)})
+def runTestFiles
+    testSuitGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x)})
+    testSuitOptimizedGLPK = TestSuit.new(Proc.new { |x| executeGLPK(x, true)})
 
-testSuitSCIP = TestSuit.new(Proc.new { |x| executeSCIP(x)})
-testSuitOptimizedSCIP = TestSuit.new(Proc.new { |x| executeSCIP(x, true)})
+    testSuitSCIP = TestSuit.new(Proc.new { |x| executeSCIP(x)})
+    testSuitOptimizedSCIP = TestSuit.new(Proc.new { |x| executeSCIP(x, true)})
 
-testSuitGLPK.runTestFiles
-testSuitOptimizedGLPK.runTestFiles
+    testSuitGLPK.runTestFiles
+    testSuitOptimizedGLPK.runTestFiles
 
-testSuitSCIP.runTestFiles
-testSuitOptimizedSCIP.runTestFiles
+    testSuitSCIP.runTestFiles
+    testSuitOptimizedSCIP.runTestFiles
+end
+
