@@ -1084,6 +1084,16 @@ About running reliably under a minute, I have run 20 times for each situation to
 | SCIP   | no         | 36                 | 53 s         |
 | SCIP   | yes        | 57                 | 48 s         |
 
+About running reliably under an hour, I have run 3 times for each situation to ensure the reliability. The results are:
+
+| Solver | Optimized? | Number of Vertices | Largest Time |
+| ------ | ---------- | ------------------ | ------------ |
+| GLPK   | no         | 48                 | 3119 s       |
+| GLPK   | yes        |                    |              |
+| SCIP   | no         |                    |              |
+| SCIP   | yes        |                    |              |
+
 They always returned the right answer for both cases.
 
 We can observe that SCIP is faster and that the optimization improves a lot the calculation speed. But the complexity still is exponential, as the improvement is at most of 100%.
+
