@@ -1075,7 +1075,7 @@ runPerformanceSCIPOnlyNTimes(58, 20, :OPTIMIZED)
 
 Both generated the correct result for the test cases.
 
-About running reliably under a minute, I have run 20 times for each situation to ensure the reliability. The results are:
+About running reliably under a minute, I have run 20 times for each situation to ensure the reliability.  For all adding one more vertex make the algorithm runs for more than a minute. The results are:
 
 | Solver | Optimized? | Number of Vertices | Largest Time |
 | ------ | ---------- | ------------------ | ------------ |
@@ -1084,12 +1084,12 @@ About running reliably under a minute, I have run 20 times for each situation to
 | SCIP   | no         | 36                 | 53 s         |
 | SCIP   | yes        | 57                 | 48 s         |
 
-About running reliably under an hour, I have run 3 times for each situation to ensure the reliability. The results are:
+About running reliably under an hour, I have run 3 times for each situation to ensure the reliability. For all adding one more vertex make the algorithm runs for more than an hour. The results are:
 
 | Solver | Optimized? | Number of Vertices | Largest Time |
 | ------ | ---------- | ------------------ | ------------ |
 | GLPK   | no         | 48                 | 3119 s       |
-| GLPK   | yes        |                    |              |
+| GLPK   | yes        | 68                 | 745 s        |
 | SCIP   | no         |                    |              |
 | SCIP   | yes        |                    |              |
 
