@@ -1075,6 +1075,8 @@ runPerformanceSCIPOnlyNTimes(58, 20, :OPTIMIZED)
 
 Both generated the correct result for the test cases.
 
+All the tests are based on creating graphs with random edge values, so they are harder to solve than the ones used in problem 14.
+
 About running reliably under a minute, I have run 20 times for each situation to ensure the reliability.  For all adding one more vertex make the algorithm runs for more than a minute. The results are:
 
 | Solver | Optimized? | Number of Vertices | Largest Time |
@@ -1097,3 +1099,10 @@ They always returned the right answer for both cases.
 
 We can observe that SCIP is faster and that the optimization improves a lot the calculation speed. But the complexity still is exponential, as the improvement is at most of 100%.
 
+We can also notice that using the MIP solvers is way better than using the `BellmanHeldKarp` algorithm. Therefore using them is a better approach to exact TSP.
+
+Just as a matter of comparison between graphs with random edges values and graphs of Cartesian points, I ran the MIP solvers for both optimized and default lp files to verify the number of vertices they can process reliably under a minute.
+
+
+
+TODO
