@@ -1092,7 +1092,7 @@ About running reliably under an hour, I have run 3 times for each situation to e
 | ------ | ---------- | ------------------ | ------------ |
 | GLPK   | no         | 48                 | 3119 s       |
 | GLPK   | yes        | 68                 | 745 s        |
-| SCIP   | no         |                    |              |
+| SCIP   | no         | 68                 | 3045 s       |
 | SCIP   | yes        |                    |              |
 
 They always returned the right answer for both cases.
@@ -1101,8 +1101,6 @@ We can observe that SCIP is faster and that the optimization improves a lot the 
 
 We can also notice that using the MIP solvers is way better than using the `BellmanHeldKarp` algorithm. Therefore using them is a better approach to exact TSP.
 
+TODO:
+
 Just as a matter of comparison between graphs with random edges values and graphs of Cartesian points, I ran the MIP solvers for both optimized and default lp files to verify the number of vertices they can process reliably under a minute.
-
-
-
-TODO
