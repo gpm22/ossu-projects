@@ -28,15 +28,15 @@ require "benchmark"
 def findValueGLPK(result)
     regex = /mip = (.*) >=     tree is empty/
     value = regex.match(result)
-    puts "result GLPK: #{value[1].to_f.to_i}"
-    value[1].to_f.to_i
+    puts "result GLPK: #{value[1].to_f}"
+    value[1].to_f
 end
 
 def findValueSCIP(result)
     regex = /objective value: (.*)/
     value = regex.match(result)
-    puts "result SCIP: #{value[1].to_f.to_i}"
-    value[1].to_f.to_i
+    puts "result SCIP: #{value[1].to_f}"
+    value[1].to_f
 end
 
 def executeSolver(graph, optimized=false, solver, findValue)
@@ -46,7 +46,7 @@ def executeSolver(graph, optimized=false, solver, findValue)
     result = solver.call(fileName)
     File.delete("#{fileName}.lp")
     resultValue = findValue.call(result)
-    graph.type == :CARTESIAN ? Math.sqrt(resultValue) : resultValue
+    graph.type == :CARTESIAN ? Math.sqrt(resultValue).round(2) : resultValue.to_i
 end
 
 def executeSCIP(graph, optimized=false)
@@ -63,6 +63,7 @@ end
 
 def findPerformance(n, type, optimized=false)
     puts "find performance for #{n} vertices"
+    puts "optimized? #{optimized}"
     graph = TestSuit.generateGraphWithNVertices(n, type)
     resultGLPK = 1
     resultSCIP = 2
@@ -169,6 +170,6 @@ def runTestFiles
     testSuitOptimizedSCIP.runTestFiles
 end
 
-runPerformanceNTimes(58, 20, :CARTESIAN, false)
+runPerformanceNTimes(21, 20, :CARTESIAN, false)
 
 # runPerformanceSCIPOnlyNTimes(58, 20, :OPTIMIZED)
