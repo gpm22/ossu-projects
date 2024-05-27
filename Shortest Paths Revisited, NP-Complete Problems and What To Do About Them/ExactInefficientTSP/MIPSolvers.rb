@@ -109,12 +109,15 @@ def findPerformanceSCIPOnly(n, type, option=:BOTH)
     end
 end
 
-def runPerformanceNTimes(n, runNumber)
+def runPerformanceNTimes(n, runNumber, graphType=nil, optimized=false)
     times = []
     runNumber.times do
-        time = findPerformance(n, nil, true)
+        time = findPerformance(n, graphType, optimized)
         times.push(time)
-        break if time[0].real > 60 or time[1].real > 60
+        if time[0].real > 60 or time[1].real > 60
+            puts "passed a minute, bro ):"
+            break
+        end
     end
     puts "results for #{n} vertices:"
     times.each_with_index do |time, index|
@@ -129,12 +132,15 @@ def runPerformanceNTimes(n, runNumber)
     
 end
 
-def runPerformanceSCIPOnlyNTimes(n, runNumber, option=:BOTH)
+def runPerformanceSCIPOnlyNTimes(n, runNumber, option=:BOTH, graphType=nil)
     times = []
     runNumber.times do
-        time = findPerformanceSCIPOnly(n, nil, option)
+        time = findPerformanceSCIPOnly(n, graphType, option)
         times.push(time)
-        break if time[0].real > 60 or time[1].real > 60
+        if time[0].real > 60 or time[1].real > 60
+            puts "passed a minute, bro ):"
+            break
+        end
     end
     puts "results for #{n} vertices:"
     times.each_with_index do |time, index|
@@ -163,4 +169,6 @@ def runTestFiles
     testSuitOptimizedSCIP.runTestFiles
 end
 
-runPerformanceSCIPOnlyNTimes(58, 20, :OPTIMIZED)
+runPerformanceNTimes(58, 20, :CARTESIAN, false)
+
+# runPerformanceSCIPOnlyNTimes(58, 20, :OPTIMIZED)
