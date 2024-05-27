@@ -709,10 +709,13 @@ Code:
     end
   end
   ```
-Under a minute: 18 for both optimized and regular. They run in $\approx$ 38 s, both take more than a min for 19.
-Under an hour: 23 for regular and 22 for optimized (not really optimized). They both run in $\approx$ 30 min, adding one more vertex makes it runs more than an hour.
-Time x Memory: Time is far more relevant than memory, with the optimization creating more problems. I tried using list, set and hash tables to the optimization, but they have similar performances.
-The optimalization helps? No, the time used to remove the old entries was greater than the time to just keep it.
+**Under a minute**: 18 for both optimized and regular Cartesian, 17 for random regular, and 16 for random regular optimized (not really optimized). Adding a vertex makes they run over a minute.
+
+**Under an hour**: 23 for regular and 22 for optimized (not really optimized again). Adding one more vertex makes it runs more than an hour.
+
+**Time x Memory**: Time is far more relevant than memory, as the optimization creates more problems. I tried using list, set and hash tables to the optimization, but they have similar performances.
+
+**The optimization helps**? No, the time used to remove the old entries was greater than the time to just keep it for both kinds of graphs and sizes.
 
 ### Problem 21.15
 
@@ -1079,9 +1082,7 @@ runPerformanceSCIPOnlyNTimes(58, 20, :OPTIMIZED)
 
 Both solvers generated the correct result for the test cases, which shows that this approach really works.
 
-In order to test the performance of this approach we verify how they work for under a minute and under an hour for graphs with random edges, which are harder to solve than the ones used in problem 14. For comparing how solvers work with different types of graphs, we test performance for under a minute to Cartesian graphs, which the vertices represents points and the edges are the distance between points.
-
-###### Random Edge Value Graphs
+In order to test the performance of this approach and how solvers work with different types of graphs, we verify how many vertices they can process under a minute with Cartesian and random edge value graphs (REVG), and how many they can process under an hour with graphs with random edges. Cartesian graphs have vertices representing points and the edges are the distance between points.
 
 To verify the reliability under a minute, I have run 20 times for each situation. In the case for under an hour, was 3 times for each, as it is a really time consuming activity. For all results, adding one more vertex make the algorithm runs for more than a minute or an hour.
 
@@ -1089,12 +1090,16 @@ For all cases both solvers returned always the same value, so both are right.
 
 Results for under a minute:
 
-| Solver | Optimized? | Number of Vertices | Largest Time |
-| ------ | ---------- | ------------------ | ------------ |
-| GLPK   | no         | 31                 | 48 s         |
-| GLPK   | yes        | 49                 | 48 s         |
-| SCIP   | no         | 36                 | 53 s         |
-| SCIP   | yes        | 57                 | 48 s         |
+| Solver | Optimized? | Graph Type | Number of Vertices | Largest Time |
+| ------ | ---------- | ---------- | ------------------ | ------------ |
+| GLPK   | no         | Random     | 31                 | 48 s         |
+| GLPK   | no         | Cartesian  | 20                 | 33 s         |
+| GLPK   | yes        | Random     | 49                 | 48 s         |
+| GLPK   | yes        | Cartesian  | 23                 | 51 s         |
+| SCIP   | no         | Random     | 36                 | 53 s         |
+| SCIP   | no         | Cartesian  | 29                 | 52 s         |
+| SCIP   | yes        | Random     | 57                 | 48 s         |
+| SCIP   | yes        | Cartesian  | 34                 | 52 s         |
 
 Results for under an hour:
 
@@ -1105,21 +1110,10 @@ Results for under an hour:
 | SCIP   | no         | 68                 | 3045 s       |
 | SCIP   | yes        | 109                | 2413 s       |
 
-We can observe that SCIP is faster and that the optimization improves a lot the calculation speed. But the complexity still is exponential for the optimized case, as the observed improvement was at most of 60%.
+We can observe that SCIP is the fastest, REVGs are easier processed, and that the optimization improves the calculation speed, even more in the case of REVGs. But the complexity still is exponential for the optimized case, as the observed improvement was at most of 60%.
 
-The superiority of SCIP over GLPK is even bigger for large instances, as the GLPK optimized has the same performance of the SCIP default for a under an hour run.
+Cartesian graphs are processed harder probably because the objective function is created with float values instead of integers, as in the REVG case.
 
-We can notice too that using the MIP solvers is way better than using the `BellmanHeldKarp` algorithm. Because using SCIP we could process under an hour a graph with 5 times the number of vertices of `BellmanHeldKarp` case. Therefore using the MIP solvers is a better approach to exact TSP than `BellmanHeldKarp`.
+The superiority of SCIP over GLPK is even bigger for large REVG instances and for Cartesian graphs. In the large REVG case, the GLPK optimized has the same performance of the SCIP default for a under an hour run. In the case of Cartesian graphs, the SCIP default is much better than the optimized GLPK.
 
-###### Cartesian Graphs
-
-As a matter of comparison between graphs with random edges values and graphs of Cartesian points, I also ran the MIP solvers for both optimized and default LP files to verify the number of vertices they can process reliably under a minute.
-
-The results are:
-
-| Solver | Optimized? | Number of Vertices | Largest Time |
-| ------ | ---------- | ------------------ | ------------ |
-| GLPK   | no         |                    |              |
-| GLPK   | yes        |                    |              |
-| SCIP   | no         |                    |              |
-| SCIP   | yes        |                    |              |
+We can notice too that using the MIP solvers is way better than using the `BellmanHeldKarp` algorithm. Because both solvers processed reliably more vertices than `BellmanHeldKarp` , where with SCIP we could process under a minute a graph with almost twice the vertices of the `BellmanHeldKarp` case. Therefore using the MIP solvers is a better approach to exact TSP than `BellmanHeldKarp`, where the best approach is using the SCIP with the optimized configuration.
