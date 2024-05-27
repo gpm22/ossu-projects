@@ -18,7 +18,7 @@ class CartesianGraph
   def self.generateGraphWithNVertices(n)
     graph = CartesianGraph.new
     (1..n).each do |i|
-      graph.addVertex(i, rand(-100.000..100.000), rand(-100.000..100.000))
+      graph.addVertex(i, rand(-0.50..0.50), rand(-0.50..0.50))
     end
     graph
   end
