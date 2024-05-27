@@ -718,11 +718,14 @@ The optimalization helps? No, the time used to remove the old entries was greate
 
 Try out one or more MIP solvers on the same types of TSP instances you considered in Problem 21.14, using the MIP formulation in Problem 21.10. How large an input size can the solver reliably process in under a minute, or under an hour? How much does the answer vary with the solver? Does it help if you add the additional inequalities from footnote 42?
 
-**ANSWER**
+#### **ANSWER**
 
 Here I use the GLPK and SCIP solvers.
 The idea is to create LP files, call GLPK and SCIP, and then translate the result.
-To create the LP files we use the `LPMaker` class:
+
+##### Code
+
+To create the LP files we use the `LPMaker` class, which creates an LP file based on a graph:
 
 
 ```ruby
@@ -762,7 +765,7 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x = "x_#{vertex_i}#{vertex_j}"
+                x = "x_#{vertex_i}_#{vertex_j}"
                 c = @graph.getEdgeValue(vertex_i, vertex_j)
                 value += "#{c} #{x} + "
             end
@@ -787,7 +790,7 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x = "x_#{vertex_i}#{vertex_j}"
+                x = "x_#{vertex_i}_#{vertex_j}"
                 value += "#{x} + "
             end
             value = value.chomp(" + ")
@@ -801,7 +804,7 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x = "x_#{vertex_j}#{vertex_i}"
+                x = "x_#{vertex_j}_#{vertex_i}"
                 value += "#{x} + "
             end
             value = value.chomp(" + ")
@@ -817,11 +820,11 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x_1 = "x_#{vertex_j}#{vertex_i}"
-                x_2 = "x_#{vertex_i}#{vertex_j}"
+                x_1 = "x_#{vertex_j}_#{vertex_i}"
+                x_2 = "x_#{vertex_i}_#{vertex_j}"
                 value = "#{x_1} + #{x_2} <= 1"
                 @outputFile.puts(value)
-                @outputFile.puts("x3_#{vertex_i}#{vertex_j}: #{value}")
+                @outputFile.puts("x3_#{vertex_i}_#{vertex_j}: #{value}")
             end
         end
     end
@@ -833,8 +836,8 @@ class LPMaker
         nonFirstVertices = @vertices.drop(1)
         
         nonFirstVertices.each do |vertex|
-            y = "y_#{firstVertex}#{vertex}"
-            x = "x_#{firstVertex}#{vertex}"
+            y = "y_#{firstVertex}_#{vertex}"
+            x = "x_#{firstVertex}_#{vertex}"
             value = "#{y} - #{nonFirstVertices.size} #{x} = 0"
             @outputFile.puts("y1_#{vertex}: #{value}")
         end 
@@ -844,10 +847,10 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                y = "y_#{vertex_i}#{vertex_j}"
-                x = "x_#{vertex_i}#{vertex_j}"
+                y = "y_#{vertex_i}_#{vertex_j}"
+                x = "x_#{vertex_i}_#{vertex_j}"
                 value = "#{y} - #{nonFirstVertices.size} #{x} <= 0"
-                @outputFile.puts("y2_#{vertex_i}#{vertex_j}: #{value}")
+                @outputFile.puts("y2_#{vertex_i}_#{vertex_j}: #{value}")
             end
         end
 
@@ -857,8 +860,8 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                y_1 = "y_#{vertex_j}#{vertex_i}"
-                y_2 = "y_#{vertex_i}#{vertex_j}"
+                y_1 = "y_#{vertex_j}_#{vertex_i}"
+                y_2 = "y_#{vertex_i}_#{vertex_j}"
                 value += "#{y_1} - #{y_2} + "
             end
 
@@ -880,7 +883,7 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x = "x_#{vertex_i}#{vertex_j}"
+                x = "x_#{vertex_i}_#{vertex_j}"
                 value = "0 <= #{x} <= 1"
                 @outputFile.puts(value)
             end
@@ -895,7 +898,7 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                y = "y_#{vertex_i}#{vertex_j}"
+                y = "y_#{vertex_i}_#{vertex_j}"
                 value = "0 <= #{y} <= #{yUpperBond}"
                 @outputFile.puts(value)
             end
@@ -912,14 +915,13 @@ class LPMaker
             @vertices.each do |vertex_j|
                 next if vertex_i == vertex_j
 
-                x = "x_#{vertex_i}#{vertex_j}"
+                x = "x_#{vertex_i}_#{vertex_j}"
                 @outputFile.puts(x)
-                y = "y_#{vertex_i}#{vertex_j}"
+                y = "y_#{vertex_i}_#{vertex_j}"
                 @outputFile.puts(y)
             end
         end
     end
-
 end
 ```
 
@@ -1073,11 +1075,19 @@ end
 runPerformanceSCIPOnlyNTimes(58, 20, :OPTIMIZED)
 ```
 
-Both generated the correct result for the test cases.
+##### Results
 
-All the tests are based on creating graphs with random edge values, so they are harder to solve than the ones used in problem 14.
+Both solvers generated the correct result for the test cases, which shows that this approach really works.
 
-About running reliably under a minute, I have run 20 times for each situation to ensure the reliability.  For all adding one more vertex make the algorithm runs for more than a minute. The results are:
+In order to test the performance of this approach we verify how they work for under a minute and under an hour for graphs with random edges, which are harder to solve than the ones used in problem 14. For comparing how solvers work with different types of graphs, we test performance for under a minute to Cartesian graphs, which the vertices represents points and the edges are the distance between points.
+
+###### Random Edge Value Graphs
+
+To verify the reliability under a minute, I have run 20 times for each situation. In the case for under an hour, was 3 times for each, as it is a really time consuming activity. For all results, adding one more vertex make the algorithm runs for more than a minute or an hour.
+
+For all cases both solvers returned always the same value, so both are right.
+
+Results for under a minute:
 
 | Solver | Optimized? | Number of Vertices | Largest Time |
 | ------ | ---------- | ------------------ | ------------ |
@@ -1086,21 +1096,30 @@ About running reliably under a minute, I have run 20 times for each situation to
 | SCIP   | no         | 36                 | 53 s         |
 | SCIP   | yes        | 57                 | 48 s         |
 
-About running reliably under an hour, I have run 3 times for each situation to ensure the reliability. For all adding one more vertex make the algorithm runs for more than an hour. The results are:
+Results for under an hour:
 
 | Solver | Optimized? | Number of Vertices | Largest Time |
 | ------ | ---------- | ------------------ | ------------ |
 | GLPK   | no         | 48                 | 3119 s       |
 | GLPK   | yes        | 68                 | 745 s        |
 | SCIP   | no         | 68                 | 3045 s       |
+| SCIP   | yes        | 109                | 2413 s       |
+
+We can observe that SCIP is faster and that the optimization improves a lot the calculation speed. But the complexity still is exponential for the optimized case, as the observed improvement was at most of 60%.
+
+The superiority of SCIP over GLPK is even bigger for large instances, as the GLPK optimized has the same performance of the SCIP default for a under an hour run.
+
+We can notice too that using the MIP solvers is way better than using the `BellmanHeldKarp` algorithm. Because using SCIP we could process under an hour a graph with 5 times the number of vertices of `BellmanHeldKarp` case. Therefore using the MIP solvers is a better approach to exact TSP than `BellmanHeldKarp`.
+
+###### Cartesian Graphs
+
+As a matter of comparison between graphs with random edges values and graphs of Cartesian points, I also ran the MIP solvers for both optimized and default LP files to verify the number of vertices they can process reliably under a minute.
+
+The results are:
+
+| Solver | Optimized? | Number of Vertices | Largest Time |
+| ------ | ---------- | ------------------ | ------------ |
+| GLPK   | no         |                    |              |
+| GLPK   | yes        |                    |              |
+| SCIP   | no         |                    |              |
 | SCIP   | yes        |                    |              |
-
-They always returned the right answer for both cases.
-
-We can observe that SCIP is faster and that the optimization improves a lot the calculation speed. But the complexity still is exponential, as the improvement is at most of 100%.
-
-We can also notice that using the MIP solvers is way better than using the `BellmanHeldKarp` algorithm. Therefore using them is a better approach to exact TSP.
-
-TODO:
-
-Just as a matter of comparison between graphs with random edges values and graphs of Cartesian points, I ran the MIP solvers for both optimized and default lp files to verify the number of vertices they can process reliably under a minute.
