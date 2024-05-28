@@ -748,9 +748,273 @@ As an honest MTA should report from where it received the message, the malicious
 **P19. In this problem, we use the useful `dig` tool available on Unix and Linux hosts to explore the hierarchy of DNS servers. Recall that in Figure 2.19, a DNS server in the DNS hierarchy delegates a DNS query to a DNS server lower in the hierarchy, by sending back to the DNS client the name of that lower-level DNS server. First read the man page for `dig`, and then answer the following questions.**
 
 * **a) Starting with a root DNS server (from one of the root servers [a-m]. root-servers.net), initiate a sequence of queries for the IP address for your department’s Web server by using `dig`. Show the list of the names of DNS servers in the delegation chain in answering your query.**
+
+  Send: `dig +norecurse @b.root-servers.net any unb.br `
+
+  Response:
+
+  ```
+  ;; AUTHORITY SECTION:
+  br.			172800	IN	NS	a.dns.br.
+  br.			172800	IN	NS	b.dns.br.
+  br.			172800	IN	NS	c.dns.br.
+  br.			172800	IN	NS	d.dns.br.
+  br.			172800	IN	NS	e.dns.br.
+  br.			172800	IN	NS	f.dns.br.
+  ```
+
+  Send: `dig +norecurse @a.dns.br any unb.br `
+
+  Response:
+
+  ```
+  ;; AUTHORITY SECTION:
+  unb.br.			3600	IN	NS	dns1.unb.br.
+  unb.br.			3600	IN	NS	dns2.unb.br.
+  unb.br.			3600	IN	NS	dns3.unb.br.
+  ```
+
+  Send `dig +norecurse @dns1.unb.br any unb.br`
+
+  Response:
+
+  ```
+  ;; ANSWER SECTION:
+  unb.br.			86400	IN	A	164.41.102.70
+  unb.br.			3600	IN	MX	0 unb-br.mail.protection.outlook.com.
+  unb.br.			3600	IN	NS	dns1.unb.br.
+  unb.br.			3600	IN	NS	dns2.unb.br.
+  unb.br.			3600	IN	NS	dns3.unb.br.
+  unb.br.			3600	IN	TXT	"_globalsign-domain-verification=UEe9yXplBmI1wp61hxrLeSL_gklEaj4LCp42LrIJPT"
+  unb.br.			3600	IN	TXT	"v=spf1 include:spf.protection.outlook.com a:smtp.unb.br a:listas.unb.br a:listas.desenv.unb.br a:smtp.listas.desenv.unb.br a:smtp.listas.unb.br a:sender1.unb.br a:sender2.unb.br a:sender3.unb.br a:aluno.unb.br -all"
+  unb.br.			3600	IN	SOA	dns1.unb.br. hostmaster.unb.br. 2024052201 14400 3600 1209600 3600
+  ```
+
 * **b) Repeat part (a) for several popular Web sites, such as google.com, yahoo.com, or amazon.com.**
 
+  * Google
 
+    * Send: `dig +norecurse @b.root-servers.net any google.com `
+
+    * Response:
+
+      ```
+      ;; AUTHORITY SECTION:
+      com.			172800	IN	NS	a.gtld-servers.net.
+      com.			172800	IN	NS	b.gtld-servers.net.
+      com.			172800	IN	NS	c.gtld-servers.net.
+      com.			172800	IN	NS	d.gtld-servers.net.
+      com.			172800	IN	NS	e.gtld-servers.net.
+      com.			172800	IN	NS	f.gtld-servers.net.
+      com.			172800	IN	NS	g.gtld-servers.net.
+      com.			172800	IN	NS	h.gtld-servers.net.
+      com.			172800	IN	NS	i.gtld-servers.net.
+      com.			172800	IN	NS	j.gtld-servers.net.
+      com.			172800	IN	NS	k.gtld-servers.net.
+      com.			172800	IN	NS	l.gtld-servers.net.
+      com.			172800	IN	NS	m.gtld-servers.net.
+      ```
+
+    * Send: `dig +norecurse @m.gtld-servers.net. any google.com `
+
+    * Response:
+
+      ```
+      ;; AUTHORITY SECTION:
+      google.com.		172800	IN	NS	ns2.google.com.
+      google.com.		172800	IN	NS	ns1.google.com.
+      google.com.		172800	IN	NS	ns3.google.com.
+      google.com.		172800	IN	NS	ns4.google.com.
+      ```
+
+    * Send: `dig +norecurse @ns3.google.com any google.com `
+
+    * Response:
+
+      ```
+      ;; ANSWER SECTION:
+      google.com.		300	IN	A	142.251.135.78
+      google.com.		300	IN	AAAA	2800:3f0:4004:807::200e
+      google.com.		3600	IN	TXT	"onetrust-domain-verification=de01ed21f2fa4d8781cbc3ffb89cf4ef"
+      google.com.		345600	IN	NS	ns4.google.com.
+      google.com.		3600	IN	TXT	"v=spf1 include:_spf.google.com ~all"
+      google.com.		3600	IN	TXT	"MS=E4A68B9AB2BB9670BCE15412F62916164C0B20BB"
+      google.com.		3600	IN	TXT	"docusign=05958488-4752-4ef2-95eb-aa7ba8a3bd0e"
+      google.com.		3600	IN	TXT	"apple-domain-verification=30afIBcvSuDV2PLX"
+      google.com.		3600	IN	TXT	"cisco-ci-domain-verification=479146de172eb01ddee38b1a455ab9e8bb51542ddd7f1fa298557dfa7b22d963"
+      google.com.		60	IN	SOA	ns1.google.com. dns-admin.google.com. 637585624 900 900 1800 60
+      google.com.		300	IN	MX	10 smtp.google.com.
+      google.com.		345600	IN	NS	ns2.google.com.
+      google.com.		3600	IN	TXT	"globalsign-smime-dv=CDYX+XFHUw2wml6/Gb8+59BsH31KzUr6c1l2BPvqKX8="
+      google.com.		345600	IN	NS	ns1.google.com.
+      google.com.		3600	IN	TXT	"docusign=1b0a6754-49b1-4db5-8540-d2c12664b289"
+      google.com.		3600	IN	TXT	"google-site-verification=wD8N7i1JTNTkezJ49swvWW48f8_9xveREV4oB-0Hf5o"
+      google.com.		21600	IN	HTTPS	1 . alpn="h2,h3"
+      google.com.		345600	IN	NS	ns3.google.com.
+      google.com.		86400	IN	CAA	0 issue "pki.goog"
+      google.com.		3600	IN	TXT	"facebook-domain-verification=22rm551cu4k0ab0bxsw536tlds4h95"
+      google.com.		3600	IN	TXT	"google-site-verification=TV9-DBe4R80X4v0M4U_bd_J9cpOJM0nikft0jAgjmsQ"
+      ```
+
+  * Yahoo
+
+    * Send: `dig +norecurse @a.root-servers.net any yahoo.com `
+
+    * Response:
+
+      ```
+      ;; AUTHORITY SECTION:
+      com.			172800	IN	NS	l.gtld-servers.net.
+      com.			172800	IN	NS	j.gtld-servers.net.
+      com.			172800	IN	NS	h.gtld-servers.net.
+      com.			172800	IN	NS	d.gtld-servers.net.
+      com.			172800	IN	NS	b.gtld-servers.net.
+      com.			172800	IN	NS	f.gtld-servers.net.
+      com.			172800	IN	NS	k.gtld-servers.net.
+      com.			172800	IN	NS	m.gtld-servers.net.
+      com.			172800	IN	NS	i.gtld-servers.net.
+      com.			172800	IN	NS	g.gtld-servers.net.
+      com.			172800	IN	NS	a.gtld-servers.net.
+      com.			172800	IN	NS	c.gtld-servers.net.
+      com.			172800	IN	NS	e.gtld-servers.net.
+      ```
+
+    * Send: `dig +norecurse @k.gtld-servers.net any yahoo.com `
+
+    * Response:
+
+      ```
+      ;; AUTHORITY SECTION:
+      yahoo.com.		172800	IN	NS	ns1.yahoo.com.
+      yahoo.com.		172800	IN	NS	ns5.yahoo.com.
+      yahoo.com.		172800	IN	NS	ns2.yahoo.com.
+      yahoo.com.		172800	IN	NS	ns3.yahoo.com.
+      yahoo.com.		172800	IN	NS	ns4.yahoo.com.
+      ```
+
+    * Send: `dig +norecurse @ns4.yahoo.com any yahoo.com `
+
+    * Response:
+
+      ```
+      ;; ANSWER SECTION:
+      yahoo.com.		1800	IN	SOA	ns1.yahoo.com. hostmaster.yahoo-inc.com. 2024052810 3600 300 1814400 600
+      yahoo.com.		1800	IN	A	98.137.11.164
+      yahoo.com.		1800	IN	A	74.6.231.20
+      yahoo.com.		1800	IN	A	74.6.143.25
+      yahoo.com.		1800	IN	A	74.6.143.26
+      yahoo.com.		1800	IN	A	74.6.231.21
+      yahoo.com.		1800	IN	A	98.137.11.163
+      yahoo.com.		1800	IN	AAAA	2001:4998:44:3507::8000
+      yahoo.com.		1800	IN	AAAA	2001:4998:124:1507::f000
+      yahoo.com.		1800	IN	AAAA	2001:4998:24:120d::1:0
+      yahoo.com.		1800	IN	AAAA	2001:4998:124:1507::f001
+      yahoo.com.		1800	IN	AAAA	2001:4998:24:120d::1:1
+      yahoo.com.		1800	IN	AAAA	2001:4998:44:3507::8001
+      yahoo.com.		1800	IN	CAA	0 iodef "mailto:security@yahooinc.com"
+      yahoo.com.		1800	IN	CAA	0 issue "digicert.com"
+      yahoo.com.		1800	IN	CAA	0 issue "globalsign.com"
+      yahoo.com.		1800	IN	MX	1 mta6.am0.yahoodns.net.
+      yahoo.com.		1800	IN	MX	1 mta7.am0.yahoodns.net.
+      yahoo.com.		1800	IN	MX	1 mta5.am0.yahoodns.net.
+      yahoo.com.		1800	IN	TXT	"Zoom=13284637"
+      yahoo.com.		1800	IN	TXT	"google-site-verification=w4N2bNopAWw1xYrdXKORILxx-WW3_LIiyX6dIMIidgk"
+      yahoo.com.		1800	IN	TXT	"google-site-verification=2b0Glh8l2icXIAgAcjOcFx16Jt26yWDgEyrk5hPD-ZY"
+      yahoo.com.		1800	IN	TXT	"google-site-verification=GLp01gkFNopm_JItbLxml4iuVbTgJa3rKu0-eq1RvsE"
+      yahoo.com.		1800	IN	TXT	"edb3bff2c0d64622a9b2250438277a59"
+      yahoo.com.		1800	IN	TXT	"google-site-verification=Z3-Vh6zqUMgybVH4wQl1GxKSKN7JE13kyCyeZ3TZZ-I"
+      yahoo.com.		1800	IN	TXT	"facebook-domain-verification=gysqrcd69g0ej34f4jfn0huivkym1p"
+      yahoo.com.		1800	IN	TXT	"google-site-verification=xoBvU6aKxP0gYgNL0iXqF0EccAg6nFrO7XxsHnc3iNQ"
+      yahoo.com.		1800	IN	TXT	"v=spf1 redirect=_spf.mail.yahoo.com"
+      yahoo.com.		1800	IN	TXT	"google-site-verification=2b8irRvU5a2h4Mb-H_fdqNrqWjS00qmPfPcWqm8BhxI"
+      yahoo.com.		1800	IN	TXT	"_globalsign-domain-verification=8DPEanqC-w2Z26VeL5Sn4zBI7cZPCFqrNU5dMKMKeP"
+      yahoo.com.		1800	IN	TXT	"_globalsign-domain-verification=+uiRDFpnx6nJGVVEhYUSY24UssVdnBCFzI0V5Stm7bE="
+      yahoo.com.		172800	IN	NS	ns3.yahoo.com.
+      yahoo.com.		172800	IN	NS	ns2.yahoo.com.
+      yahoo.com.		172800	IN	NS	ns1.yahoo.com.
+      yahoo.com.		172800	IN	NS	ns4.yahoo.com.
+      yahoo.com.		172800	IN	NS	ns5.yahoo.com.
+      ```
+
+      
+
+  * Facebook
+
+    * Send: `dig +norecurse @m.root-servers.net any facebook.com `
+
+    * Response:
+
+      ```
+      ;; AUTHORITY SECTION:
+      com.			172800	IN	NS	e.gtld-servers.net.
+      com.			172800	IN	NS	a.gtld-servers.net.
+      com.			172800	IN	NS	g.gtld-servers.net.
+      com.			172800	IN	NS	b.gtld-servers.net.
+      com.			172800	IN	NS	h.gtld-servers.net.
+      com.			172800	IN	NS	m.gtld-servers.net.
+      com.			172800	IN	NS	j.gtld-servers.net.
+      com.			172800	IN	NS	k.gtld-servers.net.
+      com.			172800	IN	NS	c.gtld-servers.net.
+      com.			172800	IN	NS	f.gtld-servers.net.
+      com.			172800	IN	NS	d.gtld-servers.net.
+      com.			172800	IN	NS	i.gtld-servers.net.
+      com.			172800	IN	NS	l.gtld-servers.net.
+      ```
+
+    * Send: `dig +norecurse @c.gtld-servers.net. any facebook.com `
+
+    * Response:
+
+      ```
+      ;; AUTHORITY SECTION:
+      facebook.com.		172800	IN	NS	a.ns.facebook.com.
+      facebook.com.		172800	IN	NS	b.ns.facebook.com.
+      facebook.com.		172800	IN	NS	c.ns.facebook.com.
+      facebook.com.		172800	IN	NS	d.ns.facebook.com.
+      ```
+
+    * Send: `dig +norecurse @d.ns.facebook.com any facebook.com `
+
+    * Response:
+
+      ```
+      ;; ANSWER SECTION:
+      facebook.com.		86400	IN	HINFO	"RFC 8482" ""
+      
+      ```
+
+
+**P20. Suppose you can access the caches in the local DNS servers of your department. Can you propose a way to roughly determine the Web servers (outside your department) that are most popular among the users in your department? Explain.**
+
+You can verify the cache at every 30 minutes or other frequency and keep a count of the URLs, so the most common ones will the most popular.
+
+**P21. Suppose that your department has a local DNS server for all computers in the department. You are an ordinary user (i.e., not a network/system administrator). Can you determine if an external Web site was likely accessed from a computer in your department a couple of seconds ago? Explain**
+
+Yes, you can, by querying for that website with dig and verifying the query time, if it is 0msec is cached, otherwise is not.
+
+**P22. Consider distributing a file of $F = 20 \text{Gbits}$ to $N$ peers. The server has an upload rate of $u_s = 30 \text{Mbps}$, and each peer has a download rate of $d_i = 2 \text{Mbps}$ and an upload rate of $u$. For $N = 10, 100, \text{ and } 1,000$ and $u = 300 Kbps, 700 Kbps, \text{ and } 2 \text{Mbps}$, prepare a chart giving the minimum distribution time for each of the combinations of $N$ and $u$ for both client-server distribution and P2P distribution**
+
+We use the following formula:
+$$
+D_\text{P2P} = \max \left\{ \frac F {u_s}, \frac F {d_\min}, \frac {NF}{u_s + \sum_{i=1}^N u_i} \right\}
+$$
+Witch results in:
+$$
+D_\text{P2P} = \max \left\{ 683, 10240, \frac {20 \cdot 1024 N}{30 \ + uN} \right\}
+$$
+The values will be
+
+| $u/N$    | 10      | 100     | 1,000   |
+| -------- | ------- | ------- | ------- |
+| 300 Kbps | 10240 s | 34538 s | 63412 s |
+| 700 Kbps | 10240 s | 20822 s | 28700 s |
+| 2 MBps   | 10240 s | 10240 s | 10240 s |
+
+**P23. Consider distributing a file of F bits to N peers using a client-server architecture. Assume a fluid model where the server can simultaneously transmit to multiple peers, transmitting to each peer at different rates, as long as the combined rate does not exceed us.**
+
+* **a) Suppose that us/N … dmin. Specify a distribution scheme that has a distribution time of NF/us.**
+* **b) Suppose that us/N Ú dmin. Specify a distribution scheme that has a distribution time of F/dmin.**
+* **c) Conclude that the minimum distribution time is in general given by max5NF/us, F/dmin6.**
 
 ## Socket Programming Assignments
 
