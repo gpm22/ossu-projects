@@ -1,4 +1,4 @@
-# 1 - Computer Networks and the Internet
+# 2 - Application Layer
 
 ## Homework Problems and Questions
 
@@ -1010,11 +1010,96 @@ The values will be
 | 700 Kbps | 10240 s | 20822 s | 28700 s |
 | 2 MBps   | 10240 s | 10240 s | 10240 s |
 
-**P23. Consider distributing a file of F bits to N peers using a client-server architecture. Assume a fluid model where the server can simultaneously transmit to multiple peers, transmitting to each peer at different rates, as long as the combined rate does not exceed us.**
+**P23. Consider distributing a file of $F$ bits to $N$ peers using a client-server architecture. Assume a fluid model where the server can simultaneously transmit to multiple peers, transmitting to each peer at different rates, as long as the combined rate does not exceed $u_s$.**
 
-* **a) Suppose that us/N … dmin. Specify a distribution scheme that has a distribution time of NF/us.**
-* **b) Suppose that us/N Ú dmin. Specify a distribution scheme that has a distribution time of F/dmin.**
-* **c) Conclude that the minimum distribution time is in general given by max5NF/us, F/dmin6.**
+* **a) Suppose that $u_s/N \leq d_\min$. Specify a distribution scheme that has a distribution time of $NF/u_s$.**
+
+  In this case the upload rate to each peer is less than the minimum download rate of the peers. So each pear will receive the file at $u_s/N$, resulting in the distribution time
+  $$
+  \frac F {u_s/N} = \frac {NF} {u_s}
+  $$
+   
+* **b) Suppose that $u_s/N \geq d_\min$. Specify a distribution scheme that has a distribution time of $F/d_\min$.**
+
+  Now the minimum download rate of the peers is below the rate each peer is receiving the file, therefore the distribution time is simple $F/d_\min$.
+* **c) Conclude that the minimum distribution time is in general given by $\max \left\{NF/u_s, F/d_\min\right\}$.**
+
+  If $u_s/N \leq d_\min$ than $NF/u_s \geq F/d_\min$ and when If $u_s/N \geq d_\min$ than $NF/u_s \leq F/d_\min$.
+
+  Therefore the general distribution time is given by 
+  $$
+  \max \left\{\frac {NF} {u_s},\frac F {d_\min} \right\}
+  $$
+
+**P24. Consider distributing a file of $F$ bits to $N$ peers using a P2P architecture. Assume a fluid model. For simplicity assume that $d_\min$ is very large, so that peer download bandwidth is never a bottleneck.**
+
+* **a) Suppose that $u_s \leq (u_s + u_1 + \dots + u_N)/N$. Specify a distribution scheme that has a distribution time of $F/u_s$.**
+
+  $u_s \leq (u_s + u_1 + \dots + u_N)/N$ means that the server is updating the file at a rate below the average upload rate of the server and the peers, which means that the peers is waiting to share new stuff to be sent by the server. In that case the bottleneck is the server itself, therefore the distribution time is
+  $$
+  \frac F {u_s}
+  $$
+  
+
+* **b) Suppose that us $u_s \geq (u_s + u_1 + \dots + u_N)/N$. Specify a distribution scheme that has a distribution time of $NF/(u_s + u_1 + \dots + u_N)$.**
+
+  $u_s \geq (u_s + u_1 + \dots + u_N)/N$ means that the server is sending more than what the peers can resend, thus the average upload rate of the server and the peers is the bottleneck. Therefore the distribution time is 
+  $$
+  \frac {F} {\left(u_s + u_1 + \dots + u_N\right)/N} = \frac {FN} {u_s + u_1 + \dots + u_N}
+  $$
+  
+
+* **c) Conclude that the minimum distribution time is in general given by $\max \left\{ F/u_s, NF/(u_s + u_1 + \dots + u_N)\right\}$.**
+
+  When $u_s \leq (u_s + u_1 + \dots + u_N)/N$, we have $F/u_s \geq NF/(u_s + u_1 + \dots + u_N)$.
+
+  Also when $u_s \geq (u_s + u_1 + \dots + u_N)/N$, we have $F/u_s \leq NF/(u_s + u_1 + \dots + u_N)$.
+
+  Therefore the general distribution time is 
+  $$
+  \max\left\{\frac F {u_s}, \frac {NF}{u_s + u_1 + \dots + u_N}\right\}
+  $$
+
+**P25. Consider an overlay network with $N$ active peers, with each pair of peers having an active TCP connection. Additionally, suppose that the TCP connections pass through a total of $M$ routers. How many nodes and edges are there in the corresponding overlay network?**
+
+The total number of nodes is the number of active peers, $N$.
+
+The total number of connections is $N(N-1)/2$, which is also the total number of edges.
+
+**P26. Suppose Bob joins a BitTorrent torrent, but he does not want to upload any data to any other peers (so called free-riding).**
+
+* **a) Bob claims that he can receive a complete copy of the file that is shared by the swarm. Is Bob’s claim possible? Why or why not?**
+
+  It is possible, because he will be select from time to time to be optimistically unchoked.
+
+* **b) Bob further claims that he can further make his “free-riding” more efficient by using a collection of multiple computers (with distinct IP addresses) in the computer lab in his department. How can he do that?**
+
+  He can have a network of computers that receives the chunks and join them into a single file.
+
+  He will increases his possibilities to be optimistically unchoked, as initially he has the probability of being selected of 
+  $$
+  1-\left(1-\frac 1{N-5}\right)^N = 1-\left(\frac {N-6}{N-5}\right)^N
+  $$
+  but adding $M$ computers increases the probability to be
+  $$
+  1-\left(1-\frac {M+1}{N-5}\right)^N =1 - \left(\frac {N-M-6}{N-5}\right)^N
+  $$
+
+**P27. Consider a DASH system for which there are $N$ video versions (at $N$ different rates and qualities) and $N$ audio versions (at $N$ different rates and qualities). Suppose we want to allow the player to choose at any time any of the $N$ video versions and any of the $N$ audio versions.**
+
+* **a) If we create files so that the audio is mixed in with the video, so server sends only one media stream at given time, how many files will the server need to store (each a different URL)?**
+
+  $N^2$, really bad move.
+
+* **b) If the server instead sends the audio and video streams separately and has the client synchronize the streams, how many files will the server need to store?**
+
+  $2N$, a better move.
+
+**P28. Install and compile the Python programs `TCPClient` and `UDPClient` on one host and `TCPServer` and `UDPServer` on another host.**
+
+* **a) Suppose you run `TCPClient` before you run `TCPServer`. What happens? Why?**
+* **b) Suppose you run `UDPClient` before you run `UDPServer`. What happens? Why?**
+* **c) What happens if you use different port numbers for the client and server sides?**
 
 ## Socket Programming Assignments
 
