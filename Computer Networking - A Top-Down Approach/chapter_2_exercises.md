@@ -1018,7 +1018,7 @@ The values will be
   $$
   \frac F {u_s/N} = \frac {NF} {u_s}
   $$
-   
+  
 * **b) Suppose that $u_s/N \geq d_\min$. Specify a distribution scheme that has a distribution time of $F/d_\min$.**
 
   Now the minimum download rate of the peers is below the rate each peer is receiving the file, therefore the distribution time is simple $F/d_\min$.
@@ -1040,7 +1040,6 @@ The values will be
   \frac F {u_s}
   $$
   
-
 * **b) Suppose that us $u_s \geq (u_s + u_1 + \dots + u_N)/N$. Specify a distribution scheme that has a distribution time of $NF/(u_s + u_1 + \dots + u_N)$.**
 
   $u_s \geq (u_s + u_1 + \dots + u_N)/N$ means that the server is sending more than what the peers can resend, thus the average upload rate of the server and the peers is the bottleneck. Therefore the distribution time is 
@@ -1048,7 +1047,6 @@ The values will be
   \frac {F} {\left(u_s + u_1 + \dots + u_N\right)/N} = \frac {FN} {u_s + u_1 + \dots + u_N}
   $$
   
-
 * **c) Conclude that the minimum distribution time is in general given by $\max \left\{ F/u_s, NF/(u_s + u_1 + \dots + u_N)\right\}$.**
 
   When $u_s \leq (u_s + u_1 + \dots + u_N)/N$, we have $F/u_s \geq NF/(u_s + u_1 + \dots + u_N)$.
@@ -1098,8 +1096,41 @@ The total number of connections is $N(N-1)/2$, which is also the total number of
 **P28. Install and compile the Python programs `TCPClient` and `UDPClient` on one host and `TCPServer` and `UDPServer` on another host.**
 
 * **a) Suppose you run `TCPClient` before you run `TCPServer`. What happens? Why?**
+
+  It throws an error, as a connection could not be created. This happens as there is nothing listen in the tried port.
 * **b) Suppose you run `UDPClient` before you run `UDPServer`. What happens? Why?**
+
+  It runs, as UDP does not create a connection. So if the server is off, the client receives the string from user, sends it, and keeps waiting for a response. If the server is on, it will respond to the client.
 * **c) What happens if you use different port numbers for the client and server sides?**
+
+  If they have different values, the message will be sent to a port that is closed, otherwise it will work.
+
+**P29. Suppose that in `UDPClient.py`, after we create the socket, we add the line:**
+
+**`clientSocket.bind((’’, 5432))`**
+
+**Will it become necessary to change `UDPServer.py`? What are the port numbers for the sockets in `UDPClient` and `UDPServer`? What were they before making this change?**
+
+It is not necessary to change the server, as it knows the client port by reading the datagram.
+Now the ports are 12000 for the server and 5432 to the client, before was 12000 for the server and 64805 for the client.
+In reality, the client port changed every time before using the bind command.
+
+**P30. Can you configure your browser to open multiple simultaneous connections to a Web site? What are the advantages and disadvantages of having a large number of simultaneous TCP connections?**
+
+Yes, in reality is the default for Firefox, which the value in my machine is 900 , but can be changed from 1-65535.
+The advantages is that with a good enough Internet, the pages will be loaded faster, but if the connection is slow, a lot of timeouts can happen, which will worsen the user experience. Also you will be getting more bandwidth than other users, which will slowdown their downloads.
+
+**P31. We have seen that Internet TCP sockets treat the data being sent as a byte stream but UDP sockets recognize message boundaries. What are one advantage and one disadvantage of byte-oriented API versus having the API explicitly recognize and preserve application-defined message boundaries?**
+
+The advantage is that a byte-stream can send easily more data indefinitely.
+The disadvantage is that when sending different messages over a byte-stream, the messages must contain something to indicate their endings, but on the other hand, messages with boundaries already do that.
+
+**P32. What is the Apache Web server? How much does it cost? What functionality does it currently have? You may want to look at Wikipedia to answer this question.**
+
+It is a web serve that you can use to provide your APIs and websites.
+It is free and open-source.
+It is can be used from authentication schemes to supporting server-side programming languages, like python and PHP.
+
 
 ## Socket Programming Assignments
 
