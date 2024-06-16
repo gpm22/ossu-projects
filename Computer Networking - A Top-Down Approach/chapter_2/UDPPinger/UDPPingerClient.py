@@ -1,5 +1,6 @@
 from socket import *
 from datetime import datetime
+import random
 
 serverName = "localhost"
 serverPort = 12000
@@ -12,6 +13,11 @@ totalRTT = 0
 for i in range(1, 11):
     try:
         print("\nsending: ", i)
+        rand = random.randint(0, 10)
+        # If rand is less is than 4, we consider the packet lost for the server
+        if rand < 4:
+            print("ooops, lost it lol!")
+            continue
         sendingTime = datetime.now()
         message = f"Ping {i} {str(sendingTime)}"
         clientSocket.sendto(message.encode(), (serverName, serverPort))
