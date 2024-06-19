@@ -1,14 +1,7 @@
 from socket import *
-import ssl
 
 def printRecv(expectedCode):
-    printRecvHelper(expectedCode, clientSocket) 
-
-def printRecvSSL(expectedCode):
-    printRecvHelper(expectedCode, scc)
-
-def printRecvHelper(expectedCode, sock):
-    recv = sock.recv(1024).decode()
+    recv = clientSocket.recv(1024).decode()
     print(recv)
     if recv[:3] != expectedCode:
         print(expectedCode, ' reply not received from server.')
@@ -17,11 +10,6 @@ def sendCommand(command):
     print("sending: ", command)
     clientSocket.send(command.encode())
 
-def sendCommandSSL(command):
-    scc.send(command.encode())
-
-msg = "\r\n I love computer networks!"
-endmsg = "\r\n.\r\n"
 # Choose a mail server (e.g. Google mail server) and call it mailserver
 mailserver = "gmail-smtp-in.l.google.com"
 serverPort = 25
