@@ -1,46 +1,45 @@
 from socket import *
+import ssl
 
 def printRecv(expectedCode):
-    recv = clientSocket.recv(1024).decode()
+    printRecvHelper(expectedCode, clientSocket) 
+
+def printRecvSSL(expectedCode):
+    printRecvHelper(expectedCode, scc)
+
+def printRecvHelper(expectedCode, sock):
+    recv = sock.recv(1024).decode()
     print(recv)
     if recv[:3] != expectedCode:
         print(expectedCode, ' reply not received from server.')
 
 def sendCommand(command):
+    print("sending: ", command)
     clientSocket.send(command.encode())
+
+def sendCommandSSL(command):
+    scc.send(command.encode())
 
 msg = "\r\n I love computer networks!"
 endmsg = "\r\n.\r\n"
 # Choose a mail server (e.g. Google mail server) and call it mailserver
-mailserver = "smtp.gmail.com"
-serverPort =  587
+mailserver = "gmail-smtp-in.l.google.com"
+serverPort = 25
 # Create socket called clientSocket and establish a TCP connection with mailserver
+print("connecting to: ", mailserver)
 clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect((mailserver,serverPort))
 printRecv("220")
-print(1)
 # Send HELO command and print server response.
 sendCommand('HELO Alice\r\n')
 printRecv("250")
-print(2)
-
-# Send STARTTLS command and print server response
-sendCommand('STARTTLS\r\n')
-printRecv("220")
-print(21)
-
-# Send EHLO command and print server response
-sendCommand('HELO\r\n')
-printRecv("250")
-print(22)
 
 # Send MAIL FROM command and print server response.
-sendCommand('MAIL FROM gabrielpacmil@gmail.com\r\n')
+sendCommand('MAIL FROM:<gabrielpacmil@gmail.com>\r\n')
 printRecv("250")
-print(3)
 
 # Send RCPT TO command and print server response.
-sendCommand('RCPT TO gabrielpacmil2@gmail.com\r\n')
+sendCommand('RCPT TO:<gabrielpacmil2@gmail.com>\r\n')
 printRecv("250")
 
 # Send DATA command and print server response.
@@ -51,6 +50,7 @@ printRecv("354")
 sendCommand('From: "Gabriel 1" <gabrielpacmil@gmail.com>\r\n')
 sendCommand('To: "Gabriel 2" <gabrielpacmil2@gmail.com>\r\n')
 sendCommand('Date: 12/24/2011\r\n')
+sendCommand('Message-ID: <' + str(hash('123981271212kijh349721372190390kjshxdjkjikhskjdhsakhdkjashdk')) + '@com.gpm22.github>\r\n')
 sendCommand('Subject: The World is Beautiful, my friend...\r\n')
 sendCommand('\r\n')
 sendCommand('Hey, DUDE!')
