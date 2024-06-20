@@ -9,14 +9,12 @@ socketPort = 12000
 tcpSerSock = socket(AF_INET,SOCK_STREAM)
 tcpSerSock.bind(('',socketPort))
 tcpSerSock.listen(1)
-# Fill in start.
-# Fill in end.
 while 1:
-    # Strat receiving data from the client
+    # Start receiving data from the client
     print('Ready to serve...')
     tcpCliSock, addr = tcpSerSock.accept()
     print('Received a connection from:', addr)
-    message = # Fill in start. # Fill in end.
+    message = tcpCliSock.recv(1024).decode()
     print(message)
     # Extract the filename from the given message
     print(message.split()[1])
@@ -33,10 +31,12 @@ while 1:
         # ProxyServer finds a cache hit and generates a response message
         tcpCliSock.send("HTTP/1.0 200 OK\r\n")
         tcpCliSock.send("Content-Type:text/html\r\n")
-        # Fill in start.
-        # Fill in end.
+        tcpCliSock.send("\r\n")
+        for outputLine in outputdata:
+            tcpCliSock.send(outputLine);
+        tcpCliSock.send("\r\n")
         print('Read from cache')
-        # Error handling for file not found in cache
+    # Error handling for file not found in cache
     except IOError:
         if fileExist == "false":
             # Create a socket on the proxyserver
@@ -46,9 +46,9 @@ while 1:
             try:
                 # Connect to the socket to port 80
                 # Fill in start.
-                # Fill in end.
-                # Create a temporary file on this socket and ask port 80 for the file requested by the client
+                # Fill in end.a temporary file on this socket and ask port 80 for the file requested by the client
                 fileobj = c.makefile('r', 0)
+                # Create 
                 fileobj.write("GET "+"http://" + filename + "HTTP/1.0\n\n")
                 # Read the response into buffer
                 # Fill in start.
