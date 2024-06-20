@@ -14,7 +14,7 @@ while 1:
     print('Ready to serve...')
     tcpCliSock, addr = tcpSerSock.accept()
     print('Received a connection from:', addr)
-    message = tcpCliSock.recv(1024).decode()
+    message = tcpCliSock.recv(1024)
     print(message)
     # Extract the filename from the given message
     print(message.split()[1])
@@ -40,31 +40,31 @@ while 1:
     except IOError:
         if fileExist == "false":
             # Create a socket on the proxyserver
-            c = # Fill in start. # Fill in end.
+            c = socket(AF_INET, SOCK_STREAM)
             hostn = filename.replace("www.","",1)
             print(hostn)
             try:
                 # Connect to the socket to port 80
-                # Fill in start.
-                # Fill in end.a temporary file on this socket and ask port 80 for the file requested by the client
+                c.connect(("localhost", 80))
+                # Create a temporary file on this socket and ask port 80 for the file requested by the client
                 fileobj = c.makefile('r', 0)
-                # Create 
                 fileobj.write("GET "+"http://" + filename + "HTTP/1.0\n\n")
                 # Read the response into buffer
-                # Fill in start.
-                # Fill in end.
+                c.send(message)
+                bufferMessage = c.recv(1024)
                 # Create a new file in the cache for the requested file.
                 # Also send the response in the buffer to client socket and the corresponding file in the cache
                 tmpFile = open("./" + filename,"wb")
-                # Fill in start.
-                # Fill in end.
+                tmpFile.write(bufferMessage)
+                tmpFile.close()
+                tcpCliSock.send(bufferMessage)
             except:
                 print("Illegal request")
+            c.close()
         else:
             # HTTP response message for file not found
-            # Fill in start.
-            # Fill in end.
+            tcpCliSock.send("HTTP/1.1 404 Not Found")
+            tcpCliSock.send("\r\n")
     # Close the client and the server sockets
     tcpCliSock.close()
-# Fill in start.
-# Fill in end.
+tcpSerSock.close()
