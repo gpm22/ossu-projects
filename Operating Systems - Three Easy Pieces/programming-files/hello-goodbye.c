@@ -5,6 +5,8 @@
 
 int main()
 {
+
+     printf("hello (pid:%d)\n", (int) getpid());
      int rc = fork();
      if (rc < 0) {
         // fork failed
@@ -12,11 +14,19 @@ int main()
         exit(1);
      } else if (rc == 0) {
         //child
-         printf("hello\n");
+        int rc_wait = waitpid(rc, NULL, 0);
+        printf("hello\n");
+        printf("child (pid:%d)\n", (int) getpid());
+        printf("wait: %d", rc_wait);
+
      } else {
         //parent
-        wait(NULL);
+        int rc_wait = waitpid(rc, NULL, 0);
+    
         printf("goodbye\n");
+
+        printf("parent of %d (pid:%d)\n", rc, (int) getpid());
+        printf("wait: %d", rc_wait);
      }
      
     return 0;
