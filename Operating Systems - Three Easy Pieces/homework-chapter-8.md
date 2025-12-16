@@ -2,7 +2,7 @@
 
 ## Homework (Simulation)
 
-This program, mlfq.py, allows you to see how the MLFQ scheduler presented in this chapter behaves.
+This program, `mlfq.py`, allows you to see how the MLFQ scheduler presented in this chapter behaves.
 See the README for details.
 
 ## Questions
@@ -181,7 +181,7 @@ See the README for details.
     - The execution was the same in the 3 runs because the jobs were the same.
     - The first job was run first than the second one.
 
-  
+
 2. **How would you run the scheduler to reproduce each of the examples in the chapter?**
 
   - Figure 8.1 - 2  High priority jobs, 1 medium, and 1 low.
@@ -2603,7 +2603,7 @@ See the README for details.
     Avg  1: startTime n/a - response 0.00 - turnaround 77.50
   ```
 
-  
+
 5. **Given a system with a quantum length of 10 ms in its highest queue, how often would you have to boost jobs back to the highest priority level (with the -B flag) in order to guarantee that a single long-running (and potentially-starving) job gets at least 5% of the CPU?**
 
   Assuming that the job is at the last queue already and it will be the first to run after the boost.
