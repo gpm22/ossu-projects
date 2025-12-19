@@ -357,8 +357,99 @@ In this homework, we’ll just learn about a few useful tools to examine virtual
   But it always keeps some small amount free around ~200 Mi.
 
 3. **Let’s try one more tool, known as `pmap`. Spend some time, and read the `pmap` manual page in detail.**
-  **To use `pmap`, you have to know the process ID of the process you’re interested in. Thus, first run `ps auxw` to see a list of all processes; then, pick an interesting one, such as a browser. You can also use your memory-user program in this case (indeed, you can even have that program call `getpid()` and print out its PID for your convenience).**
+  **To use `pmap`, you have to know the process ID of the process you’re interested in. Thus, first run `ps auxw` to see a list of all processes; then, pick an interesting one, such as a browser.**
+   `pmap` - report memory map of a process
+  **Memory map for Typora:**
 
-4. **Now run `pmap` on some of these processes, using various flags (like `-X`) to reveal many details about the process. What do you see? How many different entities make up a modern address space, as opposed to our simple conception of code/stack/heap?**
+  ```bash
+  pmap 6613
+  6613:   /usr/share/typora/Typora --enable-crashpad /ossu-projects/Operating Systems - Three Easy Pieces/homework-chapter-13.md
+  0000006c00000000   2052K -----   [ anon ]
+  0000006c00201000      4K rw---   [ anon ]
+  ...
+  0000080700000000     36K r----   [ anon ]
+  0000080700009000   4828K rw---   [ anon ]
+  00000807004c0000    260K rw---   [ anon ]
+  ...
+  00003803fffff000 8388612K -----   [ anon ]
+  0000586760000000     12K rw---   [ anon ]
+  0000586760003000      4K -----   [ anon ]
+  0000586760004000    236K r-x--   [ anon ]
+  000058676003f000      4K -----   [ anon ]
+  ...
+  0000746bbec6e000      4K -----   [ anon ]
+  0000746bbec6f000   8192K rw---   [ anon ]
+  0000746bbf58b000   1048K r---- Ubuntu[wdth,wght].ttf
+  0000746bbf691000   1048K r---- Ubuntu[wdth,wght].ttf
+  0000746bbf797000    132K r---- libnssckbi.so
+  0000746bbf7b8000     56K r-x-- libnssckbi.so
+  0000746bbf7c6000    264K r---- libnssckbi.so
+  0000746bbf808000     80K r---- libnssckbi.so
+  ...
+  00007ffe74d08000    136K rw---   [ stack ]
+  00007ffe74d4a000     16K r----   [ anon ]
+  00007ffe74d4e000      8K r-x--   [ anon ]
+  ffffffffff600000      4K --x--   [ anon ]
+   total         21599540K
+  
+  ```
 
-5. **Finally, let’s run `pmap` on your memory-user program, with different amounts of used memory. What do you see here? Does the output from `pmap` match your expectations?**
+4. **How many different entities make up a modern address space, as opposed to our simple conception of code/stack/heap?**
+
+  Based on the results of previous question, a modern address space is composed of **at least 10 distinct types of entities**:
+
+  1. **Main Executable Code Segments**
+  2. **Shared Library Code & Data Segments**
+  3. **Heap (anonymous RW)**
+  4. **Program Data/BSS Segments** (from executables/libs)
+  5. **Main Thread Stack**
+  6. **Memory-Mapped Resource Files**
+  7. **Shared Memory Segments** (for IPC)
+  8. **JIT / Dynamic Code Regions** (anonymous, RWX)
+  9. **Guard Regions / Reserved Address Space** (anonymous, no permissions)
+  10. **Kernel Interface Pages** (vDSO/vsyscall)
+  11. *(Implicit)* **Additional Thread Stacks**
+  12. *(Implicit)* **Thread Local Storage (TLS)** regions
+
+5. **Finally, let’s run `pmap` on your memory-user program, with different amounts of used memory.**
+  **What do you see here?**
+
+  ```bash
+  11590:   ./memory-user 500
+  000063b4b270e000      4K r---- memory-user
+  000063b4b270f000      4K r-x-- memory-user
+  000063b4b2710000      4K r---- memory-user
+  000063b4b2711000      4K r---- memory-user
+  000063b4b2712000      4K rw--- memory-user
+  000063b4e7e27000    132K rw---   [ anon ]
+  000073e6b9fff000 512004K rw---   [ anon ]
+  000073e6d9400000    160K r---- libc.so.6
+  000073e6d9428000   1568K r-x-- libc.so.6
+  000073e6d95b0000    316K r---- libc.so.6
+  000073e6d95ff000     16K r---- libc.so.6
+  000073e6d9603000      8K rw--- libc.so.6
+  000073e6d9605000     52K rw---   [ anon ]
+  000073e6d9703000     12K rw---   [ anon ]
+  000073e6d9723000      8K rw---   [ anon ]
+  000073e6d9725000      4K r---- ld-linux-x86-64.so.2
+  000073e6d9726000    172K r-x-- ld-linux-x86-64.so.2
+  000073e6d9751000     40K r---- ld-linux-x86-64.so.2
+  000073e6d975b000      8K r---- ld-linux-x86-64.so.2
+  000073e6d975d000      8K rw--- ld-linux-x86-64.so.2
+  00007ffe93080000    136K rw---   [ stack ]
+  00007ffe93139000     16K r----   [ anon ]
+  00007ffe9313d000      8K r-x--   [ anon ]
+  ffffffffff600000      4K --x--   [ anon ]
+   total           514692K
+  
+  ```
+
+  `memory-user` indicates the code part.
+  `000063b4e7e27000    132K rw---   [ anon ]` is the **heap**, that is, the code execution.
+
+  I can see memory allocation happening at `000073e6b9fff000 512004K rw---   [ anon ]`.
+
+  Then the library mappings, dynamic linkers, stack, and Kernel interface.
+  **Does the output from `pmap` match your expectations?**
+  Yes.
+
