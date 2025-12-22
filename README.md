@@ -38,4 +38,5 @@ My OSSU progress can be seen in [OSSU progress](https://trello.com/b/DIZv8gOk/os
 
 * [Build a Modern Computer from First Principles: From Nand to Tetris](https://github.com/gpm22/ossu-projects/tree/main/Nand2Tetris) (**Done**)
 * [Computer Networking - A Top-Down Approach](https://github.com/gpm22/ossu-projects/tree/main/Computer%20Networking%20-%20A%20Top-Down%20Approach) (In progress)
+* [Operating Systems - Three Easy Pieces](https://github.com/gpm22/ossu-projects/tree/main/Operating%20Systems%20-%20Three%20Easy%20Pieces) (In progress)
 
