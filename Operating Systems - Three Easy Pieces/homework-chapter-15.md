@@ -206,4 +206,4 @@ The program `relocation.py` allows you to see how address translations are perfo
 
   The mean curve it is almost linear.
 
-  ![img](https://github.com/gpm22/ossu-projects/blob/main/Operating%20Systems%20-%20Three%20Easy%20Pieces/homework-chapter-15.png)
+  ![img](./homework-chapter-15.png)
