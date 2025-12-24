@@ -204,6 +204,6 @@ The program `relocation.py` allows you to see how address translations are perfo
   | 896  | 5/5    | 3/5    | 5/5    | 13/15 |
   | 1024 | 5/5    | 5/5    | 5/5    | 15/15 |
 
-  The mean curve it is almost linear.
+  The mean curve is almost linear.
 
   ![img](./homework-chapter-15.png)
