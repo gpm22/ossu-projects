@@ -246,3 +246,8 @@ In this homework, you will use a simple program, which is known as `paging-linea
   The first, because it is too small, and the second, because its page size is too big for its address space.
 
 4. **Use the program to try out some other problems. Can you find the limits of where the program doesn’t work anymore? For example, what happens if the address-space size is bigger than physical memory**
+
+  Does not work when:
+
+  - Address space larger than physical memory
+  - Page size larger than Address Space.
