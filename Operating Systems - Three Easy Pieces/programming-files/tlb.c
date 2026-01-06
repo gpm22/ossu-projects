@@ -55,20 +55,19 @@ double measure_tlb_access_time(int num_pages, int num_trials) {
     warm_up();
     
     long start_time = get_time_usec();
-    
+    int sum = 0;
     for (int trial = 0; trial < num_trials; trial++) {
         for (int i = 0; i < num_pages * jump; i += jump) {
             array[i] += 1;
+            sum += array[i];
         }
     }
-    
     long end_time = get_time_usec();
-    
+    // Print sum to ensure the loop is not optimized away
+    printf("(ignore) Accumulated sum: %d\n", sum);
     free(array);
-    
     long total_time = end_time - start_time;
     long total_accesses = num_trials * num_pages;
-    
     return (total_time * 1000.0) / total_accesses; // Return nanoseconds
 }
 
