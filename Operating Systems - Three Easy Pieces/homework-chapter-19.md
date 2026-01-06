@@ -25,14 +25,14 @@ Figure 19.5 (page 15) shows the average time per access as the number of pages a
 ## Questions
 
 1. **For timing, you’ll need to use a timer (e.g., `gettimeofday()`). How precise is such a timer? How long does an operation have to take in order for you to time it precisely? (this will help determine how many times, in a loop, you’ll have to repeat a page access in order to time it successfully)**
-  `gettimeofday` gives the number of seconds and microseconds since the Epoch, so the precision is of $\pm$​ 1 microsecond. `clock_gettime()` gives seconds and nanoseconds  since the Epoch, so the precision is $\pm$ 1 nanosecond, which is more precise.
-  Thus an operation must take at least 10 nanoseconds to be precisely timed, when using `clock_gettime`.
+    `gettimeofday` gives the number of seconds and microseconds since the Epoch, so the precision is of $\pm$​ 1 microsecond. `clock_gettime()` gives seconds and nanoseconds  since the Epoch, so the precision is $\pm$ 1 nanosecond, which is more precise.
+    Thus an operation must take at least 10 nanoseconds to be precisely timed, when using `clock_gettime`.
 2. **Write the program, called `tlb.c,` that can roughly measure the cost of accessing each page. Inputs to the program should be: the number of pages to touch and the number of trials.**
 
   Code in [`tlb.c`](./programming-files/tlb.c)
 3. **Now write a script in your favorite scripting language (bash?) to run this program, while varying the number of pages accessed from 1 up to a few thousand, perhaps incrementing by a factor of two per iteration. Run the script on different machines and gather some data. How many trials are needed to get reliable measurements?**
-  Code in  [`tlb_experiment.py`](./programming-files/tlb_experiment.py).
-  I have been setting for 1000000 trials and then half of it.
+    Code in  [`tlb_experiment.py`](./programming-files/tlb_experiment.py).
+    I have been setting for 1000000 trials and then half of it.
 
   #### Results
 
@@ -151,9 +151,119 @@ Figure 19.5 (page 15) shows the average time per access as the number of pages a
   ```
 
   ![tlb_analysis_ubuntu_hw_19](./tlb_analysis_ubuntu_hw_19.png)
+Results after changes from question 5 and 6.
+
+```bash
+python3 tlb_experiment.py -m 8096
+=== TLB Size Measurement Experiment ===
+Program: ./tlb
+Max pages: 8096
+Base trials: 1000000
+Step type: mixed
+Runs per measurement: 3
+==================================================
+Testing 25 page counts: [1, 2, 4, 6, 8, 12, 16, 24, 32, 48]...
+
+[  1/ 25] Pages:    1, Trials:  1000000...    7.20 ns (±0.33)
+[  2/ 25] Pages:    2, Trials:  1000000...    8.24 ns (±0.57)
+[  3/ 25] Pages:    4, Trials:  1000000...    8.27 ns (±0.82)
+[  4/ 25] Pages:    6, Trials:  1000000...    7.62 ns (±0.09)
+[  5/ 25] Pages:    8, Trials:  1000000...    7.52 ns (±0.03)
+[  6/ 25] Pages:   12, Trials:  1000000...   14.80 ns (±0.62)
+[  7/ 25] Pages:   16, Trials:  1000000...   18.12 ns (±0.47)
+[  8/ 25] Pages:   24, Trials:  1000000...   19.62 ns (±0.26)
+[  9/ 25] Pages:   32, Trials:  1000000...   20.03 ns (±1.20)
+[ 10/ 25] Pages:   48, Trials:  1000000...   20.73 ns (±0.16)
+[ 11/ 25] Pages:   64, Trials:  1000000...   19.78 ns (±1.90)
+[ 12/ 25] Pages:   96, Trials:   500000...   17.65 ns (±0.67)
+[ 13/ 25] Pages:  128, Trials:   500000...   13.12 ns (±3.16)
+[ 14/ 25] Pages:  192, Trials:   500000...   11.30 ns (±0.06)
+[ 15/ 25] Pages:  256, Trials:   500000...   13.32 ns (±1.33)
+[ 16/ 25] Pages:  384, Trials:   250000...   13.85 ns (±0.85)
+[ 17/ 25] Pages:  512, Trials:   250000...   13.96 ns (±0.46)
+[ 18/ 25] Pages:  768, Trials:   250000...   14.16 ns (±0.39)
+[ 19/ 25] Pages: 1024, Trials:   250000...   15.35 ns (±0.35)
+[ 20/ 25] Pages: 1536, Trials:   125000...   17.15 ns (±0.37)
+[ 21/ 25] Pages: 2048, Trials:   125000...   22.23 ns (±0.23)
+[ 22/ 25] Pages: 3072, Trials:   125000...   26.56 ns (±0.62)
+[ 23/ 25] Pages: 4096, Trials:   125000...   28.18 ns (±0.49)
+[ 24/ 25] Pages: 6144, Trials:   125000...   29.62 ns (±0.41)
+[ 25/ 25] Pages: 8096, Trials:   125000...   29.84 ns (±0.04)
+
+Experiment complete! Successfully measured 25/25 points
+
+============================================================
+TLB ANALYSIS RESULTS
+============================================================
+
+Measurements: 25 data points
+Page range: 1 to 8096 pages
+
+Access Time Statistics:
+  Minimum: 7.20 ns
+  Maximum: 29.84 ns
+  Average: 16.73 ns
+  Median:  15.35 ns
+  Range:   22.63 ns
+
+============================================================
+DETECTED TLB CHARACTERISTICS
+============================================================
+
+Jump 1:
+  Detected at: 8 → 12 pages
+  Increase: 96.8%
+  Estimated TLB size: 8 entries
+  Hit time: 7.52 ns
+  Miss penalty: 7.28 ns
+
+Jump 2:
+  Detected at: 1536 → 2048 pages
+  Increase: 29.6%
+  Estimated TLB size: 1536 entries
+  Hit time: 17.15 ns
+  Miss penalty: 5.08 ns
+
+============================================================
+INFERRED TLB HIERARCHY
+============================================================
+
+L1 TLB:
+  Size: 8 entries
+  Hit time: 7.52 ns
+  Miss penalty: 7.28 ns
+
+L2 TLB:
+  Size: 1536 entries
+  Hit time: 17.15 ns
+  Miss penalty: 5.08 ns
+```
+
+![tlb_analysis_ubuntu_hw_19_2](./tlb_analysis_ubuntu_hw_19_2.png)
+
+We can observe that without the optimizations, the results became more random.
+
 4. **Next, graph the results, making a graph that looks similar to the one above. Use a good tool like ploticus or even zplot. Visualization usually makes the data much easier to digest; why do you think that is?**
-  Code of previous question already contains the plotting.
-  The graph clearly shows the jumps and changes. Just using the numbers is harder to understand that.
+     Code of previous question already contains the plotting.
+     The graph clearly shows the jumps, changes, and trends. Just using the raw numbers is harder to understand that.
+
 5. **One thing to watch out for is compiler optimization. Compilers do all sorts of clever things, including removing loops which increment values that no other part of the program subsequently uses. How can you ensure the compiler does not remove the main loop above from your TLB size estimator?**
-6. **Another thing to watch out for is the fact that most systems today ship with multiple CPUs, and each CPU, of course, has its own TLB hierarchy. To really get good measurements, you have to run your code on just one CPU, instead of letting the scheduler bounce it from one CPU to the next. How can you do that? (hint: look up “pinning a thread” on Google for some clues) What will happen if you don’t do this, and the code moves from one CPU to the other?**
-7. **Another issue that might arise relates to initialization. If you don’t initialize the array a above before accessing it, the first time you access it will be very expensive, due to initial access costs such as demand zeroing. Will this affect your code and its timing? What can you do to counterbalance these potential costs?**
+
+     Key techniques to prevent compiler optimization:
+     1. **Accumulate a result and use it:**
+          Accumulate a value inside the loop (e.g., sum up array accesses) and print or otherwise use the result after the loop. This makes the loop’s effect observable.
+     2. **Use the volatile keyword:**
+          Declare the pointer or variable being accessed as volatile, which tells the compiler not to optimize away accesses to it.
+     3. **Compiler barriers:**
+          Use platform/compiler-specific barriers (like `asm volatile("" ::: "memory");` in GCC/Clang) to prevent certain optimizations, though this is less portable.
+
+4. **Another thing to watch out for is the fact that most systems today ship with multiple CPUs, and each CPU, of course, has its own TLB hierarchy. To really get good measurements, you have to run your code on just one CPU, instead of letting the scheduler bounce it from one CPU to the next. How can you do that? (hint: look up “pinning a thread” on Google for some clues) What will happen if you don’t do this, and the code moves from one CPU to the other?**
+
+     To ensure your code runs on just one CPU, you shall “pin” the process or thread to a specific CPU core. This is called setting the CPU affinity. On Linux, you can use the `sched_setaffinity()` system call to do this in C.
+
+     If you don’t pin your process to a single CPU, the OS scheduler may move it between CPUs. Each CPU has its own TLB, so when your process moves to a different CPU, the TLB will be cold (empty) for your process, causing more TLB misses and making your measurements inaccurate and noisy.
+5. **Another issue that might arise relates to initialization. If you don’t initialize the array a above before accessing it, the first time you access it will be very expensive, due to initial access costs such as demand zeroing. Will this affect your code and its timing? What can you do to counterbalance these potential costs?**
+
+     If you don’t initialize the array before timing, the first access to each page will be slow due to demand paging and zeroing by the OS. This will artificially inflate your timing results.
+
+     To counterbalance this, you should “touch” (initialize) every page of the array before starting your timing loop. This ensures all pages are mapped into memory and any initial costs are paid before measurement begins.

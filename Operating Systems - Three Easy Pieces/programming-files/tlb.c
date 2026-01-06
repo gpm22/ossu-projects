@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -5,6 +6,7 @@
 #include <string.h>
 #include <errno.h>
 #include <math.h>
+#include <sched.h>
 
 // Configuration
 #define MIN_PAGES 1
@@ -128,10 +130,21 @@ void detect_tlb_size(void) {
 int main(int argc, char *argv[]) {
     printf("=== TLB Measurement Tool ===\n");
     printf("Based on Saavedra-Barrera's methodology from OSTEP\n\n");
-    
+
+    // Pin process to CPU 0 for accurate TLB measurement
+    cpu_set_t set;
+    CPU_ZERO(&set);
+    CPU_SET(0, &set);
+    if (sched_setaffinity(0, sizeof(set), &set) != 0) {
+        perror("sched_setaffinity");
+        fprintf(stderr, "Warning: Could not pin process to a single CPU. Results may be noisy.\n");
+    } else {
+        printf("Process pinned to CPU 0 for accurate TLB measurement.\n\n");
+    }
+
     long page_size = get_page_size();
     printf("System page size: %ld bytes\n\n", page_size);
-    
+
     if (argc == 1) {
         // Automatic detection mode
         detect_tlb_size();
@@ -139,19 +152,19 @@ int main(int argc, char *argv[]) {
         // Manual measurement mode
         int num_pages = atoi(argv[1]);
         int num_trials = atoi(argv[2]);
-        
+
         if (num_pages <= 0 || num_trials <= 0) {
             fprintf(stderr, "Both arguments must be positive integers\n");
             return EXIT_FAILURE;
         }
-        
+
         double avg_time = measure_tlb_access_time(num_pages, num_trials);
-        
+
         printf("\n=== MEASUREMENT RESULTS ===\n");
         printf("Pages: %d\n", num_pages);
         printf("Trials: %d\n", num_trials);
         printf("Average TLB access time: %.2f nanoseconds\n", avg_time);
-        
+
         if (page_size == 4096) {
             printf("Address space covered: %d KB\n", num_pages * 4);
         }
@@ -162,6 +175,6 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "\nExample: %s 16 1000000\n", argv[0]);
         return EXIT_FAILURE;
     }
-    
+
     return EXIT_SUCCESS;
 }
