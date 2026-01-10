@@ -9,8 +9,7 @@ Some basic assumptions:
 * The virtual address space for the process in question (assume there is only one) is 1024 pages, or 32 KB
 * physical memory consists of 128 pages
 
-Thus, a virtual address needs 15 bits (5 for the offset, 10 for the VPN).
-A physical address requires 12 bits (5 offset, 7 for the PFN).
+Thus, a virtual address needs 15 bits (5 for the offset, 10 for the VPN). A physical address requires 12 bits (5 offset, 7 for the PFN).
 
 The system assumes a multi-level page table. Thus, the upper five bits of a virtual address are used to index into a page directory; the page directory entry (PDE), if valid, points to a page of the page table. Each page table page holds 32 page-table entries (PTEs). Each PTE, if valid, holds the desired translation (physical frame number, or PFN) of the virtual page in question.
 
@@ -32,8 +31,7 @@ You are given two pieces of information to begin with.
 
 First, you are given the value of the page directory base register (PDBR), which tells you which page the page directory is located upon.
 
-Second, you are given a complete dump of each page of memory. A page dump
-looks like this: 
+Second, you are given a complete dump of each page of memory. A page dump looks like this: 
 
 ```sh
     page 0: 08 00 01 15 11 1d 1d 1c 01 17 15 14 16 1b 13 0b ...
@@ -46,8 +44,7 @@ which shows the 32 bytes found on pages 0, 1, 2, and so forth. The first byte (0
 
 You are then given a list of virtual addresses to translate. 
 
-Use the PDBR to find the relevant page table entries for this virtual page. Then find if it is valid. If so, use the translation to form a final physical address. Using this address, you can find the VALUE that the memory reference
-is looking for.
+Use the PDBR to find the relevant page table entries for this virtual page. Then find if it is valid. If so, use the translation to form a final physical address. Using this address, you can find the VALUE that the memory reference is looking for.
 
 Of course, the virtual address may not be valid and thus generate a fault.
 
@@ -63,6 +60,6 @@ Change the seed to get different problems, as always.
 
 Change the number of virtual addresses generated to do more translations for a given memory dump.
 
-Use -c (or --solve) to show the solutions.
+Use `-c` (or `--solve`) to show the solutions.
 
 Good luck with this monstrosity!
