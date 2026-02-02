@@ -262,7 +262,7 @@ This simulator, `paging-policy.py`, allows you to play around with different pag
   Access: 6  Hit/Miss?  State of Memory? -> Hit
   ```
 
-  
+
 2. **For a cache of size 5, generate worst-case address reference streams for each of the following policies: `FIFO`, `LRU`, and `MRU` (worst-case reference streams cause the most misses possible). For the worst case reference streams, how much bigger of a cache is needed to improve performance dramatically and approach `OPT`?**
 
   #### `FIFO`
@@ -371,5 +371,50 @@ This simulator, `paging-policy.py`, allows you to play around with different pag
 
   For this kind of input, it needs a cache the size of the address list to get near OPT.
 3. **Generate a random trace (i.e., use python and write a script that outputs random addresses, which you can then feed into the simulator). How would you expect the different policies to perform on such a trace?**
-4. **Now generate a trace with some locality. How can you generate such a trace? How does `LRU` perform on it? How much better than `RAND` is `LRU`? How does `CLOCK` do? How about `CLOCK` with different numbers of clock bits?**
+
+   Python Script: [random-tracer.py](./simulation-files/HW-Paging-Policy/random-tracer.py).
+
+   OPT will be the better by far, while the others will probably be really similar.
+
+   #### Results
+
+   ![results](random-trace_hw_22.png)
+
+   The results shows that the OPT hits is almost 60% while the others are around 36%.
+4. **Now generate a trace with some locality. How can you generate such a trace?**
+
+   To generate locality, the trace must contain repeated address that fits the cache. You can have groups of address that are accessed together as **working set.**
+
+   **Example**:
+
+   ```py
+   trace = (
+       [10,11,12,13] * 8 +    # phase 1: small working set
+       [20,21,22,23,24] * 6 + # phase 2: new working set
+       [10,11,12,13] * 5 +    # return to phase 1
+       [5,6,7] * 10           # final tight loop
+   )
+   ```
+
+   But to be better, we will use a script to generate random traces with locality and test it for each policy.
+   **Script**: [locality-tracer.py](./simulation-files/HW-Paging-Policy/locality-tracer.py)
+
+   #### Results
+
+   ![results](locality-trace_hw_22.png)
+
+   **How does `LRU` perform on it?**
+
+   Quite similar to `OPT`! 3% worse, so it is awesome!
+   **How much better than `RAND` is `LRU`?**
+
+   Far better! `RAND` is almost 30% worse than LRU.
+   **How does `CLOCK` do?**
+
+   It does well, 17% worse than LRU, but far better FIFO and RAND.
+   **How about `CLOCK` with different numbers of clock bits?**
+   **Script**: [clock-over-bits.py](./simulation-files/HW-Paging-Policy/clock-over-bits.py)
+   **Result**:
+   ![results](clock-over-bits_hw_22.png)
+   Clock improves with the usage of more bits, but it still is worse than LRU.
 5. **Use a program like `valgrind` to instrument a real application and generate a virtual page reference stream. For example, running `valgrind --tool=lackey --trace-mem=yes ls` will output a nearly-complete reference trace of every instruction and data reference made by the program ls. To make this useful for the simulator above, you’ll have to first transform each virtual memory reference into a virtual page-number reference (done by masking off the offset and shifting the resulting bits downward). How big of a cache is needed for your application trace in order to satisfy a large fraction of requests? Plot a graph of its working set as the size of the cache increases.**
