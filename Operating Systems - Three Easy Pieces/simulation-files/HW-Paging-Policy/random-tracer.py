@@ -1,66 +1,11 @@
-import random
-import subprocess
-import re
 import matplotlib.pyplot as plt
 import numpy as np
 from statistics import mean, stdev
-
-# ────────────────────────────────────────────────
-# Generate one random trace (list of integers)
-# ────────────────────────────────────────────────
-def generate_random_trace(length=30, max_page=9, seed=None):
-    if seed is not None:
-        random.seed(seed)
-    return [random.randint(0, max_page) for _ in range(length)]
-
-# ────────────────────────────────────────────────
-# Format trace as comma-separated string for -a argument
-# ────────────────────────────────────────────────
-def trace_to_arg_string(trace):
-    return ",".join(map(str, trace))
+from trace_utils import generate_random_trace, trace_to_arg_string, run_paging_policy
 
 # ────────────────────────────────────────────────
 # Call paging-policy.py and extract final hit count
 # ────────────────────────────────────────────────
-def run_paging_policy(trace, policy, cache_size=5, maxpage=10, notrace=True):
-    """
-    Calls: python3 paging-policy.py -a <trace> -p <policy> -C <cache_size> ...
-    Returns number of hits (from FINALSTATS line)
-    """
-    trace_str = trace_to_arg_string(trace)
-    notrace_flag = "-c" if notrace else ""   # -c usually means concise/no detailed trace
-
-    cmd = [
-        "python3", "paging-policy.py",
-        "-a", trace_str,
-        "-p", policy,
-        "-C", str(cache_size),
-        "--maxpage", str(maxpage),
-        notrace_flag
-    ]
-
-    try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        output = result.stdout
-
-        # Look for line like: FINALSTATS hits 42   misses 18   hitrate 70.00
-        match = re.search(r"FINALSTATS\s+hits\s+(\d+)\s+misses\s+\d+\s+hitrate", output)
-        if match:
-            hits = int(match.group(1))
-            return hits
-        else:
-            print(f"Warning: could not parse hits from output for {policy}")
-            print("Output was:")
-            print(output)
-            return 0
-
-    except subprocess.CalledProcessError as e:
-        print(f"Error running paging-policy.py for {policy}:")
-        print(e.stderr)
-        return 0
-    except FileNotFoundError:
-        print("Error: paging-policy.py not found in current directory.")
-        return 0
 
 
 # ────────────────────────────────────────────────
@@ -89,7 +34,7 @@ def run_experiments(n_runs=50, trace_length=40, cache_size=5, max_page=9):
                 policy=policy,
                 cache_size=cache_size,
                 maxpage=max_page,
-                notrace=True   # change to False if you want to see trace for debugging
+                notrace=True,
             )
             results[policy].append(hits)
 
