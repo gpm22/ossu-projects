@@ -1,86 +1,11 @@
-import random
-import subprocess
-import re
 import matplotlib.pyplot as plt
 import numpy as np
 from statistics import mean, stdev
-
-# ────────────────────────────────────────────────
-# Locality trace generator (based on Combining Patterns)
-# ────────────────────────────────────────────────
-def generate_locality_trace(length=400, seed=None):
-    if seed is not None:
-        random.seed(seed)
-    
-    trace = []
-    
-    # Phase 1: tight inner loop
-
-    for _ in range(25):
-        trace.extend(list(range(9)) + [random.randint(100, 115)])
-    
-    # Phase 2: larger working set with some repetition
-    ws =  list(range(50, 100))
-    for _ in range(60):
-        trace.append(random.choice(ws))
-        if random.random() < 0.2:
-            trace.append(random.randint(20, 35))  # occasional jump
-    
-    # Phase 3: return to earlier pages + noise
-    trace.extend([4,5,6] * 15 + [random.randint(0,40) for _ in range(20)])
-    
-    # Final tight hotspot
-    trace.extend([1,2,1,3,1,2] * 20)
-    
-    return trace[:length]
-# ────────────────────────────────────────────────
-# Format trace as comma-separated string for -a argument
-# ────────────────────────────────────────────────
-def trace_to_arg_string(trace):
-    return ",".join(map(str, trace))
+from trace_utils import generate_locality_trace, trace_to_arg_string, run_paging_policy
 
 # ────────────────────────────────────────────────
 # Call paging-policy.py and extract final hit count
 # ────────────────────────────────────────────────
-def run_paging_policy(trace, policy, cache_size=5, maxpage=50, notrace=True):
-    """
-    Calls: python3 paging-policy.py -a <trace> -p <policy> -C <cache_size> ...
-    Returns number of hits (from FINALSTATS line)
-    """
-    trace_str = trace_to_arg_string(trace)
-    notrace_flag = "-c" if notrace else ""   # -c usually means concise/no detailed trace
-
-    cmd = [
-        "python3", "paging-policy.py",
-        "-a", trace_str,
-        "-p", policy,
-        "-C", str(cache_size),
-        "--maxpage", str(maxpage),
-        notrace_flag
-    ]
-
-    try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        output = result.stdout
-
-        # Look for line like: FINALSTATS hits 42   misses 18   hitrate 70.00
-        match = re.search(r"FINALSTATS\s+hits\s+(\d+)\s+misses\s+\d+\s+hitrate", output)
-        if match:
-            hits = int(match.group(1))
-            return hits
-        else:
-            print(f"Warning: could not parse hits from output for {policy}")
-            print("Output was:")
-            print(output)
-            return 0
-
-    except subprocess.CalledProcessError as e:
-        print(f"Error running paging-policy.py for {policy}:")
-        print(e.stderr)
-        return 0
-    except FileNotFoundError:
-        print("Error: paging-policy.py not found in current directory.")
-        return 0
 
 
 # ────────────────────────────────────────────────
@@ -108,7 +33,7 @@ def run_experiments(n_runs=50, trace_length=400, cache_size=5, max_page=50):
                 policy=policy,
                 cache_size=cache_size,
                 maxpage=max_page,
-                notrace=True   # change to False for debugging
+                notrace=True,
             )
             results[policy].append(hits)
 
