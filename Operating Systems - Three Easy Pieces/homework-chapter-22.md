@@ -3,7 +3,7 @@
 
 ## Homework (Simulation)
 
-This simulator, `paging-policy.py`, allows you to play around with different page-replacement policies. See the [`README`](./simulation-files/HW-Paging-Policy/README.md) for details.
+This simulator, [`paging-policy.py`](./simulation-files/HW-Paging-Policy/paging-policy.py), allows you to play around with different page-replacement policies. See the [`README`](./simulation-files/HW-Paging-Policy/README.md) for details.
 
 ### Questions
 
@@ -418,3 +418,22 @@ This simulator, `paging-policy.py`, allows you to play around with different pag
    ![results](clock-over-bits_hw_22.png)
    Clock improves with the usage of more bits, but it still is worse than LRU.
 5. **Use a program like `valgrind` to instrument a real application and generate a virtual page reference stream. For example, running `valgrind --tool=lackey --trace-mem=yes ls` will output a nearly-complete reference trace of every instruction and data reference made by the program ls. To make this useful for the simulator above, you’ll have to first transform each virtual memory reference into a virtual page-number reference (done by masking off the offset and shifting the resulting bits downward). How big of a cache is needed for your application trace in order to satisfy a large fraction of requests? Plot a graph of its working set as the size of the cache increases.**
+
+   Result from `valgrind --tool=lackey --trace-mem=yes ls` in [valgrind-lackey-ls_22.txt](valgrind-lackey-ls_22.txt).
+
+   Modified result to use a virtual page-number reference in [transformed_pages_22.txt](transformed_pages_22.txt).
+
+   Code used to generate plots is [valgrind-tracer-plot.py](./simulation-files/HW-Paging-Policy/valgrind-tracer-plot.py).
+
+   #### Results
+
+   ![results](valgrind_hw_22.png)
+
+   
+
+   ![results](valgrind_hw_22_2.png)
+
+With a cache size of 3, it is already enough to reach 90% of hit rate for all the policies. After that it keep increasing slowly towards 100%.
+
+All the policies follows the same curve format, the best obviously is the `OPT`, followed by `LRU`, `CLOCK`, `FIFO`. and `RAND`.
+
