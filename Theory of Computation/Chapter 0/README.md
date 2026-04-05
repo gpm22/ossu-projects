@@ -188,7 +188,98 @@ The error is that if $a$ and $b$ are 1, then $(a - b) = 0$, so the step of divid
 
 ### 0.11
 
-Continue here-
+$S(N) = \sum_{i=1}^n i$.
+
+$C(N) = \sum_{i=1}^n i³$.
+
+1. Prove that $S(n) = \frac n2 (n+1)$
+
+   **Claim**: $\sum_{i=1}^n i = \frac n 2 (n + 1)$
+
+   **Basis**: for $n=1$, $\sum_{i=1}^1 i = 1$ and $\frac 1 2 (1 + 1) = \frac 2 2 = 1$.
+
+   Thus it holds.
+
+   **Induction Step**: We assume that the claim is true for $n = k$ and we prove that the claim is true for $n = k + 1$.
+
+   We can see that for the left side:
+   $$
+   \begin{align}
+   S(n+1) &= \sum_{i=1}^{n+1} i \\
+          &= \sum_{i=1}^{n} i + n + 1 \\
+          &= S(n) + n+1
+   \end{align}
+   $$
+   
+
+   Thus for the right side:
+   $$
+   \begin{align}
+   S(n+1) &= \frac {(n+1)}2 ((n+1)+1)  \\
+          &= \frac 12 ((n+1)^2+(n+1)) \\
+          &= \frac 12 ((n^2 + 2n + 1)+(n+1)) \\
+          &= \frac 12 ((n^2+n) + (2n + 2) ) \\
+          &= \frac {(n^2+n)} 2 + \frac {2n + 2}2 \\
+          &= \frac n2 (n+1) + n + 1 \\
+          &= S(n) + n + 1
+   \end{align}
+   $$
+   Therefore 
+   $$
+   \sum_{i=1}^n i = \frac n 2 (n + 1)
+   $$
+
+2. Prove that $C(n) = \frac {(n^4 + 2n^3 + n^2)}4 = \frac {n^2}4 (n+1)^2$
+
+   **Claim**: $\sum_{i=1}^n i^3 = \frac {n^2}4 (n+1)^2$.
+
+   **Basis**: For $n=1$, $\sum_{i=1}^1 i³ = 1$, $\frac {1^2}4 (1+1)^2 = \frac 14(2)^2 = \frac 44 = 1$.
+
+   Therefore it holds.
+
+   **Induction step:** We assume that the claim is true for $n = k$ and we prove that the claim is true for $n = k + 1$.
+
+   We can see that for the left side:
+   $$
+   \begin{align}
+   C(n+1) &= \sum_{i=1}^{n+1} i ^ 3 \\
+          &= \sum_{i=1}^{n} i ^3 + (n+1) ^3 \\
+          &= C(n) + (n+1)^3
+   \end{align}
+   $$
+   Thus for the right side:
+   $$
+   \begin{align}
+   C(n+1) &= \frac {(n+1)^2}4 ((n+1)+1)^2  \\
+          &= \frac 14 ((n+1)^2+(n+1))^2 \\
+          &= \frac 14 ((n+1)^4 + 2(n+1)^3 + (n+1)^2 ) \\
+          &= \frac 14 (n+1)^2((n+1)^2 + 2(n+1) + 1) \\
+          &= \frac 14 (n^2+2n+1)(n^2+2n+1 +2n + 2 + 1) \\
+          &= \frac 14 (n^2+2n+1)(n^2+4n+4) \\
+          &= \frac 14 (n^4 + 4n^3 + 4n^2 + 2n^3 +  8n^2 + 8n + n^2 + 4n + 4) \\
+          &= \frac 14 (n^4 + 6n^3 + 13n^2 + 12 n + 4) \\
+          &= \frac 14 (n^4 + 2n^3 + n^2) + \frac 14 (4n^3+12n^2+12n+4) \\
+          &= \frac {n^2}4 (n^2 + 2n + 1) + \frac 44 (n^3+3n^2+3n+1) \\
+          &= \frac {n^2}4 (n+1)^2 + \frac 44 (n^3+3n^2+3n+1) \\
+          &= \frac {n^2}4 (n+1)^2 + (n^2+2n+1)(n+1) \\
+          &= \frac {n^2}4 (n+1)^2 + (n+1)^3 \\
+          &= C(n) + (n+1)^3
+   \end{align}
+   $$
+   Therefore 
+   $$
+   \sum_{i=1}^n i^3 = \frac {n^2}4 (n+1)^2
+   $$
+
+3. We can than conclude that 
+   $$
+   \begin{align}
+   C(n) &= \frac {n^2}4 (n+1)^2 \\
+        &= \left( \frac {n(n+1)}4 \right)^2 \\
+        &= S(n)^2
+   \end{align}
+   $$
+   
 
 ### 0.12
 
@@ -197,6 +288,8 @@ The error is that it does not prove for $h = k+1$ any time, it only do for $h = 
 ### 0.13
 
 **Claim:** For any graph with two or more nodes, there are at least two nodes that have equal degrees.
+
+Continue here.
 
 ### 0.14
 
