@@ -309,4 +309,65 @@ Every case is covered, therefore it is proved that for any graph with two or mor
 
 ### 0.14
 
+Here we prove the **Ramsey’s theorem.**
+
+Let's define:
+
+1.  A **clique** of a graph is a subgraph in which **every two nodes of this subgraph are connected by an edge**.
+2.  An **anti-clique** of a graph is a subgraph in which **every two nodes of this graph are not connected by an edge**.
+
+The Ramsey's theorem states that **every graph with $n$ nodes contains either a clique or an anti-clique with at least $\frac{\log_2 n}2$**.
+
+Continue here.
+
 ### 0.15
+
+**Theorem 0.25**
+$$
+P_t = PM^t - Y \left(\frac {M^t-1}{M-1} \right) \\
+M = 1 + I/12
+$$
+Where:
+
+- $P$ is the **principal**.
+  - It is the amount of the original loan.
+- $I$ is the yearly **interest reate**.
+- $Y$ is the **monthly payment**.
+- $P_t$​ is the amount of the loan outstanding after the $t$th month.
+
+Joining them
+$$
+\begin{align}
+P_t &= P(1 + I/12)^t - Y \left(\frac {(1 + I/12)^t-1}{1 + I/12-1} \right) \\
+    &= P\left(\frac{12 + I}{12}\right)^t - Y \left(\frac {((12 + I)/12)^t-1}{I/12} \right) \\
+    &= P\left(\frac{12 + I}{12}\right)^t - 12Y \left(\frac {((12 + I)/12)^t-1}{I} \right) \\
+\end{align}
+$$
+Assuming that $P_t$ is 0,
+$$
+P\left(\frac{12 + I}{12}\right)^t - 12Y \left(\frac {((12 + I)/12)^t-1}{I} \right) = 0
+$$
+We then isolate $Y$:
+$$
+12Y \left(\frac {((12 + I)/12)^t-1}{I} \right) = P\left(\frac{12 + I}{12}\right)^t
+$$
+
+$$
+\begin{align}
+Y &= \frac P{12} \left(\frac{12 + I}{12}\right)^t\left(\frac I{((12 + I)/12)^t-1}\right) \\
+  &= \frac {PI}{12}\left(\frac {((12 + I)/12)^t}{((12 + I)/12)^t-1}\right) \\
+  &= \frac {PI}{12}\left(\frac 1{1-((12 + I)/12)^{-t}}\right) \\
+\end{align} 
+$$
+
+For 30-year mortage with 360 monthly payments on an initial loan of $100,000.00 and 5% annual interest rate:
+$$
+\begin{align}
+Y &= \frac {100.000 \times 0.05}{12}\left(\frac 1{1-((12 + 0.05)/12)^{-360}}\right) \\
+  &= \frac {5000}{12}\left(\frac 1{1-(12.05/12)^{-360}}\right) \\
+  &= \frac {1.250}{3}\left(\frac 1{1-(241/240)^{-360}}\right) \\
+  &= \frac {1.250}{3}\left(\frac 1{1-(240/241)^{360}}\right) \\
+  &= 536.82
+\end{align} 
+$$
+The monthly payment will be **$ 536.82**.
