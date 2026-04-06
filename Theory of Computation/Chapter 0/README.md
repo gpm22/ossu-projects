@@ -29,7 +29,6 @@
    \{n | n \in \Z \and n > 5 \}
    $$
    
-
 3. The set containing all natural numbers that are less than 5
    $$
    \{n | n \in \N \and n < 5 \}
@@ -39,19 +38,16 @@
    \{0, 1, 2, 3, 4 \}
    $$
    
-
 4. The set containing the string `aba`
    $$
    \{\text{aba}\}
    $$
    
-
 5. The set containing the empty string
    $$
    \{\text{""}\}
    $$
    
-
 6. The set containing nothing at all.
    $$
    \empty
@@ -287,9 +283,29 @@ The error is that it does not prove for $h = k+1$ any time, it only do for $h = 
 
 ### 0.13
 
-**Claim:** For any graph with two or more nodes, there are at least two nodes that have equal degrees.
+We use **induction** to prove that for any graph with two or more nodes, there are at least two nodes that have equal degrees.
 
-Continue here.
+**Basis**: For a graph with $v = 2$ nodes it is trivial to see that the claim holds, because for the case without edges both vertex have degree 0, while in the case with a edge, both vertex have degree 1.
+
+**Induction Step**: We assume that for any graph with $v > n$ nodes it holds and we show that it holds also for $v = n$,
+
+Let's $G_{n+1}$ a graph with $n+1$ nodes and we will build $G_n$, a graph with $n$ nodes, from it by removing a node.
+
+This can create three different cases:
+
+1. **$G_{n+1}$ has a vertex $v$ of degree $0$.**
+
+   Then we can simply remove $v$, which results in a graph with $n$ vertex holding the same degree, so the claim holds for this case, as we assumed it holds for $G_{n+1}$ .
+
+2. **$G_{n+1}$ has a vertex $v$ of degree $n$.**
+
+   Removing $v$ will decrease the degree by 1 for all the remaining nodes in $G_n$. So it holds for this case too.
+
+3. **$G_{n+1}$ has no vertex $v$ of degree $0$ or $n$.**
+
+   Then we remove a random node, which results in $G_n$, where every node has a degree in the set $\{1, 2, \dots, n-2 \}$. As $G_{n}$ has $n$ vertices, but the degree set only contains $n-2$ values, by the pigeonhole principle, at least two vertices have the same degree. 
+
+Every case is covered, therefore it is proved that for any graph with two or more nodes, there are at least two nodes that have equal degrees.
 
 ### 0.14
 
