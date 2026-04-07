@@ -316,9 +316,31 @@ Let's define:
 1.  A **clique** of a graph is a subgraph in which **every two nodes of this subgraph are connected by an edge**.
 2.  An **anti-clique** of a graph is a subgraph in which **every two nodes of this graph are not connected by an edge**.
 
-The Ramsey's theorem states that **every graph with $n$ nodes contains either a clique or an anti-clique with at least $\frac{\log_2 n}2$**.
+The Ramsey's theorem states that **every graph with $n$ nodes contains either a clique or an anti-clique with at least $\frac{\log_2 n}2$ nodes**.
 
-Continue here.
+We prove the Ramsey's theorem with a **proof by construction**.
+
+The idea is to create a **clique** $C$ and an **anti-clique** $A$ from a given graph $G$.
+
+Let's $V$ be the set of all nodes of $G$ , $V^{'}$ the set of all nodes removed from $G$, $\deg(v)$ is the degree of a vertex $v$ in the remaining graph without the nodes in $V^{'}$.
+
+To build $C$ and $A$ we execute the following steps on each node $v \in V \and v \notin V^{'}$: 
+
+1. Compute $\deg(v)$.
+2. Remove $v$ from $V$ and added to $V^{'}$.
+3. If $\deg(v) > \frac {|V-V^{'}|}2$, add $v$ to $C$, otherwise add it to $A$.
+   - We do this to maximize $C$ or $A$, nor both, as the nodes added to $C$ are pairwise adjacent (forming a clique) and that the vertices added to $A$ are pairwise non‑adjacent (forming an anti‑clique).
+4. If it was added to $C$, remove from $V$ all nodes that are NOT connected to $v$ from $V$ and add them to $V^{'}$.
+   - As those nodes will not maximize $C$.
+5. If it was added to $A$, remove from $V$ all nodes that are connected to $v$ from $V$ and add them to $V^{'}$. 
+   - As those nodes will not maximize $A$.
+6. Repeat all steps until $V$ is empty.
+
+At most half plus one of the remaining nodes are removed at each iteration, so at least $\log_2 n$ steps must happen before emptying $V$.
+
+Also each iteration add one node to either $C$ or $A$, thus at least one of them must have $\frac {\log_2 n}2$ nodes or more.
+
+Therefore, the **Ramsey's theorem** holds for all cases and is proved.
 
 ### 0.15
 
