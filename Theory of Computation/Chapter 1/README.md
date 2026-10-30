@@ -1,4 +1,4 @@
-# 1 - Regular Langues
+# 1 - Regular Languages
 
 ## Exercises 
 
@@ -58,7 +58,72 @@
 
 ### 1.4
 
-- Continue here, page 107.
+We use the same idea for union, but changing $F$.
+
+Let $M_1$ recognize $A_1$, where $M_1 = (Q_1, Σ, δ_1, q_1, F_1)$, and $M_2$ recognize $A_2$, where $M_2 = (Q_2, Σ, δ_2, q_2, F_2)$. 
+
+Construct $M$ to recognize $A_1 \cap A_2$, where $M = (Q, Σ, δ, q_0, F)$.
+
+1. $Q = \{(r_1, r_2)| r_1 ∈ Q_1 \text{ and } r_2 ∈ Q_2\}$.
+2.  For each $(r_1, r_2) ∈ Q$ and each $a ∈ Σ$, let $δ (r_1, r_2), a = δ1(r_1, a), δ2(r_2, a)$.
+3. $q_0$ is the pair $(q_1, q_2)$.
+4. $F = F_1 \times F_2$.
+
+##### a. $\{ w| w \text{ has at least three a’s and at least two b’s}\}$
+
+$M_1 = \{ \{q_1, q_2, q_3, q_4\}, \{a, b\}, \delta_1, q_1, \{q_4\} \}$
+
+$\delta_1$
+
+|       | $a$   | $b$   |
+| ----- | ----- | ----- |
+| $q_1$ | $q_2$ | $q_1$ |
+| $q_2$ | $q_3$ | $q_2$ |
+| $q_3$ | $q_4$ | $q_3$ |
+| $q_4$ | $q_4$ | $q_4$ |
+
+$M_2 = \{ \{q_5, q_6, q_7\}, \{a, b\}, \delta_2, q_5, \{q_7\} \}$
+
+$\delta_1$
+
+|       | $a$   | $b$   |
+| ----- | ----- | ----- |
+| $q_5$ | $q_5$ | $q_6$ |
+| $q_6$ | $q_6$ | $q_7$ |
+| $q_7$ | $q_7$ | $q_7$ |
+
+$\{ w| M_1 \cap M_2 \} = Q, \{a, b\}, \delta, (q_1, q_5), \{(q_4, q_7\} \}$$
+
+$\delta$
+
+| Q            | $a$          | $b$          |
+| ------------ | ------------ | ------------ |
+| $(q_1, q_5)$ | $(q_2, q_5)$ | $(q_1, q_6)$ |
+| $(q_1, q_6)$ | $(q_2, q_6)$ | $(q_1, q_7)$ |
+| $(q_1, q_7)$ | $(q_2, q_7)$ | $(q_1, q_7)$ |
+| $(q_2, q_5)$ | $(q_3, q_5)$ | $(q_2, q_6)$ |
+| $(q_2, q_6)$ | $(q_3, q_6)$ | $(q_2, q_7)$ |
+| $(q_2, q_7)$ | $(q_3, q_7)$ | $(q_2, q_7)$ |
+| $(q_3, q_5)$ | $(q_4, q_5)$ | $(q_3, q_6)$ |
+| $(q_3, q_6)$ | $(q_4, q_6)$ | $(q_3, q_7)$ |
+| $(q_3, q_7)$ | $(q_4, q_7)$ | $(q_3, q_7)$ |
+| $(q_4, q_5)$ | $(q_4, q_5)$ | $(q_4, q_6)$ |
+| $(q_4, q_6)$ | $(q_4, q_6)$ | $(q_4, q_7)$ |
+| $(q_4, q_7)$ | $(q_4, q_7)$ | $(q_4, q_7)$ |
+
+
+
+#####  b. $\{w| w \text{ has exactly two a’s and at least two b’s}\}$
+
+##### c. $\{w| w \text{ has an even number of a’s and one or two b’s}\}$
+
+##### d. $\{w| w \text{ has an even number of a’s and each a is followed by at least one b}\}$
+
+##### e. $\{w| w \text{ starts with an a and has at most one b}\}$
+
+##### f. $\{w| w \text{ has an odd number of a’s and ends with a b}\}$
+
+##### g. $\{w| w \text{ has even length and an odd number of a’s}\}$
 
 ### 1.5
 
