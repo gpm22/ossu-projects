@@ -442,7 +442,71 @@ $\overline M = \{ \{q_1, q_2, q_3\}, \{a, b\}, \delta_1, q_1, \{q_1, q_3\} \}$
 
 ### 1.6
 
+##### a. $\{w| \text{ w begins with a 1 and ends with a 0}\}$
 
+$M = \{ \{q_1, q_2, q_3, q_4\}, \{0, 1\}, \delta_1, q_1, \{q_2\} \}$
+
+$\delta_1$
+
+|       | $1$   | $0$   |
+| ----- | ----- | ----- |
+| $q_1$ | $q_2$ | $q_4$ |
+| $q_2$ | $q_3$ | $q_2$ |
+| $q_3$ | $q_3$ | $q_2$ |
+| $q_4$ | $q_4$ | $q_4$ |
+
+##### b. $\{w| \text{ w contains at least three 1s}\}$
+
+$M = \{ \{q_1, q_2, q_3, q_4\}, \{0, 1\}, \delta_1, q_1, \{q_4\} \}$
+
+$\delta_1$
+
+|       | $1$   | $0$   |
+| ----- | ----- | ----- |
+| $q_1$ | $q_2$ | $q_1$ |
+| $q_2$ | $q_3$ | $q_2$ |
+| $q_3$ | $q_4$ | $q_3$ |
+| $q_4$ | $q_4$ | $q_4$ |
+
+##### 
+
+##### c. $\{w| \text{ w contains the substring 0101 (i.e., w = x0101y for some x and y)}\}$
+
+$M = \{ \{q_1, q_2, q_3, q_4, q_5\}, \{0, 1\}, \delta_1, q_1, \{q_5\} \}$
+
+$\delta_1$
+
+|       | $0$   | $1$   |
+| ----- | ----- | ----- |
+| $q_1$ | $q_2$ | $q_1$ |
+| $q_2$ | $q_2$ | $q_3$ |
+| $q_3$ | $q_4$ | $q_1$ |
+| $q_4$ | $q_2$ | $q_5$ |
+| $q_5$ | $q_5$ | $q_5$ |
+
+##### d. $\{w| \text{ w has length at least 3 and its third symbol is a 0}\}$
+
+Continue here
+
+##### e. $\{w| \text{ w starts with 0 and has odd length, or starts with 1 and has even length}\}$
+
+##### f. $\{w| \text{ w doesn’t contain the substring 110}\}$
+
+##### g. $\{w| \text{ the length of w is at most 5}\}$
+
+##### h. $\{w| \text{ w is any string except 11 and 111}\}$
+
+##### i. $\{w| \text{ every odd position of w is a 1}\}$
+
+##### j. $\{w| \text{ w contains at least two 0s and at most one 1} \}$
+
+##### k. $\{ε, 0\}$
+
+##### l. $\{w| w \text{ contains an even number of 0s, or contains exactly two 1s} \}$
+
+##### m. The empty set
+
+##### n. All strings except the empty string
 
 ### 1.7
 
