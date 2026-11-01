@@ -1016,6 +1016,12 @@ $\delta$
 
 ### 1.11
 
+We prove by construction that every NFA can be converted to an equivalent one that has a single accept state.
+
+We add a new state $q_\text{final}$, where all previous accept states now point with $\epsilon$, so all previous accept states automatically move to the new unique one, which does not have any outgoing transition.
+
+QED
+
 ### 1.12
 
 ### 1.13
