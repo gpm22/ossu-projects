@@ -1108,7 +1108,59 @@ $M = \{\{q_1, q_2, q_3, q_4\}, \{0, 1\}, \delta_1, q_1, \{q_1, q_2, q_3\} \}$
 
 ### 1.14
 
+##### a
+
+This is literally demonstrated in the 1.13, thus demonstrating that regular languages is closed under complement.
+
+##### b
+
+As NFAs do need to have all possible states combinations, the complement of a NFA need to add those missing states needed. 
+
+An example is $0^*$, which is 
+
+$M = \{\{q_1\}, \{0, 1\}, \delta_1, q_1, \{q_1\} \}$
+
+$\delta_1$
+
+|       | $0$       | $1$  | $\epsilon$ |
+| ----- | --------- | ---- | ---------- |
+| $q_1$ | $\{q_1\}$ | {}   | $\{q_1\}$  |
+
+Just removing $q_1$ from the accept state as $\{\{q_1\}, \{0, 1\}, \delta_1, q_1, \{\} \}$  does not does the job. Because this NFA does not recognize anything, instead of recognizing anything that is not $0^*$, like 101.
+
+As any NFA can be transformed in a DFA, the class of languages recognized by NFAs are closed under complement.
+
 ### 1.15
+
+The problem of just making the initial state an accepted state instead of adding a new one, is that anything keep looping in the initial state, like accepting a substring, that is not accepted by the language is now accepted.
+
+An example is for $M = \text{recoginizes the substring 01}$, to implemet it we need
+
+$M_1 = \{\{q_1, q_2, q_3\}, \{0, 1\}, \delta_1, q_1, \{q_3\} \}$
+
+$\delta_1$
+
+|       | $0$   | $1$   | $\epsilon$ |
+| ----- | ----- | ----- | ---------- |
+| $q_1$ | $\{q_2\}$ | $\{q_1\}$ | {}         |
+| $q_2$ | $\{q_1\}$ | $\{q_3\}$ | {}         |
+| $q_3$ | $\{q_3\}$ | $\{q_3\}$ | {}         |
+
+
+
+Applying the construction results in 
+
+$M_2 = \{\{q_1, q_2, q_3\}, \{0, 1\}, \delta_2, q_1, \{q_3, q_1\} \}$
+
+$\delta_2$
+
+|       | $0$   | $1$   | $\epsilon$ |
+| ----- | ----- | ----- | ---------- |
+| $q_1$ | $\{q_2\}$ | $\{q_1\}$ | {}         |
+| $q_2$ | $\{q_1\}$ | $\{q_3\}$ | {}         |
+| $q_3$ | $\{q_3\}$ | $\{q_3\}$ | $\{q_1\}$         |
+
+which know recognizes 1, which is definitely not 01, which proves that the construction does not work as `*`.
 
 ### 1.16
 
