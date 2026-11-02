@@ -1062,26 +1062,24 @@ $\delta_3$
 | $q_6$ | $q_6$ | $q_7$ |
 | $q_7$ | $q_7$ | $q_7$ |
 
-
 $D = M_1 \cap M_2 \cap M_3 = \{Q_1 \times Q_2 \times Q_3, \{a, b\}, \delta_3, (q_1, q_3, q_5), \{(q_1, q_4, q_5), (q_1, q_4, q_6)\} \}$
 
 baa
 
-|       | $a$   | $b$   |
-| ----- | ----- | ----- |
-| $(q_1, q_3, q_5)$ | $(q_2, q_3, q_6)$  | $(q_1, q_4, q_5)$ |
-| $(q_1, q_3, q_6)$ | $(q_2, q_3, q_6)$  | $(q_1, q_4, q_7)$ |
-| $(q_1, q_3, q_7)$ | $(q_2, q_3, q_7)$  | $(q_1, q_4, q_7)$ |
-| $(q_1, q_4, q_5)$ | $(q_2, q_4, q_6)$  | $(q_1, q_3, q_5)$ |
-| $(q_1, q_4, q_6)$ | $(q_2, q_4, q_6)$  | $(q_1, q_3, q_7)$ |
-| $(q_1, q_4, q_7)$ | $(q_2, q_4, q_7)$  | $(q_1, q_3, q_7)$ |
-| $(q_2, q_3, q_5)$ | $(q_1, q_3, q_6)$  | $(q_2, q_4, q_5)$ |
-| $(q_2, q_3, q_6)$ | $(q_1, q_3, q_6)$  | $(q_2, q_4, q_7)$ |
-| $(q_2, q_3, q_7)$ | $(q_1, q_3, q_7)$  | $(q_2, q_4, q_7)$ |
-| $(q_2, q_4, q_5)$ | $(q_1, q_4, q_6)$  | $(q_2, q_3, q_5)$ |
-| $(q_2, q_4, q_6)$ | $(q_1, q_4, q_6)$  | $(q_2, q_3, q_7)$ |
-| $(q_2, q_4, q_7)$ | $(q_1, q_4, q_7)$  | $(q_2, q_3, q_7)$ |
-
+|                   | $a$               | $b$               |
+| ----------------- | ----------------- | ----------------- |
+| $(q_1, q_3, q_5)$ | $(q_2, q_3, q_6)$ | $(q_1, q_4, q_5)$ |
+| $(q_1, q_3, q_6)$ | $(q_2, q_3, q_6)$ | $(q_1, q_4, q_7)$ |
+| $(q_1, q_3, q_7)$ | $(q_2, q_3, q_7)$ | $(q_1, q_4, q_7)$ |
+| $(q_1, q_4, q_5)$ | $(q_2, q_4, q_6)$ | $(q_1, q_3, q_5)$ |
+| $(q_1, q_4, q_6)$ | $(q_2, q_4, q_6)$ | $(q_1, q_3, q_7)$ |
+| $(q_1, q_4, q_7)$ | $(q_2, q_4, q_7)$ | $(q_1, q_3, q_7)$ |
+| $(q_2, q_3, q_5)$ | $(q_1, q_3, q_6)$ | $(q_2, q_4, q_5)$ |
+| $(q_2, q_3, q_6)$ | $(q_1, q_3, q_6)$ | $(q_2, q_4, q_7)$ |
+| $(q_2, q_3, q_7)$ | $(q_1, q_3, q_7)$ | $(q_2, q_4, q_7)$ |
+| $(q_2, q_4, q_5)$ | $(q_1, q_4, q_6)$ | $(q_2, q_3, q_5)$ |
+| $(q_2, q_4, q_6)$ | $(q_1, q_4, q_6)$ | $(q_2, q_3, q_7)$ |
+| $(q_2, q_4, q_7)$ | $(q_1, q_4, q_7)$ | $(q_2, q_3, q_7)$ |
 
 ##### Regular Expression
 
@@ -1114,19 +1112,19 @@ This is literally demonstrated in the 1.13, thus demonstrating that regular lang
 
 ##### b
 
-As NFAs do need to have all possible states combinations, the complement of a NFA need to add those missing states needed. 
+As NFAs do need to have all possible states combinations, the complement of a NFA need to add those missing states needed.
 
-An example is $0^*$, which is 
+An example is $0^*$, which is
 
 $M = \{\{q_1\}, \{0, 1\}, \delta_1, q_1, \{q_1\} \}$
 
 $\delta_1$
 
-|       | $0$       | $1$  | $\epsilon$ |
-| ----- | --------- | ---- | ---------- |
-| $q_1$ | $\{q_1\}$ | {}   | $\{q_1\}$  |
+|       | $0$       | $1$ | $\epsilon$ |
+| ----- | --------- | --- | ---------- |
+| $q_1$ | $\{q_1\}$ | {}  | $\{q_1\}$  |
 
-Just removing $q_1$ from the accept state as $\{\{q_1\}, \{0, 1\}, \delta_1, q_1, \{\} \}$  does not does the job. Because this NFA does not recognize anything, instead of recognizing anything that is not $0^*$, like 101.
+Just removing $q_1$ from the accept state as $\{\{q_1\}, \{0, 1\}, \delta_1, q_1, \{\} \}$ does not does the job. Because this NFA does not recognize anything, instead of recognizing anything that is not $0^*$, like 101.
 
 As any NFA can be transformed in a DFA, the class of languages recognized by NFAs are closed under complement.
 
@@ -1140,25 +1138,23 @@ $M_1 = \{\{q_1, q_2, q_3\}, \{0, 1\}, \delta_1, q_1, \{q_3\} \}$
 
 $\delta_1$
 
-|       | $0$   | $1$   | $\epsilon$ |
-| ----- | ----- | ----- | ---------- |
+|       | $0$       | $1$       | $\epsilon$ |
+| ----- | --------- | --------- | ---------- |
 | $q_1$ | $\{q_2\}$ | $\{q_1\}$ | {}         |
 | $q_2$ | $\{q_1\}$ | $\{q_3\}$ | {}         |
 | $q_3$ | $\{q_3\}$ | $\{q_3\}$ | {}         |
 
-
-
-Applying the construction results in 
+Applying the construction results in
 
 $M_2 = \{\{q_1, q_2, q_3\}, \{0, 1\}, \delta_2, q_1, \{q_3, q_1\} \}$
 
 $\delta_2$
 
-|       | $0$   | $1$   | $\epsilon$ |
-| ----- | ----- | ----- | ---------- |
+|       | $0$       | $1$       | $\epsilon$ |
+| ----- | --------- | --------- | ---------- |
 | $q_1$ | $\{q_2\}$ | $\{q_1\}$ | {}         |
 | $q_2$ | $\{q_1\}$ | $\{q_3\}$ | {}         |
-| $q_3$ | $\{q_3\}$ | $\{q_3\}$ | $\{q_1\}$         |
+| $q_3$ | $\{q_3\}$ | $\{q_3\}$ | $\{q_1\}$  |
 
 which know recognizes 1, which is definitely not 01, which proves that the construction does not work as `*`.
 
@@ -1170,21 +1166,21 @@ $M_\text{NFA} = \{\{q_1, q_2\}, \{a, b\}, \delta_\text{NFA}, q_1, \{q_1\} \}$
 
 $\delta_\text{NFA}$
 
-|       | $a$  | $b$  | $\epsilon$ |
-| ----- | ----- | ----- | ---------- |
+|       | $a$            | $b$       | $\epsilon$ |
+| ----- | -------------- | --------- | ---------- |
 | $q_1$ | $\{q_1, q_2\}$ | $\{q_2\}$ | {}         |
-| $q_2$ | $\{\}$ | $\{q_1\}$ | {}         |
+| $q_2$ | $\{\}$         | $\{q_1\}$ | {}         |
 
 $M_\text{DFA} = \{\{q_1, q_2, q_{12},  q_\empty\}, \{a, b\}, \delta_\text{DFA}, q_1, \{q_1, q_{12}\} \}$
 
 $\delta_\text{DFA}$
 
-|       | $a$  | $b$  | 
-| ----- | ----- | ----- | 
-| $q_1$ | $q_{12}$ | $q_2$ |
-| $q_2$ | $q_\empty$ | $q_1$ |
-| $q_{12}$ | $q_{12}$ | $q_{12}$ |
-| $q_\empty$ | $q_\empty$ | $q_1$ |
+|            | $a$        | $b$      |
+| ---------- | ---------- | -------- |
+| $q_1$      | $q_{12}$   | $q_2$    |
+| $q_2$      | $q_\empty$ | $q_1$    |
+| $q_{12}$   | $q_{12}$   | $q_{12}$ |
+| $q_\empty$ | $q_\empty$ | $q_1$    |
 
 ##### b)
 
@@ -1192,27 +1188,31 @@ $M_\text{NFA} = \{\{q_1, q_2, q_3\}, \{a, b\}, \delta_\text{NFA}, q_1, \{q_2\} \
 
 $\delta_\text{NFA}$
 
-|       | $a$  | $b$  | $\epsilon$ |
-| ----- | ----- | ----- | ---------- |
-| $q_1$ | $\{q_3\}$ | $\{\}$ | $\{q_2\}$ |
-| $q_2$ | $\{q_1\}$ | $\{\}$ | $\{\}$   |
-| $q_3$ | $\{q_2\}$ | $\{q_2, q_3\}$ | $\{\}$ |
+|       | $a$       | $b$            | $\epsilon$ |
+| ----- | --------- | -------------- | ---------- |
+| $q_1$ | $\{q_3\}$ | $\{\}$         | $\{q_2\}$  |
+| $q_2$ | $\{q_1\}$ | $\{\}$         | $\{\}$     |
+| $q_3$ | $\{q_2\}$ | $\{q_2, q_3\}$ | $\{\}$     |
 
 $M_\text{DFA} = \{\{q_1, q_2, q_3, q_{12} q_{13}, q_{23},, q_\empty\}, \{a, b\}, \delta_\text{DFA}, q_{12}, \{q_2, q_{12}, q_{23} \} \}$
 
 $\delta_\text{NFA}$
 
-|       | $a$  | $b$  | 
-| ----- | ----- | ----- | 
-| $q_1$ | $q_3$ | $q_\empty$ | 
-| $q_2$ | $q_1$ | $q_\empty$ | 
-| $q_3$ | $q_2$ | $q_{23}$ | 
-| $q_{12}$ | $q_{13}$ | $q_\empty$ |
-| $q_{13}$ | $q_{23}$ | $q_{23}$ | 
-| $q_{23}$ | $q_{12}$ | $q_{23}$ | 
-| $q_\empty$ | $q_\empty$ | $q_\empty$ | 
+|            | $a$        | $b$        |
+| ---------- | ---------- | ---------- |
+| $q_1$      | $q_3$      | $q_\empty$ |
+| $q_2$      | $q_1$      | $q_\empty$ |
+| $q_3$      | $q_2$      | $q_{23}$   |
+| $q_{12}$   | $q_{13}$   | $q_\empty$ |
+| $q_{13}$   | $q_{23}$   | $q_{23}$   |
+| $q_{23}$   | $q_{12}$   | $q_{23}$   |
+| $q_\empty$ | $q_\empty$ | $q_\empty$ |
 
 ### 1.17
+
+##### a. Give an NFA recognizing the language $(01 ∪ 001 ∪ 010)^∗$
+
+##### b. Convert this NFA to an equivalent DFA. Give only the portion of the DFA that is reachable from the start state.
 
 ### 1.18
 
