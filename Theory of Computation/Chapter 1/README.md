@@ -1302,9 +1302,9 @@ $\delta_3$
 | $q_6$ | $\{q_7\}$           | $\{\}$    | $\{\}$     |
 | $q_7$ | $\{\}$              | $\{\}$    | $\{\}$     |
 
-$M = \{\{q_1, q_2, q_3, q_4, q_5, q_6\}, \{0, 1\}, \delta, q_1, \{q_6\} \}$
+$M_\text{NFA} = \{\{q_1, q_2, q_3, q_4, q_5, q_6\}, \{0, 1\}, \delta_\text{NFA}, q_1, \{q_6\} \}$
 
-$\delta$
+$\delta_\text{NFA}$
 
 |       | $0$                 | $1$       | $\epsilon$ |
 | ----- | ------------------- | --------- | ---------- |
@@ -1315,9 +1315,22 @@ $\delta$
 | $q_5$ | $\{q_6\}$           | $\{\}$    | $\{\}$     |
 | $q_6$ | $\{\}$              | $\{\}$    | $\{\}$     |
 
-$M$ is the final simplifed NFA version.
+$M_\text{NFA}$ is the final simplifed NFA version.
 
 ##### b. Convert this NFA to an equivalent DFA. Give only the portion of the DFA that is reachable from the start state.
+
+$M_\text{DFA} = \{\{q_1, q_2, q_3, q_4, q_5, q_6\}, \{0, 1\}, \delta_\text{DFA}, q_1, \{q_4, q_5\} \}$
+
+$\delta_\text{DFA}$
+
+|       | $0$   | $1$   |
+| ----- | ----- | ----- |
+| $q_1$ | $q_2$ | $q_6$ |
+| $q_2$ | $q_3$ | $q_4$ |
+| $q_3$ | $q_6$ | $q_5$ |
+| $q_4$ | $q_5$ | $q_6$ |
+| $q_5$ | $q_6$ | $q_6$ |
+| $q_6$ | $q_6$ | $q_6$ |
 
 ### 1.18
 
@@ -1344,3 +1357,6 @@ $M$ is the final simplifed NFA version.
 ### 1.29
 
 ### 1.30
+
+$$
+$$
