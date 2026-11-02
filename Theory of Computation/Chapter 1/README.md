@@ -1334,6 +1334,62 @@ $\delta_\text{DFA}$
 
 ### 1.18
 
+##### a. $\{w| w\text{ begins with a 1 and ends with a 0}\}$ 
+
+$1\{0, 1\}^*0$
+
+##### b. $\{w| w\text{ contains at least three 1s}\}$ 
+
+$(\{0, 1\}^*1)^3\{0, 1\}^*$
+
+##### c. $\{w| w\text{ contains the substring 0101 (i.e., w = x0101y for some x and y)}\}$ 
+
+$\{0, 1\}^*0101\{0, 1\}^*$
+
+##### d. $\{w| w\text{ has length at least 3 and its third symbol is a 0}\}$ 
+
+$\{0, 1\}^20\{0, 1\}^*$
+
+##### e. $\{w| w\text{ starts with 0 and has odd length, or starts with 1 and has even length}\}$ 
+
+$(0 \cup 1\{0, 1\})\{0, 1\}^{2*}$
+
+##### f. $\{w| w\text{ doesn’t contain the substring 110}\}$ 
+
+$\overline(110)$
+
+##### g. $\{w| the length of w\text{ is at most 5}\}$ 
+
+$1\{\epsilon, 0, 1\}^5$
+
+##### h. $\{w| w\text{ is any string except 11 and 111}\}$ 
+
+$\overline(11 \cup 111)$
+
+##### i. $\{w| every odd position of w\text{ is a 1}\}$ 
+
+$(1\{\epsilon, 0, 1\})^*$
+
+##### j. $\{w| w\text{ contains at least two 0s and at most one 1}\}$ 
+
+$(\{0, 1\}^*0)^2\{0, 1\}^* \cap 0^*{\epsilon, 1}0^*$
+
+##### k. $\{ε, 0\}$ 
+
+$\{ε, 0\}$ 
+
+##### l. $\{w| w\text{ contains an even number of 0s, or contains exactly two 1s}\}$ 
+
+$(0^*10^*)^2 \cup 0^{2*}1^* \cup 1^*0^{2*} \cup (0^n1^*0^n)^8 ; n \in \N$
+
+##### m. The empty set
+
+$\{\}$
+
+##### n. All strings except the empty string
+
+$\{0, 1\}^+$ or $\overline(\epsilon)$
+
 ### 1.19
 
 ### 1.20
@@ -1358,5 +1414,3 @@ $\delta_\text{DFA}$
 
 ### 1.30
 
-$$
-$$
