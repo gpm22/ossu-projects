@@ -1089,6 +1089,23 @@ $D = M_1 \cap M_2 \cap M_3 = M_1 \cap M_2 \cap \overline{ab}$
 
 ### 1.13
 
+First we define a DFA that can identify a string with a pair of 1s that are separated by an odd number of symbols.
+
+$M_1 = \{\{q_1, q_2, q_3, q_4\}, \{0, 1\}, \delta_1, q_1, \{q_4\} \}$
+
+$\delta_1$
+
+|       | $0$   | $1$   |
+| ----- | ----- | ----- |
+| $q_1$ | $q_1$ | $q_2$ |
+| $q_2$ | $q_3$ | $q_3$ |
+| $q_3$ | $q_2$ | $q_4$ |
+| $q_4$ | $q_4$ | $q_4$ |
+
+Then we define $M = \overline{M_1}$, which is
+
+$M = \{\{q_1, q_2, q_3, q_4\}, \{0, 1\}, \delta_1, q_1, \{q_1, q_2, q_3\} \}$
+
 ### 1.14
 
 ### 1.15
