@@ -1537,6 +1537,86 @@ $\delta_2$
 
 ### 1.20
 
+##### $a^*b^*$
+
+Strings that are part of it:
+- ab
+- aaaa
+
+Strings that are not part of it:
+- ba 
+- bbaa
+
+##### $a(ba)^*b$
+
+Strings that are part of it:
+- ab
+- abab
+
+Strings that are not part of it:
+- b 
+- a
+
+##### $a^* \cup b^*$
+
+Strings that are part of it:
+- aaaa
+- bbbb
+
+Strings that are not part of it:
+- ba 
+- ab
+
+##### $(aaa)^*$
+
+Strings that are part of it:
+- aaa
+- aaaaaa
+
+Strings that are not part of it:
+- b 
+- a
+
+##### $\Sigma^*a\Sigma^*b\Sigma^*a\Sigma^*$
+
+Strings that are part of it:
+- aba
+- aabbbbbba
+
+Strings that are not part of it:
+- a 
+- b
+
+##### $aba \cup bab$
+
+Strings that are part of it:
+- aba
+- bab
+
+Strings that are not part of it:
+- b 
+- a
+
+##### $(\varepsilon \cup a)b$
+
+Strings that are part of it:
+- ab
+- b
+
+Strings that are not part of it:
+- a 
+- ba
+
+##### $(a \cup ba \cup bb)\Sigma^*$
+
+Strings that are part of it:
+- ba
+- bb
+
+Strings that are not part of it:
+- $\epsilon$ 
+- b
+
 ### 1.21
 
 ### 1.22
