@@ -1723,6 +1723,18 @@ $/\#\ (\overline{(\#/)^+})^*  \#/$
 
 ### 1.23
 
+If $BB \subseteq B$, it means that $BB$ is part of $B$, thus $BB = B$.
+
+As result
+
+$$
+\cdots BBBBBBBBBBBBBBBB \subseteq  BBBBBBBB \subseteq BBBB \subseteq BB \subseteq B
+$$
+
+which result in $B^+ \subseteq B$ and therefore
+
+$B = B^+$
+
 ### 1.24
 
 ### 1.25
