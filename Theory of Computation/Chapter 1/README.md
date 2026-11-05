@@ -1702,6 +1702,25 @@ Then the regular expression is $(a \cup b)a^*b ( a \cup (a(a \cup b)a^*b \cup bb
 
 ### 1.22
 
+##### a. Give a DFA that recognizes $C$.
+
+$\{\{q_1, q_2, q_3, q_4, q_5, q_6\}, \{a, b, /, \#\}, \delta_1, q_1, \{q_5\} \}$
+
+$\delta_1$
+
+|       | $a$   | $b$   | $/$   | $\#$  |
+| ----- | ----- | ----- | ----- | ----- |
+| $q_1$ | $q_6$ | $q_6$ | $q_2$ | $q_6$ |
+| $q_2$ | $q_6$ | $q_6$ | $q_6$ | $q_3$ |
+| $q_3$ | $q_3$ | $q_3$ | $q_3$ | $q_4$ |
+| $q_4$ | $q_3$ | $q_3$ | $q_5$ | $q_3$ |
+| $q_5$ | $q_6$ | $q_6$ | $q_6$ | $q_6$ |
+| $q_6$ | $q_6$ | $q_6$ | $q_6$ | $q_6$ |
+
+##### b. Give a regular expression that generates $C$.
+
+$/\#\ (\overline{(\#/)^+})^*  \#/$
+
 ### 1.23
 
 ### 1.24
