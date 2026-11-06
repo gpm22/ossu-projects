@@ -1921,5 +1921,13 @@ $\delta_3$
 
 ### 1.29
 
+Continue here at page 88 (112)
+
+##### a. \(A_1 = \{0^n1^n2^n \mid n \ge 0\}\)
+
+##### b. \(A_2 = \{www \mid w \in \{a, b\}^*\}\)
+
+##### c. \(A_3 = \{a^{2^n} \mid n \ge 0\}\) (Here, \(a^{2^n}\) means a string of \(2^n\) a's.)
+
 ### 1.30
 
