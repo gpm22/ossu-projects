@@ -1737,7 +1737,41 @@ $B = B^+$
 
 ### 1.24
 
+##### a. \(T_1\) on input $011$
+
+000
+
+##### b. \(T_1\) on input $211$
+
+111
+
+##### c. \(T_1\) on input $121$
+
+011
+
+##### d. \(T_1\) on input $0202$
+
+0101
+
+##### e. \(T_2\) on input $b$
+
+1
+
+##### f. \(T_2\) on input $bbab$
+
+1111
+
+##### g. \(T_2\) on input $bbbbbb$
+
+110110
+
+##### h. \(T_2\) on input \(\varepsilon\)
+
+ \(\varepsilon\)
+
 ### 1.25
+
+
 
 ### 1.26
 
