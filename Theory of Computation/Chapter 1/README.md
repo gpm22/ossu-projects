@@ -1771,14 +1771,36 @@ $B = B^+$
 
 ### 1.25
 
-A **finite state transducer (FST)** is a 5-tuple $(Q, Σ, δ, q_0 , F )$, where
+A **finite state transducer (FST)** is a 5-tuple $(Q, Σ,  \Gamma, δ, q_0 )$, where
 1. $Q$ is a finite set called the states,
-2. $Σ$ is a finite set called the alphabet,
-3. $δ : Q \times Σ \to Q \times \Gamma$ is the transition function, where $\Gamma$ is the output alphabet, 
-4. $q_0 ∈ Q$ is the start state, and
-5. $F \subset Q$ is the set of accept states.
+2. $Σ$ is a finite set called the input alphabet,
+3. $\Gamma$ is a finite set called the output alphabet,
+4. $δ : Q \times Σ \to Q \times \Gamma$ is the transition function,, 
+5. $q_0 ∈ Q$ is the start state, and
 
 ### 1.26
+
+##### $T_1$
+
+$(\{q_1, q_2\}, \{0, 1, 2\}, \{0, 1 \},  δ, q_1 )$
+
+$\delta$
+
+|       | $0$       | $1$       | $2$       |
+| ----- | --------- | --------- | --------- |
+| $q_1$ | $q_1 : 0$ | $q_1 : 0$ | $q_2 : 1$ |
+| $q_2$ | $q_1 : 0$ | $q_2 : 1$ | $q_2 : 1$ |
+
+
+##### $T_2$
+
+$(\{q_1, q_2, q_3\}, \{a, b\}, \{0, 1 \},  δ, q_1 )$
+
+|       | $a$       | $b$       |
+| ----- | --------- | --------- |
+| $q_1$ | $q_2 : 1$ | $q_3 : 1$ |
+| $q_2$ | $q_3 : 1$ | $q_1 : 0$ |
+| $q_3$ | $q_1 : 0$ | $q_2 : 1$ |
 
 ### 1.27
 
