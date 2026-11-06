@@ -1771,7 +1771,12 @@ $B = B^+$
 
 ### 1.25
 
-
+A **finite state transducer (FST)** is a 5-tuple $(Q, Σ, δ, q_0 , F )$, where
+1. $Q$ is a finite set called the states,
+2. $Σ$ is a finite set called the alphabet,
+3. $δ : Q \times Σ \to Q \times \Gamma$ is the transition function, where $\Gamma$ is the output alphabet, 
+4. $q_0 ∈ Q$ is the start state, and
+5. $F \subset Q$ is the set of accept states.
 
 ### 1.26
 
