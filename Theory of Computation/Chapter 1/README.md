@@ -1864,7 +1864,7 @@ $\delta_1$
 | $q_6$ | {}        | $\{q_5\}$ | {}        |
 
  \(a^+ \cup (ab)^+\)
- 
+
  $\{\{q_0, q_1, q_2,\}, \{a, b\}, \delta_1, q_0, \{q_2, q_5\} \}$
 
 $\delta_1$
@@ -1925,9 +1925,58 @@ Continue here at page 88 (112)
 
 ##### a. \(A_1 = \{0^n1^n2^n \mid n \ge 0\}\)
 
+- Let $B$ be the language $\{0^n 1^n 2^n |n ≥ 0\}$.
+
+- Let $p$ be the pumping length given by the pumping lemma.
+
+- Choose $s$ to be the string $0^p 1^p 2^p$.
+
+- Impossible cases for the pumping lemma:
+
+  1. **The string $y$ consists only of 0s.**
+
+     - In this case, the string $xyyz$ has more $0$s than $1$s and $w$s, and so is not a member of $B$.
+
+     - It violates condition 1
+
+  2. **The string $y$ consists only of 1s**.
+
+     - Same proof as for case 1.
+
+  3. **The string $y$ consists only of 2s**.
+
+     - Same proof as for case 1.
+
+  4. **The string $y$ consists of both 0s , 1s, and 2s.**
+
+     - In this case, the string $xyyz$ may have the same number of 0s , 1s, and 2s, but they will be **out of order** with some 1s before 0s, per example.
+     - Hence it is not a member of $B$, which is a contradiction.
+
+- Therefore $B$ cannot be regular.
+
 ##### b. \(A_2 = \{www \mid w \in \{a, b\}^*\}\)
 
+- Let $B$ be the language \( \{www \mid w \in \{a, b\}^*\}\)
+- Let $p$ be the pumping length given by the pumping lemma.
+- Choose $s$ to be the string $a^p b^p a^p b$.
+- There is no way to divide $s$ in $xyz$, so $xy^iz, i \geq 0$, while $|y| > 0$ and $|xy| \leq p$ being true.
+- Therefore $B$ cannot be regular.
+
 ##### c. \(A_3 = \{a^{2^n} \mid n \ge 0\}\) (Here, \(a^{2^n}\) means a string of \(2^n\) a's.)
+
+- Let $B$ be the language \( \{a^{2^n} \mid n \ge 0\}\)
+- Let $p$ be the pumping length given by the pumping lemma.
+- Choose $s$ to be the string $a^{2^p}$.
+- Now consider the two strings $xyz$ and $xy^2z$.
+- By condition 3:
+  - $|xy| \leq p$
+  - thus $|y| \leq p$.
+- We have by definition of $s$, $|s| = |xyz| = 2^p$.
+- Thus $|xy^2z| \leq 22^p = 2^{p+1}$.
+- As condition states that $y$ cannot be $\varepsilon$:
+  - $|xy^2p| > 2^p$
+- Therefore the length of $xy^2z$ lies strictly between $2^p$ and $2^{p+1}$, which is not a perfect square itself.
+- Therefore, we arrived at a contradiction and  $B$ cannot be regular.
 
 ### 1.30
 
