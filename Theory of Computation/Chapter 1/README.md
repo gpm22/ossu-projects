@@ -1980,3 +1980,10 @@ Continue here at page 88 (112)
 
 ### 1.30
 
+$A = 0^* 1^*$
+
+$s = 0^p 1^p$
+
+We can devide it as $x = y = 0^{p/2}$ and $z = 1^p$, which have $|xy| = p$, which is $\leq p$ and $|y| > 0$.
+
+We can pump $y$ indefinetly and still got a string that is part of $A$, as it will just add more 0s before the 1s, which is accepted by $0^* 1^*$.
